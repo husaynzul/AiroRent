@@ -1,0 +1,277 @@
+# JAKURZI — Master Product & UX Specification
+
+## 1. One-Line Concept
+Jakurzi = **Airbnb's booking experience** + **MyRent.mt's property marketplace** — one app for renting, buying, selling, and short-letting *any* property type (homes, apartments, shops, plazas, commercial units, land), with a map-first discovery layer, direct owner contact (Call/WhatsApp), and all money movement routed through Jakurzi's own verified payment system.
+
+---
+
+## 2. Core Positioning
+| From MyRent.mt | From Airbnb |
+|---|---|
+| Property categories (Apartments, Penthouses, Maisonettes, Studios, Farmhouses, Rooms, Palazzos, Commercial) | Bottom nav: Explore / Wishlists / Trips / Messages / Profile |
+| Rent / Buy / Short Let toggle | Trip-style booking flow (dates, availability, "Message host") |
+| Filters: Price, Beds, Baths, Garage | Empty-state illustrations ("Nothing to see here", "No notifications yet") |
+| Map with price bubbles + cluster counts | Wishlists (saved + "Recently viewed") |
+| Agent verification badges (Verified, Vetted, Licensed, Phone verified) | Trust & safety micro-copy ("Always use [App] to pay") |
+| Listing freshness ("Listed 79 days ago", "May no longer be available") | Account Settings structure (Personal info, Login & security, Privacy, Notifications, Payments, Taxes) |
+| "Similar nearby" carousel | Guest/Host dual role model + "Become a host" |
+
+---
+
+## 3. Transaction Types × Property Types
+**Transaction types (top-level toggle, always visible):**
+- Rent (long-term, 1-year registered lease style)
+- Short Let (nightly/weekly, Airbnb-style booking)
+- Buy
+- Sell / List (owner-initiated)
+
+**Property categories (horizontal scroll tabs under the toggle):**
+All · Apartments · Penthouses · Maisonettes · Townhouses · Studios · Farmhouses · Rooms · Palazzos · Villas · Commercial (Shops/Offices) · Plazas/Retail Units · Land/Garages
+
+Every category is available under every transaction type (e.g., "Commercial – Rent", "Villa – Buy", "Room – Short Let").
+
+---
+
+## 4. Information Architecture (Bottom Navigation)
+1. **Explore** — home feed / search / category browse
+2. **Map** — full-screen map with price-pin discovery
+3. **Wishlists** — saved listings + "Recently viewed"
+4. **Trips / Bookings** — active rentals, purchase offers, short-let stays, past deals
+5. **Messages** — chat with owners/agents + Jakurzi system notices
+6. **Profile** — account, verification status, become an owner/agent, settings
+
+---
+
+## 5. Explore / Home Screen
+- Top bar: logo, location pill (auto-detected via GPS, editable), search icon, "Post for free" CTA (for owners), hamburger menu.
+- Transaction toggle: **Rent | Buy | Short Let** (pill switch, black-on-white active state, matches MyRent).
+- Category icon row (grid icons like MyRent: All/Apartments/Penthouses/Maisonettes…), horizontally scrollable, active tab underlined.
+- Filter chip row: Price, Beds, Baths, Garage, + category-specific filters (e.g., Check-in/Check-out dates only appear under Short Let).
+- Vertical feed of **Listing Cards** (see §7).
+- Pull-to-refresh, infinite scroll.
+
+---
+
+## 6. Map View
+- Entry points: dedicated Map tab **and** a "View on map" toggle from Explore results.
+- Rent / Buy / Short Let filter pills persist on the map.
+- Cluster bubbles show count (e.g., "7", "2") when zoomed out; zooming in reveals individual **price bubbles** (e.g., "€1,850", "€320,000") exactly like MyRent's Mapbox implementation.
+- Tapping a price bubble opens a bottom-sheet preview card (image, title, price, beds/baths) → tap again opens full Property Detail page.
+- User's live location shown as a blue dot; "near me" sorting available.
+- Map style: light/greyscale base (as in screenshots) with brand-colored pins for contrast.
+- Attribution footer required if Mapbox/Google Maps SDK is used.
+
+---
+
+## 7. Listing Card Anatomy (feed & search results)
+- Rounded image carousel (swipeable), top-left badge: `RENT` / `BUY` / `SHORT LET` / `SOLD` / `RENTED`.
+- Heart icon (top-right) to save to Wishlist.
+- Title (truncated, 1 line).
+- Type · Locality line (e.g., "Apartment · Ibraġ").
+- Verified badge inline if agent/owner is verified (blue checkmark + label, e.g., "✓ Ensuite" style tags for standout features).
+- Price row: `€1,600 /m` (or `/night` for short-let, or flat price for Buy) + bed icon + count + bath icon + count + optional garage icon.
+
+---
+
+## 8. Property Detail Page
+Sticky elements:
+- Bottom bar (always visible while scrolling): price + period, **Call** button, **WhatsApp** button (green, direct-contact), and (new, Jakurzi-only) **Book / Make Offer via Jakurzi** primary button.
+
+Scrollable body sections, in this order:
+1. Image gallery (swipe, counter, tap-to-zoom).
+2. Title + type + locality + verified/feature tags.
+3. Price block: `ASKING €1,800 / month` + freshness note ("Listed X days ago" / "May no longer be available" if stale >60 days).
+4. **Agent/Owner card**: logo/avatar, name, role (Agent/Owner), verification badges — Verified by Jakurzi, Vetted, Licensed agent, Phone verified. Tapping opens their full profile + other listings.
+5. **Safety heads-up banner**: "Never pay a deposit before viewing the property in person / before payment is confirmed through Jakurzi." + link to Safety Tips.
+6. **Description** (rich text, truncatable "read more").
+7. **Features** (checklist, green checkmarks — High ceilings, Furnished, Double glazing, etc.)
+8. **What's Included**, grouped by sub-header:
+   - Indoor (AC, washing machine, tumble dryer, laundry room…)
+   - Outdoor (balcony, terrace, garden…)
+   - Building (lift, parking, security…)
+9. **Location** section: neighborhood name + embedded static map + "Open in Google Maps" deep link.
+10. **Availability** (Short Let / Airbnb-style only): calendar picker, "Add your travel dates for exact pricing."
+11. **Things to Know** (Short Let only, Airbnb-pattern): Cancellation policy, House rules (check-in time, guest max, pets), Safety & property (smoke/CO alarm status, exterior cameras).
+12. **Similar Nearby** carousel (same category/locality, horizontally scrollable).
+13. **Report this listing** link (flag icon) — always present for trust/safety.
+
+---
+
+## 9. Contact & Communication Model
+Two parallel tracks, both surfaced on every listing:
+
+**A. Direct contact (fast path)**
+- Call button → dials owner/agent directly.
+- WhatsApp button → opens chat pre-filled with listing link/reference.
+- Used for quick questions, viewing scheduling — no money changes hands here.
+
+**B. In-app Messaging (Jakurzi Messages tab)**
+- Airbnb-style thread UI.
+- System banner at top of every thread: *"To help protect your payment, always pay and communicate through Jakurzi."*
+- Empty state: "Nothing to see here — plan a rental, purchase, or stay to connect with the owner here." + "Get started" CTA.
+- Threads persist across booking lifecycle (inquiry → viewing → offer → contract → payment → move-in/handover → post-deal support).
+
+---
+
+## 10. Booking, Offer & Payment Workflow ("Jakurzi Pay")
+This is the key differentiator vs. both source apps — **all money flows through Jakurzi, never directly bank-to-bank until verification clears.**
+
+**Step-by-step flow:**
+1. **Inquire** — user taps Call/WhatsApp or in-app "Message" for initial contact and viewing.
+2. **Viewing / Due diligence** — in-person or virtual viewing arranged via chat; Jakurzi shows the safety-tips banner throughout.
+3. **Offer / Booking Request**
+   - *Short Let*: select dates → instant price calculation → "Request to Book."
+   - *Long-term Rent*: submit rental application (dates, deposit terms) → owner accepts/declines.
+   - *Buy*: submit an offer amount → agent/owner counter-offers or accepts.
+4. **Verification checkpoint** (Jakurzi-side, before any payment is released):
+   - Identity check on both parties (KYC).
+   - Listing re-verification (ownership doc / agent license still valid, property still available).
+   - Confirmation the in-person viewing happened (for rent/buy) or booking terms agreed (for short-let).
+5. **Payment collection** — buyer/renter pays into Jakurzi's secured payment system (card/bank/wallet), funds **held in escrow**, not sent to owner yet.
+6. **Confirmation & Release**
+   - Short-let: funds released to host after check-in (or per cancellation policy).
+   - Long-term rent: funds released once lease is signed and move-in confirmed.
+   - Buy/Sell: funds released in milestone tranches tied to legal/notary steps (deposit → promise of sale → final deed), ideally with legal-partner integration.
+7. **Review stage** — after stay/lease/sale completion, both parties can leave reviews (rating + text), gating future trust scores.
+8. **Dispute/Support path** — if something goes wrong pre-release, funds stay in escrow and Jakurzi support mediates.
+
+**Why this matters:** Owners/agents can still be reached instantly via Call/WhatsApp (keeps the app fast and non-intrusive, MyRent-style), but **no money is safe to send outside Jakurzi** — the in-app payment rail is the only verified, refundable, dispute-protected path. This should be repeated as persistent UI copy near every payment CTA.
+
+---
+
+## 11. Trust & Verification System
+Badges shown on agent/owner cards and listings:
+- ✅ Verified by Jakurzi (identity + ownership/agency license confirmed)
+- ✅ Vetted (manual review passed)
+- ✅ Licensed agent (real estate license number checked)
+- ✅ Phone verified
+- Listing-level: "Listed X days ago", "May no longer be available" auto-flag after inactivity window, "Report this listing" always visible.
+- Persistent safety banners at message/pay touchpoints (never pay outside the app, view in person before paying deposit).
+
+---
+
+## 12. User Roles
+- **Guest/Renter/Buyer** (default) — browse, save, message, book, pay.
+- **Owner** — "Become a host/owner" banner (Airbnb pattern) → post a listing for free, manage inquiries, receive payments via Jakurzi Pay, see verification badges accrue over time.
+- **Agent** — professional tier, license verification required, can manage a portfolio of listings, gets "Agent" tag + verified badges.
+- Role switch happens from Profile screen without needing a separate account.
+
+---
+
+## 13. Profile Screen
+- Avatar (initial-letter avatar by default, e.g., purple circle + "H"), name, role label (Guest/Owner/Agent).
+- Quick tiles: Past Trips / Bookings, Connections.
+- "Become a host/owner" promo card if user hasn't listed anything yet.
+- Menu: Account settings, Get help, View profile, Privacy, Refer a host, Find a co-host/co-agent, Legal, Log out.
+
+**Account Settings sub-screen:**
+Personal information, Login & security, Privacy, Notifications, Payments, Taxes, Translation, Booking permissions (New), Travel for work, Accessibility. Version/build number shown at bottom for support/debug purposes.
+
+---
+
+## 14. Notifications & Messages Empty States
+- Notifications: bell icon illustration, "No notifications yet — you've got a blank slate (for now). We'll let you know when updates arrive."
+- Messages: 3D chat-bubble illustration, "Nothing to see here — plan a stay/rental/purchase to connect with your host/owner here." + primary CTA button.
+- Both patterns reused from Airbnb — keep consistent illustration style app-wide for a polished feel.
+
+---
+
+## 15. Posting a Listing (Owner/Agent Flow)
+Accessible via hamburger menu → "Post a listing" (bottom sheet menu, MyRent-style):
+Rent · Buy · Short Let · Map · For Owners · For Agents · Services · **Post a listing** (primary black button) · Sign in.
+
+Posting flow (not shown in screenshots but required for completeness):
+1. Choose transaction type + category.
+2. Address + auto-pin on map (with manual drag-to-adjust).
+3. Price, deposit terms, lease length / nightly rate.
+4. Photos (min. count enforced), features checklist, what's-included groups (Indoor/Outdoor/Building).
+5. Ownership/agency verification upload (ID, deed, or license number).
+6. Preview → Submit for review → goes live once Jakurzi verification passes.
+
+---
+
+## 16. End-to-End User Journeys
+
+**A. Long-term rent journey**
+Explore → filter Rent + Apartment → browse feed/map → open listing → check features/location → Call or WhatsApp to arrange viewing → view in person → return to app → submit rental application via in-app chat → owner accepts → pay deposit + first month through Jakurzi Pay (escrow) → lease signed digitally → funds released to owner → move in → leave review after move-in period.
+
+**B. Short-let (Airbnb-style) journey**
+Explore → toggle Short Let → pick dates on listing → see price breakdown → "Request to Book" → host accepts (or instant book) → pay via Jakurzi Pay → booking confirmed in Trips tab → check-in → stay → checkout → leave/receive review.
+
+**C. Buy/Sell journey**
+Explore → toggle Buy → browse map (price bubbles like €320,000 / €1,780,000) → open listing → view agent verification → schedule viewing via Call/WhatsApp → submit offer in-app → negotiate via Messages → accept offer → deposit paid into Jakurzi escrow → legal/notary steps tracked in-app → milestone payments released → deed transfer → both parties review each other.
+
+**D. Owner listing journey**
+Profile → "Become a host/owner" → Post a listing → fill details → verify ownership → go live → receive inquiries in Messages → manage bookings/offers in Trips/Bookings tab → get paid via Jakurzi Pay after each verified transaction.
+
+---
+
+## 17. Design/UI Principles
+- **Buttery-smooth, minimal, high-contrast** UI: black/white primary palette (like MyRent's black pills) with a single accent color for CTAs (Airbnb-style red/pink works well for primary actions — book, get started, post a listing).
+- Rounded corners everywhere (cards, images, buttons, chips) — 16–24px radius.
+- Icon-first navigation (category icons, bottom nav icons) for fast scanning.
+- Sticky bottom action bar on every detail page (price + Call + WhatsApp + Book/Pay).
+- Consistent empty-state illustrations across Notifications/Messages/Wishlists for polish.
+- Map interactions must feel native (pinch-zoom, cluster-to-pin transitions, bottom-sheet previews) — this is the single most important UX benchmark from MyRent to nail.
+- Trust/safety micro-copy repeated at every money- or contact-related touchpoint, without being alarmist.
+
+---
+
+## 18. Monetization & Fee Structure ("Jakurzi Pay" Business Model)
+
+**A. Listing Fee — $50 (one-time, per listing)**
+- Charged to the owner/agent **before** a listing goes live.
+- Covers Jakurzi's verification process (ownership/ID/license check).
+- Non-refundable once verification starts; if verification fails, listing stays inactive and owner is notified what to fix (resubmit without a second fee, or refund policy — decide which before launch).
+- Only after verification passes does the owner receive the **blue verified checkmark** and the listing publishes to Explore/Map.
+
+**B. Sale Commission — 20% of final sale price**
+- Applies only to **Buy/Sell** transactions.
+- Charged at the point the sale completes (deed transfer / final payment milestone), deducted from the funds held in Jakurzi's escrow before release to the seller.
+- Buyer pays full agreed price into escrow → Jakurzi deducts 20% → remaining 80% released to seller.
+
+**C. Rental Commission — 5%, recurring only while the unit is occupied**
+- Applies to both **Long-term Rent** (charged **monthly**) and **Short Let** (charged **per booking/weekly**, matching the payout cycle).
+- Rule: **fee is only ever taken from an active, paying tenancy.** If the property is vacant / not currently rented, Jakurzi takes **$0** — no fee applies to unlisted time, vacancies, or gaps between tenants.
+- Mechanics: each time a rent payment (monthly rent or short-let booking payout) passes through Jakurzi Pay, the system automatically deducts 5% before releasing the remaining 95% to the owner.
+- This means commission is usage-based and self-terminating — as soon as a lease ends or a booking calendar goes empty, deductions stop automatically until the next paying tenant/guest is confirmed.
+
+**Fee Summary Table**
+
+| Action | Who pays | Amount | When charged |
+|---|---|---|---|
+| List a property | Owner/Agent | $50 flat | Before verification/publish |
+| Property sells | Seller (deducted from proceeds) | 20% of sale price | At sale completion, from escrow |
+| Long-term rent active | Owner (deducted from rent) | 5% | Every month, only while occupied |
+| Short-let booking active | Host (deducted from payout) | 5% | Every booking/week, only while occupied |
+| Property vacant / not rented | — | $0 | No charge — commission auto-pauses |
+
+---
+
+## 19. Payment Collection Flow (Card & Bank, Country-Aware)
+
+1. **Country selection first.** On payment screens (listing fee, rent payment, sale payment, or owner payout setup), the app detects the user's country (GPS/account setting) and shows only the payment methods valid for that country — mirrors how Airbnb/Uber localize payment options.
+2. **Default primary method: Card.** Visa/Mastercard (and Amex where supported) shown first, big and simple — "Pay with card" as the default button.
+3. **Local bank options underneath.** Based on the selected/detected country, list the relevant local bank transfer / instant-payment rails (e.g., SEPA for EU countries, local instant-transfer apps/banks for others) as secondary options, similar to how checkout flows show "Pay with [Local Bank]" logos below the card option.
+4. **Owner payout setup** (separate from paying-in flow): owner links a bank account or card to *receive* their 95%/80% share; this is set up once in Account Settings → Payments, filtered by the owner's own country.
+5. **Every payment screen shows a clear breakdown** before confirming: 
+   - "Rent: €1,000 · Jakurzi fee (5%): €50 · Owner receives: €950" 
+   - "Sale price: €300,000 · Jakurzi commission (20%): €60,000 · Seller receives: €240,000"
+   This transparency should be non-negotiable UI — never a hidden deduction.
+6. **Receipts** auto-generated and stored under Trips/Bookings → each transaction, downloadable PDF.
+
+---
+
+## 20. Verification → Blue Tick Flow (Updated)
+
+1. Owner/agent creates listing → prompted to pay **$50 listing fee** via card or local bank.
+2. Payment confirmed → listing enters **"Pending Verification"** state (not visible in public Explore/Map yet, or visible but tagged "Unverified — pending review").
+3. Jakurzi review team/automated checks confirm: identity, ownership/agency license, listing photos match property, price is realistic.
+4. On pass → owner/agent profile and listing both get the **blue verified checkmark** (same visual language as MyRent's "✓ Ensuite"-style inline badges, but used for identity/listing trust).
+5. Listing goes fully live across Explore, Map, and search.
+6. If a sale or rental later completes on that listing, commission rules from §18 apply automatically — no separate invoicing needed, it's deducted at the payment-release step described in §10.
+
+---
+
+## 21. Suggested App Name Elements
+- **Jakurzi** as brand name; tagline candidates: "Every property. One trusted platform." / "Rent, buy, stay — safely, in one app."

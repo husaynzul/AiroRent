@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Jakurzi Property Marketplace"
+description = "A trusted property marketplace for renting, buying, and short stays. Browse listings, explore a map, save favorites, contact owners, request bookings, and manage the owner listing flow in one place."
+version = "1.0.0"
+id = "artifacts/jakurzi"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18514
+
+[services.development]
+run = "pnpm --filter @workspace/jakurzi run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jakurzi", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/jakurzi/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18514"
+BASE_PATH = "/"
