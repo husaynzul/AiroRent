@@ -20,6 +20,24 @@ import {
 } from 'lucide-react';
 
 type Mode = 'Rent' | 'Buy' | 'Short Let';
+type FilterState = {
+  price: string;
+  beds: string;
+  baths: string;
+  garages: string;
+  propertyType: string;
+  location: string;
+};
+
+const defaultFilters: FilterState = {
+  price: 'Any',
+  beds: 'Any',
+  baths: 'Any',
+  garages: 'Any',
+  propertyType: 'Any',
+  location: 'Any',
+};
+
 type Listing = {
   id: string;
   title: string;
@@ -32,6 +50,7 @@ type Listing = {
   rating: string;
   tag?: string;
   verified?: boolean;
+  garages?: number;
 };
 
 const images = {
@@ -46,12 +65,12 @@ const images = {
 };
 
 const listings: Listing[] = [
-  { id: 'harbour-loft', title: 'The Limestone Harbour Loft', location: 'Vittoriosa, South East', type: 'Apartment', mode: 'Short Let', price: '€145', detail: '2 beds · 1 bath · sleeps 4', image: images.limestone, rating: '4.92', tag: 'Guest favourite', verified: true },
-  { id: 'seaview-sliema', title: 'Seaview apartment with terrace', location: 'Sliema, Central', type: 'Apartment', mode: 'Rent', price: '€1,280 / mo', detail: '2 beds · 2 baths · 98 m²', image: images.seaview, rating: '4.8', tag: 'New this week', verified: true },
-  { id: 'garden-rabat', title: 'A quiet garden home near Rabat', location: 'Rabat, West', type: 'House', mode: 'Buy', price: '€685,000', detail: '3 beds · 2 baths · 164 m²', image: images.farmhouse, rating: '4.75', tag: 'Owner listed' },
-  { id: 'gozo-stone', title: 'Sun-washed stone farmhouse', location: 'Xagħra, Gozo', type: 'House', mode: 'Short Let', price: '€210', detail: '4 beds · 3 baths · sleeps 8', image: images.farmhouse, rating: '4.97', tag: 'Guest favourite', verified: true },
-  { id: 'msida-studio', title: 'Bright studio by the marina', location: 'Msida, Central', type: 'Studio', mode: 'Rent', price: '€850 / mo', detail: '1 bed · 1 bath · 46 m²', image: images.limestone, rating: '4.61' },
-  { id: 'marsaxlokk-villa', title: 'Pool villa, close to the sea', location: 'Marsaxlokk, South East', type: 'Villa', mode: 'Buy', price: '€1,180,000', detail: '4 beds · 3 baths · 240 m²', image: images.seaview, rating: '4.88', tag: 'Price reduced', verified: true },
+  { id: 'harbour-loft', title: 'The Limestone Harbour Loft', location: 'Vittoriosa, South East', type: 'Apartment', mode: 'Short Let', price: '€145', detail: '2 beds · 1 bath · sleeps 4', image: images.limestone, rating: '4.92', tag: 'Guest favourite', verified: true, garages: 0 },
+  { id: 'seaview-sliema', title: 'Seaview apartment with terrace', location: 'Sliema, Central', type: 'Apartment', mode: 'Rent', price: '€1,280 / mo', detail: '2 beds · 2 baths · 98 m²', image: images.seaview, rating: '4.8', tag: 'New this week', verified: true, garages: 1 },
+  { id: 'garden-rabat', title: 'A quiet garden home near Rabat', location: 'Rabat, West', type: 'House', mode: 'Buy', price: '€685,000', detail: '3 beds · 2 baths · 164 m²', image: images.farmhouse, rating: '4.75', tag: 'Owner listed', garages: 2 },
+  { id: 'gozo-stone', title: 'Sun-washed stone farmhouse', location: 'Xagħra, Gozo', type: 'House', mode: 'Short Let', price: '€210', detail: '4 beds · 3 baths · sleeps 8', image: images.farmhouse, rating: '4.97', tag: 'Guest favourite', verified: true, garages: 2 },
+  { id: 'msida-studio', title: 'Bright studio by the marina', location: 'Msida, Central', type: 'Studio', mode: 'Rent', price: '€850 / mo', detail: '1 bed · 1 bath · 46 m²', image: images.limestone, rating: '4.61', garages: 0 },
+  { id: 'marsaxlokk-villa', title: 'Pool villa, close to the sea', location: 'Marsaxlokk, South East', type: 'Villa', mode: 'Buy', price: '€1,180,000', detail: '4 beds · 3 baths · 240 m²', image: images.seaview, rating: '4.88', tag: 'Price reduced', verified: true, garages: 2 },
 ];
 
 const categories = [
@@ -86,14 +105,6 @@ function Logo({ light = false }: { light?: boolean }) {
   );
 }
 
-function ProfileButton() {
-  return (
-    <Link href="/profile" className="grid size-10 place-items-center rounded-full border border-[hsl(var(--primary)/.22)] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] shadow-[0_5px_14px_hsl(var(--primary)/.12)] transition hover:-translate-y-0.5 hover:bg-[hsl(var(--accent))]" aria-label="Open profile" data-testid="button-header-profile">
-      <UserRound size={18} strokeWidth={2.1} />
-    </Link>
-  );
-}
-
 function Header({ onMenu }: { onMenu: () => void }) {
   const [location, setLocation] = useLocation();
   return (
@@ -108,7 +119,6 @@ function Header({ onMenu }: { onMenu: () => void }) {
         </div>
         <div className="flex items-center gap-2">
            <Link href="/post" className="hidden rounded-full bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-white shadow-[0_7px_16px_hsl(var(--primary)/.2)] transition hover:-translate-y-0.5 md:inline-flex md:text-sm" data-testid="link-post-header">List a property</Link>
-          <ProfileButton />
           <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-black/10 bg-white transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
             <Menu size={19} />
           </button>
@@ -250,7 +260,7 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
   </div>;
 }
 
-function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void }) {
+function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters, onClearFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void; onClearFilters: () => void }) {
   const [, setLocation] = useLocation();
   const propertyTabs = [
     ['All', Layers3],
@@ -284,7 +294,6 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
           <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Good morning</p>
           <h1 className="mt-1 text-[24px] font-semibold tracking-[-.05em]">Hi, {userName}</h1>
         </div>
-        <button onClick={() => setLocation('/profile')} className="text-xs font-semibold text-[hsl(var(--primary))]" data-testid="link-mobile-profile-greeting">View profile</button>
       </div>
       <label className="flex h-12 w-full items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)]">
         <Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" /><button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
@@ -293,12 +302,8 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
         {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 pb-2 text-sm font-semibold ${mode === item ? 'border-b-2 border-black text-black' : 'text-black/50'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
       </div>
     </section>
-    <nav className="flex gap-5 overflow-x-auto border-b border-black/[.08] px-5 pb-3" aria-label="Property types">
-      {propertyTabs.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-[58px] shrink-0 flex-col items-center gap-1.5 text-[10px] ${category === label ? 'border-b-2 border-black pb-2 font-semibold text-black' : 'text-black/55'}`} data-testid={`button-mobile-property-${label.toLowerCase()}`}><Icon size={21} strokeWidth={1.5} />{label}</button>)}
-    </nav>
-    <div className="flex gap-2 overflow-x-auto border-b border-black/[.08] px-5 py-3">
-      {['Price', 'Beds', 'Baths', 'Garages'].map((label) => <button key={label} onClick={onOpenFilters} className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/10 px-3.5 py-2 text-xs font-medium" data-testid={`button-mobile-filter-${label.toLowerCase()}`}>{label}<ChevronDown size={14} /></button>)}
-      <button onClick={onOpenFilters} className="grid size-8 shrink-0 place-items-center rounded-full border border-black/10" aria-label="More filters" data-testid="button-mobile-more-filters"><Plus size={15} /></button>
+    <div className="border-b border-black/[.08] px-5 py-3">
+      <button onClick={onOpenFilters} className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold shadow-[0_4px_12px_rgba(0,0,0,.05)]" data-testid="button-mobile-filters"><SlidersHorizontal size={16} />Filters</button>
     </div>
     <div className="space-y-7 px-5 pb-28 pt-5">
       <section aria-labelledby="mobile-top-categories">
@@ -320,7 +325,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
         {mobileListings.length ? <div className="space-y-7">{mobileListings.slice(0, 6).map((item) => <article key={item.id} data-testid={`card-mobile-market-${item.id}`}>
           <div className="relative aspect-[1.34] overflow-hidden rounded-[24px] bg-[#f3f3f3]"><img src={item.image} alt={item.title} onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="size-full cursor-pointer object-cover" /><span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold">{item.mode === 'Short Let' ? 'SHORT LET' : item.mode.toUpperCase()}</span><button onClick={() => onSave(item.id)} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full ${saved.includes(item.id) ? 'bg-[hsl(var(--primary))] text-white' : 'bg-white/95'}`} aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'} data-testid={`button-mobile-market-save-${item.id}`}><Heart size={18} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
           <button onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="mt-3 block w-full text-left"><h3 className="line-clamp-1 text-[17px] font-semibold">{item.title}</h3><p className="mt-1 text-sm text-black/55">{item.type} · {item.location.split(',')[0]}</p><p className="mt-2 text-sm"><b>{item.price}</b>{item.mode === 'Short Let' ? ' / night' : ''} <span className="text-black/45"> · {item.detail}</span></p></button>
-        </article>)}</div> : <EmptyState title="No properties found" body="Try another town, property type, or clear the filters." action="Clear search" onAction={() => { setQuery(''); setCategory('All'); }} />}
+        </article>)}</div> : <EmptyState title="No properties found" body="Try another town, property type, or clear the filters." action="Clear search" onAction={() => { setQuery(''); setCategory('All'); onClearFilters(); }} />}
       </section>
     </div>
   </div>;
@@ -333,6 +338,7 @@ function HomePage() {
   const [toast, setToast] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [category, setCategory] = useState('All');
+  const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [location] = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(location.split('?')[1] || '');
@@ -344,15 +350,41 @@ function HomePage() {
   const matches = useMemo(() => {
     const categoryMap: Record<string, string | undefined> = { Penthouses: 'Apartment', Maisonettes: 'Apartment', Townhouses: 'House' };
     const selectedType = categoryMap[category] || category.slice(0, -1);
-    return listings.filter((item) => item.mode === mode).filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase())).filter((item) => category === 'All' || item.type === selectedType);
-  }, [mode, query, category]);
+    return listings
+      .filter((item) => item.mode === mode)
+      .filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase()))
+      .filter((item) => category === 'All' || item.type === selectedType)
+      .filter((item) => filters.propertyType === 'Any' || item.type === filters.propertyType)
+      .filter((item) => filters.location === 'Any' || item.location.toLowerCase().includes(filters.location.toLowerCase()))
+      .filter((item) => {
+        const price = Number(item.price.replace(/[^0-9]/g, ''));
+        if (filters.price === 'Under €1,000') return price < 1000;
+        if (filters.price === '€1,000–€2,000') return price >= 1000 && price <= 2000;
+        if (filters.price === 'Over €2,000') return price > 2000;
+        return true;
+      })
+      .filter((item) => {
+        const beds = Number(item.detail.match(/^\d+/)?.[0] || 0);
+        const minimum = Number(filters.beds.replace('+', ''));
+        return filters.beds === 'Any' || beds >= minimum;
+      })
+      .filter((item) => {
+        const baths = Number(item.detail.match(/·\s*(\d+)\s+bath/)?.[1] || 0);
+        const minimum = Number(filters.baths.replace('+', ''));
+        return filters.baths === 'Any' || baths >= minimum;
+      })
+      .filter((item) => {
+        const minimum = Number(filters.garages.replace('+', ''));
+        return filters.garages === 'Any' || (item.garages || 0) >= minimum;
+      });
+  }, [mode, query, category, filters]);
   const toggleSave = (id: string) => {
     const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
     setSaved(next); localStorage.setItem('jakurzi:wishlist', JSON.stringify(next)); setToast(saved.includes(id) ? 'Removed from your wishlist' : 'Saved to your wishlist');
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
   return <main>
-    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} />
+    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} onClearFilters={() => setFilters(defaultFilters)} />
     <div className="hidden md:block">
      <section className="airo-hero relative overflow-hidden border-b border-[hsl(var(--border))]">
        <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--primary)/.18)] blur-3xl" />
@@ -372,21 +404,69 @@ function HomePage() {
       </section>
       {recent.length > 0 && <section className="pb-10"><div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">Pick up where you left off</h2><Link href="/wishlist" className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="link-see-wishlist">See saved</Link></div><div className="flex gap-4 overflow-x-auto pb-2">{recent.slice(0, 4).map((item) => <ListingCard key={item.id} listing={item} saved={saved.includes(item.id)} onSave={toggleSave} compact />)}</div></section>}
       <section className="pb-14"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">{mode === 'Short Let' ? 'Make a weekend of it' : 'Places that feel right'}</p><h2 className="mt-1 font-display text-3xl tracking-[-.04em]">{query ? `Homes near “${query}”` : `${mode} homes in Malta`}</h2></div><Link href="/map" className="hidden items-center gap-1 text-sm font-bold text-[hsl(var(--primary))] sm:flex" data-testid="link-browse-map">Browse map <ArrowRight size={16} /></Link></div>
-        {matches.length ? <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">{matches.map((item, index) => <div key={item.id} className="animate-rise" style={{ animationDelay: `${index * 55}ms` }}><ListingCard listing={item} saved={saved.includes(item.id)} onSave={toggleSave} /></div>)}</div> : <EmptyState title="No homes in this corner yet" body="Try another location or clear your category filter. Malta has a few more good corners." action="Clear filters" onAction={() => { setQuery(''); setCategory('All'); }} />}
+         {matches.length ? <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">{matches.map((item, index) => <div key={item.id} className="animate-rise" style={{ animationDelay: `${index * 55}ms` }}><ListingCard listing={item} saved={saved.includes(item.id)} onSave={toggleSave} /></div>)}</div> : <EmptyState title="No homes in this corner yet" body="Try another location or clear your category filter. Malta has a few more good corners." action="Clear filters" onAction={() => { setQuery(''); setCategory('All'); setFilters(defaultFilters); }} />}
       </section>
       <section className="mb-10 grid overflow-hidden rounded-[30px] bg-[hsl(var(--foreground))] text-[hsl(var(--background))] md:grid-cols-[1.15fr_.85fr]"><div className="p-7 md:p-12"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--accent))]">The AiroRent promise</p><h2 className="mt-3 max-w-md font-display text-4xl leading-[1.02] tracking-[-.045em]">Good homes.<br />Clear moves.</h2><p className="mt-5 max-w-md text-sm leading-relaxed text-[hsl(var(--background)/.7)]">From your first message to the final payment, AiroRent Pay keeps the important moments protected. No guesswork, no awkward hand-offs.</p><Link href="/profile" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white" data-testid="link-promise-profile">How it works <ArrowRight size={16} /></Link></div><div className="relative min-h-[220px] overflow-hidden bg-[hsl(var(--primary))]"><div className="absolute -right-10 -top-16 size-64 rounded-full border-[24px] border-[hsl(var(--accent)/.55)]" /><div className="absolute bottom-8 left-10 size-28 rounded-full border-[14px] border-[hsl(var(--background)/.16)]" /><div className="absolute bottom-10 right-12 rounded-2xl bg-[hsl(var(--card))] p-4 text-[hsl(var(--foreground))] shadow-lift"><ShieldCheck size={23} className="text-[hsl(var(--primary))]" /><p className="mt-2 text-sm font-bold">Money moments,<br />made safer.</p></div></div></section>
     </div>
     </div>
-    {filterOpen && <FilterSheet mode={mode} onClose={() => setFilterOpen(false)} />}
+     {filterOpen && <FilterSheet mode={mode} filters={filters} onApply={setFilters} onClose={() => setFilterOpen(false)} />}
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;
 }
 
-function FilterSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
-  const [min, setMin] = useState('Any');
-  const [max, setMax] = useState('Any');
-  const [beds, setBeds] = useState('Any');
-  return <div className="fixed inset-0 z-50 animate-fade bg-[hsl(var(--foreground)/.4)] p-4 backdrop-blur-sm" onClick={onClose}><div className="mx-auto mt-auto max-w-lg animate-rise rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:mt-[12vh]" onClick={(e) => e.stopPropagation()}><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button></div><div className="mt-6 space-y-5"><div><label className="text-sm font-bold">Price range</label><div className="mt-2 grid grid-cols-2 gap-3">{[['Minimum', min, setMin], ['Maximum', max, setMax]].map(([label, value, setter]) => <select key={String(label)} value={String(value)} onChange={(e) => (setter as (s: string) => void)(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" data-testid={`select-${String(label).toLowerCase()}`}><option>Any</option><option>€500</option><option>€1,000</option><option>€2,000</option><option>€500,000</option></select>)}</div></div><div><label className="text-sm font-bold">Bedrooms</label><div className="mt-2 flex gap-2">{['Any', '1', '2', '3', '4+'].map((item) => <button key={item} onClick={() => setBeds(item)} className={`rounded-full border px-4 py-2 text-sm font-semibold ${beds === item ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : ''}`} data-testid={`button-beds-${item}`}>{item}</button>)}</div></div><div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4"><div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div><div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div></div></div><button onClick={onClose} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Show homes</button></div></div>;
+function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState) => void; onClose: () => void }) {
+  const [draft, setDraft] = useState<FilterState>(filters);
+  const update = (key: keyof FilterState, value: string) => setDraft((current) => ({ ...current, [key]: value }));
+  const selectClass = 'mt-2 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-3 text-sm outline-none focus:border-[hsl(var(--primary))]';
+  return <div className="fixed inset-0 z-50 flex animate-fade items-end bg-[hsl(var(--foreground)/.4)] p-3 backdrop-blur-sm md:items-center md:justify-center" onClick={onClose}>
+    <div className="w-full max-w-lg animate-rise overflow-y-auto rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:max-h-[86dvh]" onClick={(e) => e.stopPropagation()}>
+      <div className="flex items-center justify-between">
+        <div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div>
+        <button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button>
+      </div>
+      <div className="mt-6 space-y-5">
+        <label className="block text-sm font-bold">Price range
+          <select value={draft.price} onChange={(event) => update('price', event.target.value)} className={selectClass} data-testid="select-price">
+            {['Any', 'Under €1,000', '€1,000–€2,000', 'Over €2,000'].map((option) => <option key={option}>{option}</option>)}
+          </select>
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="text-sm font-bold">Beds
+            <select value={draft.beds} onChange={(event) => update('beds', event.target.value)} className={selectClass} data-testid="select-beds">
+              {['Any', '1+', '2+', '3+', '4+'].map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+          <label className="text-sm font-bold">Baths
+            <select value={draft.baths} onChange={(event) => update('baths', event.target.value)} className={selectClass} data-testid="select-baths">
+              {['Any', '1+', '2+', '3+'].map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="text-sm font-bold">Garages
+            <select value={draft.garages} onChange={(event) => update('garages', event.target.value)} className={selectClass} data-testid="select-garages">
+              {['Any', '1+', '2+'].map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+          <label className="text-sm font-bold">Property type
+            <select value={draft.propertyType} onChange={(event) => update('propertyType', event.target.value)} className={selectClass} data-testid="select-property-type">
+              {['Any', 'Apartment', 'House', 'Studio', 'Villa'].map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+        </div>
+        <label className="block text-sm font-bold">Location
+          <select value={draft.location} onChange={(event) => update('location', event.target.value)} className={selectClass} data-testid="select-location">
+            {['Any', 'Valletta', 'Sliema', 'Rabat', 'Msida', 'Gozo'].map((option) => <option key={option}>{option}</option>)}
+          </select>
+        </label>
+        <div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4">
+          <div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div>
+          <div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div>
+        </div>
+      </div>
+      <button onClick={() => { onApply(draft); onClose(); }} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Apply Filters</button>
+    </div>
+  </div>;
 }
 
 function EmptyState({ title, body, action, onAction }: { title: string; body: string; action?: string; onAction?: () => void }) {
