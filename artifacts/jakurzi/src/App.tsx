@@ -77,17 +77,24 @@ function saveRecent(id: string) {
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-2.5" data-testid="link-logo">
-      <img src={logoSrc} alt="AiroRent brand mark" className={`size-9 rounded-xl object-cover ${light ? 'bg-white' : ''}`} />
+      <img src={logoSrc} alt="AiroRent brand mark" className={`size-9 rounded-full object-cover ring-1 ring-[hsl(var(--primary)/.22)] ${light ? 'bg-white' : ''}`} />
       <span className={`text-[1.28rem] font-bold tracking-[-.055em] ${light ? 'text-white' : 'text-[hsl(var(--foreground))]'}`}>AiroRent</span>
+    </Link>
+  );
+}
+
+function ProfileButton() {
+  return (
+    <Link href="/profile" className="grid size-10 place-items-center rounded-full border border-[hsl(var(--primary)/.22)] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] shadow-[0_5px_14px_hsl(var(--primary)/.12)] transition hover:-translate-y-0.5 hover:bg-[hsl(var(--accent))]" aria-label="Open profile" data-testid="button-header-profile">
+      <UserRound size={18} strokeWidth={2.1} />
     </Link>
   );
 }
 
 function Header({ onMenu }: { onMenu: () => void }) {
   const [location, setLocation] = useLocation();
-  const hideMobileHeader = location.startsWith('/profile') || location.startsWith('/listing/');
   return (
-    <header className={`${hideMobileHeader ? 'hidden md:block' : 'block'} sticky top-0 z-40 border-b border-[hsl(var(--border)/.7)] bg-white/95 backdrop-blur-xl`}>
+    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border)/.7)] bg-white/95 backdrop-blur-xl">
       <div className="mx-auto flex h-[68px] max-w-[1260px] items-center justify-between px-5 lg:px-8">
         <Logo />
         <div className="hidden items-center gap-2 md:flex">
@@ -97,7 +104,8 @@ function Header({ onMenu }: { onMenu: () => void }) {
           <Link href="/map" className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-[hsl(var(--muted))]" data-testid="link-map-header">Map</Link>
         </div>
         <div className="flex items-center gap-2">
-           <Link href="/post" className="rounded-full bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-white shadow-[0_7px_16px_hsl(var(--primary)/.2)] transition hover:-translate-y-0.5 md:text-sm" data-testid="link-post-header"><span className="md:hidden">Post free</span><span className="hidden md:inline">List a property</span></Link>
+           <Link href="/post" className="hidden rounded-full bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-white shadow-[0_7px_16px_hsl(var(--primary)/.2)] transition hover:-translate-y-0.5 md:inline-flex md:text-sm" data-testid="link-post-header">List a property</Link>
+          <ProfileButton />
           <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-black/10 bg-white transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
             <Menu size={19} />
           </button>
@@ -408,18 +416,18 @@ function ProfileExperiencePage() {
   const row = (label: string, Icon: typeof Settings, action: () => void, testId: string) => <button onClick={action} key={label} className="flex w-full items-center gap-4 py-[17px] text-left" data-testid={testId}><Icon size={25} strokeWidth={1.7} /><span className="flex-1 text-[17px]">{label}</span><ChevronRight size={21} className="text-black/50" /></button>;
   const notify = () => setToast('You are all caught up.');
   return <main className="min-h-[calc(100dvh-70px)] bg-white px-5 pb-28 pt-4 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
-    <div className="flex items-center justify-between border-b border-black/[.08] pb-4 md:border-0 md:pb-0"><div><p className="hidden text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))] md:block">Your space</p><h1 className="text-[29px] font-semibold tracking-[-.045em] md:mt-1 md:font-display md:text-5xl">Profile</h1></div><button onClick={notify} className="grid size-11 place-items-center rounded-full bg-[#f5f5f5]" aria-label="Notifications" data-testid="button-profile-notifications-new"><Bell size={21} strokeWidth={1.8} /></button></div>
+    <div className="flex items-center justify-between border-b border-black/[.08] pb-4 md:border-0 md:pb-0"><div><p className="hidden text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))] md:block">Your space</p><h1 className="text-[29px] font-semibold tracking-[-.045em] md:mt-1 md:font-display md:text-5xl">Profile</h1></div><button onClick={notify} className="grid size-11 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]" aria-label="Notifications" data-testid="button-profile-notifications-new"><Bell size={21} strokeWidth={1.8} /></button></div>
     <div className="mx-auto mt-4 max-w-[660px] md:mt-8">
       <section className="rounded-[26px] border border-black/[.07] bg-white px-5 py-7 text-center shadow-[0_7px_22px_rgba(0,0,0,.07)] md:flex md:items-center md:gap-6 md:px-8 md:text-left">
-        <div className="mx-auto grid size-[104px] place-items-center rounded-full bg-[#eee9ff] text-[47px] font-semibold text-[#5942b2] md:mx-0">H</div>
+        <div className="mx-auto grid size-[104px] place-items-center rounded-full bg-[hsl(var(--accent))] text-[47px] font-bold text-[hsl(var(--primary))] md:mx-0">H</div>
         <div className="mt-4 md:mt-0"><h2 className="text-[34px] font-bold tracking-[-.06em]">Husnain</h2><p className="mt-1 text-[16px] text-black/55">{role}</p></div>
         <button onClick={() => setRole(role === 'Guest' ? 'Owner' : 'Guest')} className="mx-auto mt-4 rounded-full border border-black/10 px-4 py-2 text-xs font-semibold md:ml-auto md:mt-0" data-testid="button-switch-role-reference">Switch to {role === 'Guest' ? 'owner' : 'guest'}</button>
       </section>
       <div className="mt-5 grid grid-cols-2 gap-4">
-        <button onClick={() => setLocation('/trips')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-trips-reference"><span className="absolute right-3 top-3 rounded-full bg-[#e9eef6] px-2 py-1 text-[10px] font-bold text-[#40516c]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[#f2e5dd] text-[#a8613f]"><CalendarDays size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Past trips</h3></button>
-        <button onClick={() => setLocation('/messages')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-connections-reference"><span className="absolute right-3 top-3 rounded-full bg-[#e9eef6] px-2 py-1 text-[10px] font-bold text-[#40516c]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[#e6f0ed] text-[#356b5e]"><UsersRound size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Connections</h3></button>
+        <button onClick={() => setLocation('/trips')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-trips-reference"><span className="absolute right-3 top-3 rounded-full bg-[hsl(var(--secondary))] px-2 py-1 text-[10px] font-bold text-[hsl(var(--primary))]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[hsl(var(--accent)/.55)] text-[hsl(var(--primary))]"><CalendarDays size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Past trips</h3></button>
+        <button onClick={() => setLocation('/messages')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-connections-reference"><span className="absolute right-3 top-3 rounded-full bg-[hsl(var(--secondary))] px-2 py-1 text-[10px] font-bold text-[hsl(var(--primary))]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><UsersRound size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Connections</h3></button>
       </div>
-      <button onClick={() => setLocation('/post')} className="mt-5 flex w-full items-center gap-4 rounded-[24px] border border-black/[.07] bg-white p-5 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-become-owner-reference"><div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#fff0eb] text-[hsl(var(--primary))]"><HousePlus size={28} strokeWidth={1.7} /></div><span className="flex-1"><b className="block text-[19px]">Become a host</b><span className="mt-1 block text-[15px] leading-snug text-black/55">It's easy to start hosting and<br className="sm:hidden" /> earn extra income.</span></span><ChevronRight className="text-black/50" /></button>
+      <button onClick={() => setLocation('/post')} className="mt-5 flex w-full items-center gap-4 rounded-[24px] border border-black/[.07] bg-white p-5 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-become-owner-reference"><div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[hsl(var(--accent)/.55)] text-[hsl(var(--primary))]"><HousePlus size={28} strokeWidth={1.7} /></div><span className="flex-1"><b className="block text-[19px]">Become a host</b><span className="mt-1 block text-[15px] leading-snug text-black/55">It's easy to start hosting and<br className="sm:hidden" /> earn extra income.</span></span><ChevronRight className="text-black/50" /></button>
       <section className="mt-6 divide-y divide-black/[.08]">
         {row('Account settings', Settings, () => setLocation('/profile/settings'), 'button-account-settings-reference')}
         {row('Get help', CircleHelp, () => setLocation('/messages'), 'button-help-reference')}
@@ -454,10 +462,10 @@ function AccountSettingsPage() {
     ['Accessibility', Accessibility],
   ] as const;
   return <main className="min-h-[100dvh] bg-white px-5 pb-10 pt-4 md:mx-auto md:min-h-0 md:max-w-[720px] md:bg-transparent md:px-8 md:py-12">
-    <button onClick={() => setLocation('/profile')} className="grid size-12 place-items-center rounded-full bg-[#f6f6f6]" aria-label="Back to profile" data-testid="button-settings-back"><ArrowLeft size={23} /></button>
+    <button onClick={() => setLocation('/profile')} className="grid size-12 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]" aria-label="Back to profile" data-testid="button-settings-back"><ArrowLeft size={23} /></button>
     <h1 className="mt-5 text-[39px] font-semibold tracking-[-.055em] md:font-display md:text-5xl">Account settings</h1>
     <section className="mt-8 divide-y divide-black/[.08]">
-      {settings.map(([label, Icon]) => <button key={label} onClick={() => setToast(`${label} is ready to customize`)} className="flex w-full items-center gap-5 py-[17px] text-left" data-testid={`button-settings-${label.toLowerCase().replaceAll(' ', '-')}`}><Icon size={27} strokeWidth={1.55} /><span className="flex-1 text-[17px]">{label}</span>{label === 'Booking permissions' && <span className="rounded-full bg-[#ffe9f4] px-2.5 py-1 text-xs font-semibold text-[#bf2c74]">New</span>}<ChevronRight size={22} className="text-black/50" /></button>)}
+      {settings.map(([label, Icon]) => <button key={label} onClick={() => setToast(`${label} is ready to customize`)} className="flex w-full items-center gap-5 py-[17px] text-left" data-testid={`button-settings-${label.toLowerCase().replaceAll(' ', '-')}`}><Icon size={27} strokeWidth={1.55} /><span className="flex-1 text-[17px]">{label}</span>{label === 'Booking permissions' && <span className="rounded-full bg-[hsl(var(--secondary))] px-2.5 py-1 text-xs font-semibold text-[hsl(var(--primary))]">New</span>}<ChevronRight size={22} className="text-black/50" /></button>)}
     </section>
   <p className="mt-8 border-t border-black/[.08] pt-8 text-sm text-black/55">Version 1.0.0 · AiroRent</p>
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
