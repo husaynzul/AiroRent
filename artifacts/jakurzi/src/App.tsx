@@ -282,6 +282,72 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
   </div>;
 }
 
+function MobileSearchExperience({ mode, setMode, query, setQuery, onClose, onSearch, onOpenFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; onClose: () => void; onSearch: (nextQuery?: string) => void; onOpenFilters: () => void }) {
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [checkIn, setCheckIn] = useState('Add dates');
+  const [guests, setGuests] = useState(2);
+  const [likedDestination, setLikedDestination] = useState('');
+  const categories = [
+    ['All', Globe2],
+    ['Beach', Sparkles],
+    ['Mountains', Layers3],
+    ['City', Building2],
+    ['Countryside', Home],
+  ] as const;
+  const destinations = [
+    { city: 'Istanbul', country: 'Türkiye', price: 'From $45 / night', image: images.limestone },
+    { city: 'Dubai', country: 'UAE', price: 'From $55 / night', image: images.seaview },
+    { city: 'London', country: 'United Kingdom', price: 'From $65 / night', image: images.explore },
+  ];
+  const recentSearches = [
+    { place: 'Islamabad, Pakistan', details: 'Sep 1 – 2  ·  2 Guests', icon: Building2 },
+    { place: 'New York, United States', details: '2 Guests', icon: Building2 },
+    { place: 'Lahore, Punjab', details: 'Aug 20 – 22  ·  3 Guests', icon: Sparkles },
+  ];
+  return <div className="fixed inset-0 z-30 h-[100dvh] overflow-y-auto bg-[#fffdfd] pb-[150px] text-[#14231e] md:hidden" data-testid="mobile-search-experience">
+    <div className="mx-auto max-w-md px-7 pb-8 pt-5">
+      <header className="flex items-center justify-between">
+        <button onClick={onClose} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white" aria-label="Close search" data-testid="button-close-search-experience"><ArrowLeft size={22} /></button>
+        <div className="text-center"><h1 className="text-[21px] font-bold tracking-[-.04em] text-[#143e30]">Where to?</h1><p className="mt-0.5 text-[13px] text-black/50">Find your perfect stay</p></div>
+        <button onClick={onOpenFilters} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white text-[#145d45]" aria-label="Open all filters" data-testid="button-search-experience-filters"><Navigation size={19} /></button>
+      </header>
+      <div className="mt-7 flex h-[74px] items-center gap-3 rounded-[17px] border-[1.5px] border-[#145d45] bg-white px-5 shadow-[0_4px_12px_rgba(20,93,69,.07)]">
+        <Search size={22} className="shrink-0 text-[#23775a]" />
+        <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search destinations, places, or homes" aria-label="Search destinations, places, or homes" className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-black/45" data-testid="input-search-experience-destination" />
+        <button onClick={onOpenFilters} className="grid size-11 shrink-0 place-items-center rounded-full bg-[#087143] text-white shadow-[0_5px_12px_rgba(8,113,67,.2)]" aria-label="Adjust search filters" data-testid="button-search-experience-adjust"><SlidersHorizontal size={19} /></button>
+      </div>
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+        {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 rounded-full px-4 py-2 text-[12px] font-bold ${mode === item ? 'bg-[#dff1e8] text-[#145d45]' : 'bg-white text-black/55'}`} data-testid={`button-search-experience-mode-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
+      </div>
+      <div className="mt-5 flex gap-2.5 overflow-x-auto pb-1">
+        {categories.map(([label, Icon]) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex h-[91px] w-[73px] shrink-0 flex-col items-center justify-center gap-2 rounded-[13px] border text-[11px] font-medium ${activeCategory === label ? 'border-transparent bg-[#e7f4ed] text-[#145d45]' : 'border-black/[.05] bg-white text-black/70'}`} data-testid={`button-search-category-${label.toLowerCase()}`}><Icon size={28} strokeWidth={1.6} /><span>{label}</span>{activeCategory === label && <span className="h-1 w-5 rounded-full bg-[#145d45]" />}</button>)}
+      </div>
+      <section className="mt-7">
+        <div className="flex items-center justify-between"><h2 className="text-[14px] font-bold">Popular destinations</h2><button onClick={() => setActiveCategory('All')} className="flex items-center gap-1 text-[11px] font-medium text-[#236c4e]" data-testid="button-search-view-all">View all <ChevronRight size={14} /></button></div>
+        <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1">
+          {destinations.map((destination) => <button key={destination.city} onClick={() => { setQuery(destination.city); onSearch(destination.city); }} className="relative h-[224px] w-[143px] shrink-0 overflow-hidden rounded-[17px] bg-black text-left" data-testid={`button-search-destination-${destination.city.toLowerCase()}`}>
+            <img src={destination.image} alt={destination.city} className="size-full object-cover opacity-90" /><span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" /><span onClick={(event) => { event.stopPropagation(); setLikedDestination(likedDestination === destination.city ? '' : destination.city); }} className="absolute right-2.5 top-2.5 grid size-8 place-items-center rounded-full bg-white/90 text-black" role="button" aria-label={`Save ${destination.city}`} data-testid={`button-save-destination-${destination.city.toLowerCase()}`}><Heart size={15} fill={likedDestination === destination.city ? 'currentColor' : 'none'} /></span><span className="absolute inset-x-3 bottom-3 text-white"><b className="block text-[14px]">{destination.city}</b><span className="block text-[11px]">{destination.country}</span><span className="mt-2 inline-block rounded-full border border-white/50 bg-black/35 px-2 py-1 text-[9px]">{destination.price}</span></span>
+          </button>)}
+        </div>
+      </section>
+      <section className="mt-7">
+        <div className="flex items-center justify-between"><h2 className="text-[14px] font-bold">Recently searched</h2><button onClick={() => setQuery('')} className="text-[11px] font-medium text-[#236c4e]" data-testid="button-clear-recent-searches">Clear all</button></div>
+        <div className="mt-3 space-y-2">
+          {recentSearches.map(({ place, details, icon: Icon }) => <button key={place} onClick={() => { setQuery(place); onSearch(place); }} className="flex w-full items-center gap-3 rounded-[15px] border border-black/[.06] bg-white px-3 py-2.5 text-left shadow-[0_2px_7px_rgba(0,0,0,.02)]" data-testid={`button-recent-search-${place.toLowerCase().replaceAll(' ', '-')}`}><span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-[#e8f5ee] text-[#308363]"><Icon size={19} strokeWidth={1.5} /></span><span className="min-w-0 flex-1"><b className="block truncate text-[12px] font-medium">{place}</b><span className="mt-1 block text-[11px] text-black/45">{details}</span></span><ChevronRight size={17} className="shrink-0 text-black/60" /></button>)}
+        </div>
+      </section>
+    </div>
+    <div className="fixed inset-x-0 bottom-[69px] z-30 border-t border-black/[.06] bg-white/95 px-7 py-3 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-md items-center rounded-[17px] border border-black/[.06] bg-white shadow-[0_4px_16px_rgba(0,0,0,.05)]">
+        <button onClick={() => setCheckIn(checkIn === 'Add dates' ? 'Sep 1 – 2' : 'Add dates')} className="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-left" data-testid="button-search-check-in"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#eaf5ed] text-[#327d5a]"><CalendarDays size={17} /></span><span className="min-w-0"><span className="block text-[10px] text-black/50">Check-in</span><b className="block truncate text-[11px]">{checkIn}</b></span></button>
+        <div className="h-9 w-px bg-black/10" />
+        <button onClick={() => setGuests(guests === 5 ? 1 : guests + 1)} className="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-left" data-testid="button-search-guests"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#eaf5ed] text-[#327d5a]"><UserRound size={17} /></span><span className="min-w-0"><span className="block text-[10px] text-black/50">Guests</span><b className="block truncate text-[11px]">{guests === 1 ? 'Add guests' : `${guests} Guests`}</b></span></button>
+        <button onClick={() => onSearch()} className="grid size-[50px] shrink-0 place-items-center rounded-full bg-[#258b59] text-white shadow-[0_5px_12px_rgba(37,139,89,.2)]" aria-label="Search stays" data-testid="button-search-experience-submit"><Search size={22} /></button>
+      </div>
+    </div>
+  </div>;
+}
+
 function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters, onClearFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void; onClearFilters: () => void }) {
   const [, setLocation] = useLocation();
   const [searchExpanded, setSearchExpanded] = useState(false);
@@ -317,20 +383,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
           <input value={query} onChange={(event) => setQuery(event.target.value)} onFocus={() => setSearchExpanded(true)} placeholder="Search town, property or postcode" aria-label="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" />
           <button onClick={(event) => { event.stopPropagation(); setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`); setSearchExpanded(false); }} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
         </div>
-        {searchExpanded && <div className="mt-3 rounded-[22px] border border-[hsl(var(--border))] bg-white p-3 shadow-lift animate-rise" data-testid="mobile-search-panel">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[10px] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Search by</span>
-            <button onClick={() => setSearchExpanded(false)} className="grid size-7 place-items-center rounded-full bg-[hsl(var(--muted))]" aria-label="Close search filters" data-testid="button-close-mobile-search"><X size={15} /></button>
-          </div>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`rounded-xl px-2 py-2.5 text-xs font-bold transition ${mode === item ? 'bg-[hsl(var(--primary))] text-white shadow-sm' : 'bg-[hsl(var(--muted))] text-[hsl(var(--foreground))]'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
-          </div>
-          <div className="mt-3 flex gap-2 overflow-x-auto border-t border-[hsl(var(--border))] pt-3">
-            <button onClick={onOpenFilters} className="flex shrink-0 items-center gap-2 rounded-full bg-[hsl(var(--foreground))] px-3.5 py-2 text-xs font-bold text-[hsl(var(--background))]" data-testid="button-mobile-filters"><SlidersHorizontal size={14} />All filters</button>
-            <button onClick={() => setCategory('All')} className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold ${category === 'All' ? 'border-[hsl(var(--primary))] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`} data-testid="button-mobile-filter-any-type">Any type</button>
-            <button onClick={() => setLocation('/map')} className="shrink-0 rounded-full border border-[hsl(var(--border))] px-3.5 py-2 text-xs font-semibold" data-testid="button-mobile-filter-map">Map view</button>
-          </div>
-        </div>}
+        {searchExpanded && <MobileSearchExperience mode={mode} setMode={setMode} query={query} setQuery={setQuery} onClose={() => setSearchExpanded(false)} onSearch={(nextQuery) => { const searchQuery = nextQuery ?? query; setLocation(`/?mode=${mode}&q=${encodeURIComponent(searchQuery)}`); setSearchExpanded(false); }} onOpenFilters={() => { setSearchExpanded(false); onOpenFilters(); }} />}
       </div>
     </section>
     <div className="space-y-7 px-5 pb-28 pt-5">
