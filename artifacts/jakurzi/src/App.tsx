@@ -172,7 +172,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
   const immersiveRoute = location.startsWith('/profile') || location.startsWith('/listing/');
-  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  const homeRoute = location === '/' || location.startsWith('/?');
+  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
@@ -280,6 +281,7 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
 
 function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters, onClearFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void; onClearFilters: () => void }) {
   const [, setLocation] = useLocation();
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const propertyTabs = [
     ['All', Layers3],
     ['Apartments', Building2],
@@ -289,7 +291,6 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
     ['Villas', Sparkles],
     ['Studios', DoorOpen],
   ] as const;
-  const userName = readUserName();
   const mobileListings = matches;
   const trendingListings = query ? matches.slice(0, 5) : listings.filter((item) => item.mode === mode).slice(0, 5);
   const popularRentals = listings.filter((item) => item.mode === 'Rent').slice(0, 5);
@@ -306,23 +307,29 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
     <p className="rounded-2xl bg-[hsl(var(--muted))] px-4 py-5 text-sm text-[hsl(var(--muted-foreground))]">No properties match this search yet.</p>
   );
   return <div className="bg-white md:hidden">
-    <section className="px-5 pb-4 pt-4">
-      <div className="mb-3 flex items-center justify-between">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Good morning</p>
-          <h1 className="mt-1 text-[24px] font-semibold tracking-[-.05em]">Hi, {userName}</h1>
+    <section className="px-5 pb-4 pt-3">
+      <div className="relative">
+        <div className={`flex h-12 w-full items-center gap-3 rounded-full border bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)] transition ${searchExpanded ? 'border-[hsl(var(--primary))] ring-4 ring-[hsl(var(--primary)/.08)]' : 'border-black/10'}`} role="search" onClick={() => setSearchExpanded(true)}>
+          <Search size={18} className="shrink-0 text-black/60" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} onFocus={() => setSearchExpanded(true)} placeholder="Search town, property or postcode" aria-label="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" />
+          <button onClick={(event) => { event.stopPropagation(); setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`); setSearchExpanded(false); }} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
         </div>
-      </div>
-      <label className="flex h-12 w-full items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)]">
-        <Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" /><button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
-      </label>
-      <div className="mt-4 flex gap-6 overflow-x-auto border-b border-black/[.08] pb-2">
-        {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 pb-2 text-sm font-semibold ${mode === item ? 'border-b-2 border-black text-black' : 'text-black/50'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
+        {searchExpanded && <div className="mt-3 rounded-[22px] border border-[hsl(var(--border))] bg-white p-3 shadow-lift animate-rise" data-testid="mobile-search-panel">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-[10px] font-bold uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">Search by</span>
+            <button onClick={() => setSearchExpanded(false)} className="grid size-7 place-items-center rounded-full bg-[hsl(var(--muted))]" aria-label="Close search filters" data-testid="button-close-mobile-search"><X size={15} /></button>
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`rounded-xl px-2 py-2.5 text-xs font-bold transition ${mode === item ? 'bg-[hsl(var(--primary))] text-white shadow-sm' : 'bg-[hsl(var(--muted))] text-[hsl(var(--foreground))]'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
+          </div>
+          <div className="mt-3 flex gap-2 overflow-x-auto border-t border-[hsl(var(--border))] pt-3">
+            <button onClick={onOpenFilters} className="flex shrink-0 items-center gap-2 rounded-full bg-[hsl(var(--foreground))] px-3.5 py-2 text-xs font-bold text-[hsl(var(--background))]" data-testid="button-mobile-filters"><SlidersHorizontal size={14} />All filters</button>
+            <button onClick={() => setCategory('All')} className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold ${category === 'All' ? 'border-[hsl(var(--primary))] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`} data-testid="button-mobile-filter-any-type">Any type</button>
+            <button onClick={() => setLocation('/map')} className="shrink-0 rounded-full border border-[hsl(var(--border))] px-3.5 py-2 text-xs font-semibold" data-testid="button-mobile-filter-map">Map view</button>
+          </div>
+        </div>}
       </div>
     </section>
-    <div className="border-b border-black/[.08] px-5 py-3">
-      <button onClick={onOpenFilters} className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2.5 text-sm font-semibold shadow-[0_4px_12px_rgba(0,0,0,.05)]" data-testid="button-mobile-filters"><SlidersHorizontal size={16} />Filters</button>
-    </div>
     <div className="space-y-7 px-5 pb-28 pt-5">
       <section aria-labelledby="mobile-top-categories">
         <div className="mb-3 flex items-center justify-between"><h2 id="mobile-top-categories" className="text-[20px] font-semibold tracking-[-.04em]">Top Categories</h2><span className="text-xs text-black/45">Browse all</span></div>

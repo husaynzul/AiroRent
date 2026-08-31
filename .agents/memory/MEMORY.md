@@ -1,1 +1,2 @@
 - [Conversation asset handoff](conversation-asset-handoff.md) — after project handoff, uploaded files may need copying from the preserved conversation folder before Vite can bundle them.
+- [Imported artifact registry](imported-artifact-registry.md) — imported artifact.toml files may exist without registry entries, requiring an explicit web workflow for preview.
