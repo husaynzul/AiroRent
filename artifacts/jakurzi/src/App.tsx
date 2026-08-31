@@ -146,7 +146,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
 
 function BottomNav() {
   const [location] = useLocation();
-  if (location.startsWith('/profile/settings')) return null;
+  if (location.startsWith('/profile') || location.startsWith('/listing/')) return null;
   const items = [
     { href: '/', label: 'Explore', icon: Search },
     { href: '/wishlist', label: 'Wishlists', icon: Heart },
@@ -170,7 +170,9 @@ function BottomNav() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  return <div className="texture min-h-[100dvh] pb-20 md:pb-0"><Header onMenu={() => setMenuOpen(true)} />{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  const [location] = useLocation();
+  const immersiveRoute = location.startsWith('/profile') || location.startsWith('/listing/');
+  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
@@ -519,10 +521,19 @@ function DetailPage({ id }: { id: string }) {
   const [contactOpen, setContactOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [toast, setToast] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const beds = listing.detail.match(/^\d+/)?.[0] || '2';
   const baths = listing.detail.match(/·\s*(\d+)\s+bath/)?.[1] || '1';
   const guests = listing.detail.match(/sleeps\s+(\d+)/)?.[1] || '2';
   const gallery = [listing.image, images.seaview, images.farmhouse, images.limestone];
+  const selectImage = (index: number) => setSelectedImageIndex((index + gallery.length) % gallery.length);
+  const handleTouchEnd = (clientX: number) => {
+    if (touchStartX === null) return;
+    const delta = touchStartX - clientX;
+    if (Math.abs(delta) > 40) selectImage(selectedImageIndex + (delta > 0 ? 1 : -1));
+    setTouchStartX(null);
+  };
   const toggleSave = () => {
     const current = readSaved();
     const next = current.includes(listing.id) ? current.filter((item) => item !== listing.id) : [...current, listing.id];
@@ -532,15 +543,15 @@ function DetailPage({ id }: { id: string }) {
   };
   const openBooking = () => listing.mode === 'Buy' ? setToast('Offer draft started — check Trips to continue') : setBookingOpen(true);
   useEffect(() => saveRecent(listing.id), [listing.id]);
-  return <main className="mx-auto max-w-[1260px] px-5 pb-28 pt-5 lg:px-8">
+  return <main className="mx-auto max-w-[1260px] px-5 pb-8 pt-5 md:pb-28 lg:px-8">
     <div className="md:hidden">
-      <section className="-mx-5 -mt-5 relative h-[410px] overflow-hidden">
-        <img src={listing.image} alt={listing.title} className="size-full object-cover" />
+      <section className="-mx-5 -mt-5 relative h-[410px] overflow-hidden" onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)} onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0].clientX)} data-testid="mobile-detail-gallery">
+        <img src={gallery[selectedImageIndex]} alt={`${listing.title} selected view`} className="size-full object-cover transition-opacity duration-200" />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 pt-5">
           <button onClick={() => setLocation('/')} className="grid size-12 place-items-center rounded-full bg-white/95 shadow-soft" aria-label="Back to search" data-testid="button-detail-back-mobile"><ArrowLeft size={23} /></button>
           <div className="flex gap-2"><button onClick={toggleSave} className="grid size-12 place-items-center rounded-full bg-white/95 shadow-soft" aria-label={saved ? 'Remove from watchlist' : 'Save listing'} data-testid="button-detail-save-mobile"><Heart size={22} fill={saved ? 'currentColor' : 'none'} className={saved ? 'text-[hsl(var(--primary))]' : ''} /></button><button onClick={() => setToast('Link copied — share it with someone you trust')} className="grid size-12 place-items-center rounded-full bg-white/95 shadow-soft" aria-label="Share listing" data-testid="button-detail-share-mobile"><Send size={20} /></button></div>
         </div>
-        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-2.5 py-2">{gallery.map((image, index) => <span key={image + index} className={`size-2 rounded-full ${index === 0 ? 'bg-[hsl(var(--primary))]' : 'bg-white/75'}`} />)}</div>
+        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-2.5 py-2">{gallery.map((image, index) => <button key={image + index} onClick={() => selectImage(index)} className={`size-2 rounded-full ${index === selectedImageIndex ? 'bg-[hsl(var(--primary))]' : 'bg-white/75'}`} aria-label={`Show photo ${index + 1}`} data-testid={`button-detail-dot-${index}`} />)}</div>
       </section>
       <section className="relative -mx-5 -mt-7 rounded-t-[30px] bg-white px-6 pb-28 pt-7">
         <h1 className="text-[30px] font-semibold tracking-[-.055em]">{listing.title}</h1>
@@ -549,7 +560,7 @@ function DetailPage({ id }: { id: string }) {
           {[[UsersRound, `${guests} Guests`], [BedDouble, `${beds} Bedrooms`], [BedDouble, `${beds} Beds`], [Bath, `${baths} Baths`], [Navigation, 'Wifi']].map(([Icon, label]) => <div key={String(label)} className="flex min-w-0 flex-col items-center gap-2 text-[10px] font-medium"><Icon size={23} strokeWidth={1.7} /><span>{String(label)}</span></div>)}
         </div>
         <section className="pt-6"><h2 className="text-[21px] font-bold">About this place</h2><p className={`mt-3 text-[15px] leading-relaxed text-black/65 ${expanded ? '' : 'line-clamp-2'}`}>Wake up to the island breeze in this beautiful {listing.type.toLowerCase()}. Perfect for relaxing getaways, remote work, and making the most of {listing.location.split(',')[0]}.</p><button onClick={() => setExpanded(!expanded)} className="mt-3 flex items-center gap-1 text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-detail-read-more">{expanded ? 'Show less' : 'Read more'} <ChevronDown size={16} className={expanded ? 'rotate-180' : ''} /></button></section>
-        <div className="mt-5 flex gap-2 overflow-x-auto pb-1">{gallery.map((image, index) => <button key={image + index} onClick={() => setToast(`Photo ${index + 1} selected`)} className="size-[94px] shrink-0 overflow-hidden rounded-xl" aria-label={`View photo ${index + 1}`} data-testid={`button-detail-gallery-${index}`}><img src={image} alt={`${listing.title} view ${index + 1}`} className="size-full object-cover" /></button>)}</div>
+        <div className="mt-5 flex gap-2 overflow-x-auto pb-1">{gallery.map((image, index) => <button key={image + index} onClick={() => selectImage(index)} className={`size-[94px] shrink-0 overflow-hidden rounded-xl ${index === selectedImageIndex ? 'ring-2 ring-[hsl(var(--primary))] ring-offset-2' : ''}`} aria-label={`View photo ${index + 1}`} data-testid={`button-detail-gallery-${index}`}><img src={image} alt={`${listing.title} view ${index + 1}`} className="size-full object-cover" /></button>)}</div>
         <section className="mt-8 border-t border-black/[.1] pt-7" data-testid="section-property-details"><h2 className="text-[21px] font-bold">Property details</h2><div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div className="rounded-2xl bg-[hsl(var(--secondary)/.5)] p-3"><Home size={18} className="text-[hsl(var(--primary))]" /><p className="mt-2 font-semibold">{listing.type}</p><p className="text-xs text-black/55">Property type</p></div><div className="rounded-2xl bg-[hsl(var(--secondary)/.5)] p-3"><BedDouble size={18} className="text-[hsl(var(--primary))]" /><p className="mt-2 font-semibold">{beds} bedrooms</p><p className="text-xs text-black/55">Sleeping arrangements</p></div><div className="rounded-2xl bg-[hsl(var(--secondary)/.5)] p-3"><Bath size={18} className="text-[hsl(var(--primary))]" /><p className="mt-2 font-semibold">{baths} bathroom{baths === '1' ? '' : 's'}</p><p className="text-xs text-black/55">Private bathroom</p></div><div className="rounded-2xl bg-[hsl(var(--secondary)/.5)] p-3"><KeyRound size={18} className="text-[hsl(var(--primary))]" /><p className="mt-2 font-semibold">{listing.garages || 0} parking</p><p className="text-xs text-black/55">Parking spaces</p></div></div></section>
         <section className="mt-8 border-t border-black/[.1] pt-7" data-testid="section-amenities"><h2 className="text-[21px] font-bold">What this place offers</h2><div className="mt-4 grid grid-cols-2 gap-y-4 text-sm">{[['Wifi', Navigation], ['Kitchen', Home], ['Air conditioning', Sparkles], ['Washer', CircleHelp], ['Workspace', Pencil], ['Free parking', KeyRound]].map(([label, Icon]) => <div key={String(label)} className="flex items-center gap-3"><Icon size={20} strokeWidth={1.7} />{String(label)}</div>)}</div><button onClick={() => setToast('Showing all amenities')} className="mt-5 rounded-xl border border-black/15 px-4 py-2.5 text-sm font-bold" data-testid="button-show-amenities">Show all amenities</button></section>
         <section className="mt-8 border-t border-black/[.1] pt-7" data-testid="section-house-rules"><h2 className="text-[21px] font-bold">House rules</h2><div className="mt-4 divide-y divide-black/[.08] text-sm"><div className="flex items-center gap-3 py-3"><CircleHelp size={19} /><span className="flex-1">No smoking</span><span className="text-xs text-black/50">Not allowed</span></div><div className="flex items-center gap-3 py-3"><DoorOpen size={19} /><span className="flex-1">No parties or events</span><span className="text-xs text-black/50">Quiet stay</span></div><div className="flex items-center gap-3 py-3"><Clock3 size={19} /><span className="flex-1">Quiet hours</span><span className="text-xs text-black/50">10pm – 8am</span></div><div className="flex items-center gap-3 py-3"><KeyRound size={19} /><span className="flex-1">Check-in after 3:00 PM</span><span className="text-xs text-black/50">Checkout by 11:00 AM</span></div><div className="flex items-center gap-3 py-3"><Heart size={19} /><span className="flex-1">Pets</span><span className="text-xs text-black/50">By request</span></div></div></section>
@@ -713,7 +724,6 @@ function LegacyProfileExperiencePage() {
 }
 
 function ProfileExperiencePage() {
-  const [role, setRole] = useState<'Guest' | 'Owner'>('Guest');
   const [toast, setToast] = useState('');
   const [, setLocation] = useLocation();
   const userName = readUserName();
@@ -729,10 +739,9 @@ function ProfileExperiencePage() {
     ['Help Center', CircleHelp, () => setLocation('/messages'), 'button-profile-overview-help'],
     ['Privacy & Security', ShieldCheck, () => setLocation('/profile/settings'), 'button-profile-overview-privacy'],
   ] as const;
-  return <main className="min-h-[calc(100dvh-68px)] bg-[#fff8fb] pb-28 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
+  return <main className="min-h-[calc(100dvh-68px)] bg-[#fff8fb] pb-10 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
     <section className="relative -mx-5 bg-gradient-to-br from-[#ed267e] via-[#f53189] to-[#ff5b9e] px-5 pb-20 pt-7 text-white md:mx-0 md:rounded-[30px] md:px-9">
       <div className="flex items-start gap-4"><div className="grid size-[78px] shrink-0 place-items-center rounded-full border-4 border-white/70 bg-[#ffd6e9] text-[34px] font-bold text-[hsl(var(--primary))]">{userName[0]}</div><div className="min-w-0 pt-1"><h1 className="truncate text-[25px] font-bold tracking-[-.04em]">{userName}</h1><p className="mt-1 text-sm text-white/85">{userName.toLowerCase().replaceAll(' ', '.')}@email.com</p><span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-xs font-bold"><Star size={13} fill="currentColor" />Premium Member</span></div><button onClick={() => setLocation('/profile/settings')} className="ml-auto grid size-11 shrink-0 place-items-center rounded-full bg-white/15" aria-label="Open profile settings" data-testid="button-profile-overview-settings"><Settings size={23} /></button></div>
-      <button onClick={() => setRole(role === 'Guest' ? 'Owner' : 'Guest')} className="mt-5 rounded-full border border-white/40 px-4 py-2 text-xs font-semibold" data-testid="button-profile-overview-switch">Switch to {role === 'Guest' ? 'owner' : 'guest'}</button>
     </section>
     <section className="relative -mt-12 mx-5 rounded-[25px] bg-white p-5 shadow-[0_7px_24px_rgba(0,0,0,.08)] md:mx-0" data-testid="section-profile-trips-overview">
       <div className="flex items-center justify-between"><h2 className="text-[20px] font-semibold">My Trips</h2><button onClick={() => setLocation('/trips')} className="flex items-center gap-1 text-sm font-semibold text-[hsl(var(--primary))]" data-testid="button-profile-overview-view-all">View all <ChevronRight size={17} /></button></div>
