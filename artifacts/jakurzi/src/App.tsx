@@ -11,7 +11,7 @@ import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrac
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
 import {
   ArrowLeft, ArrowRight, Bell, Building2, CalendarDays, Check,
-  ChevronLeft, ChevronRight, CircleHelp, DoorOpen,
+  ChevronDown, ChevronLeft, ChevronRight, CircleHelp, DoorOpen,
   Filter, Heart, Home, HousePlus, KeyRound, Layers3, ListFilter, LockKeyhole,
   MapPin, Menu, MessageCircle, Minus, Navigation, Pencil,
   Plus, Search, Send, Settings, ShieldCheck, SlidersHorizontal, Sparkles,
@@ -87,10 +87,11 @@ function Logo({ light = false }: { light?: boolean }) {
 }
 
 function Header({ onMenu }: { onMenu: () => void }) {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const hideMobileHeader = location.startsWith('/profile') || location.startsWith('/listing/');
   return (
-    <header className="sticky top-0 z-40 hidden border-b border-[hsl(var(--border)/.7)] bg-[hsl(var(--background)/.9)] backdrop-blur-xl md:block">
-      <div className="mx-auto flex h-[70px] max-w-[1260px] items-center justify-between px-5 lg:px-8">
+    <header className={`${hideMobileHeader ? 'hidden md:block' : 'block'} sticky top-0 z-40 border-b border-[hsl(var(--border)/.7)] bg-white/95 backdrop-blur-xl`}>
+      <div className="mx-auto flex h-[68px] max-w-[1260px] items-center justify-between px-5 lg:px-8">
         <Logo />
         <div className="hidden items-center gap-2 md:flex">
           <button onClick={() => setLocation('/?mode=Rent')} className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-[hsl(var(--muted))]" data-testid="button-rent">Rent</button>
@@ -99,8 +100,8 @@ function Header({ onMenu }: { onMenu: () => void }) {
           <Link href="/map" className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-[hsl(var(--muted))]" data-testid="link-map-header">Map</Link>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/post" className="hidden rounded-full bg-[hsl(var(--foreground))] px-4 py-2.5 text-sm font-bold text-[hsl(var(--background))] transition hover:-translate-y-0.5 md:block" data-testid="link-post-header">List a property</Link>
-          <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
+          <Link href="/post" className="rounded-full bg-[hsl(var(--foreground))] px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 md:text-sm" data-testid="link-post-header"><span className="md:hidden">Post free</span><span className="hidden md:inline">List a property</span></Link>
+          <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-black/10 bg-white transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
             <Menu size={19} />
           </button>
         </div>
@@ -140,14 +141,14 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
   const [, setLocation] = useLocation();
-  const links = [['Rent', '/?mode=Rent'], ['Buy', '/?mode=Buy'], ['Short let', '/?mode=Short Let'], ['Map', '/map'], ['For owners', '/post'], ['For agents', '/post']];
+  const links = [['Rent', '/?mode=Rent'], ['Buy', '/?mode=Buy'], ['Short Let', '/?mode=Short Let'], ['Map', '/map'], ['For owners', '/post'], ['For agents', '/post'], ['Services', '/profile']];
   return <div className="fixed inset-0 z-50 animate-fade bg-[hsl(var(--foreground)/.45)] p-4 backdrop-blur-sm" onClick={onClose}>
-    <div className="mx-auto mt-[70px] max-w-md animate-rise rounded-[28px] bg-[hsl(var(--card))] p-5 shadow-lift" onClick={(event) => event.stopPropagation()}>
-      <div className="mb-4 flex items-center justify-between"><Logo /><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-menu"><X size={18} /></button></div>
-      <div className="divide-y divide-[hsl(var(--border))]">{links.map(([label, href]) => <Link key={href + label} href={href} onClick={onClose} className="flex items-center justify-between py-3.5 text-[1.05rem] font-semibold" data-testid={`link-menu-${label.toLowerCase().replace(' ', '-')}`}>{label}<ChevronRight size={17} className="text-[hsl(var(--muted-foreground))]" /></Link>)}</div>
-      <div className="mt-3 border-t border-[hsl(var(--border))] pt-4">
-        <button onClick={() => { onClose(); setLocation('/post'); }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--foreground))] py-3.5 font-bold text-[hsl(var(--background))]" data-testid="button-menu-post"><HousePlus size={18} />Post a listing</button>
-        <Link href="/profile" onClick={onClose} className="mt-2 flex items-center gap-3 rounded-xl py-3 text-sm font-semibold" data-testid="link-menu-profile"><UserRound size={18} />Guest profile</Link>
+    <div className="mx-auto mt-[62px] max-w-md animate-rise rounded-[26px] bg-white p-5 shadow-lift" onClick={(event) => event.stopPropagation()}>
+      <div className="mb-3 flex items-center justify-between"><Logo /><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[#f3f3f3]" data-testid="button-close-menu"><X size={18} /></button></div>
+      <div className="divide-y divide-black/[.08]">{links.map(([label, href]) => <Link key={href + label} href={href} onClick={onClose} className="flex items-center justify-between py-3.5 text-[1.03rem] font-medium" data-testid={`link-menu-${label.toLowerCase().replace(' ', '-')}`}>{label}<ChevronRight size={17} className="text-black/50" /></Link>)}</div>
+      <div className="mt-3 border-t border-black/[.08] pt-3">
+        <button onClick={() => { onClose(); setLocation('/post'); }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-3.5 font-bold text-white" data-testid="button-menu-post"><HousePlus size={18} />Post a listing</button>
+        <Link href="/profile" onClick={onClose} className="mt-1 flex items-center gap-3 rounded-xl py-3 text-[1.03rem] font-medium" data-testid="link-menu-profile"><UserRound size={18} />Sign in</Link>
       </div>
     </div>
   </div>;
@@ -241,6 +242,48 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
   </div>;
 }
 
+function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void }) {
+  const [, setLocation] = useLocation();
+  const propertyTabs = [
+    ['All', Layers3],
+    ['Apartments', Building2],
+    ['Penthouses', Building2],
+    ['Maisonettes', Home],
+    ['Townhouses', Home],
+    ['Villas', Sparkles],
+    ['Studios', DoorOpen],
+  ] as const;
+  const mobileListings = matches.length ? matches : query ? [] : listings.filter((item) => item.mode === mode);
+  return <div className="bg-white md:hidden">
+    <section className="px-5 pb-6 pt-6">
+      <div className="flex items-center gap-2 text-xs font-medium text-black/45"><span>AiroRent</span><span>/</span><span>{mode === 'Short Let' ? 'Short Let' : mode}</span></div>
+      <h1 className="mt-3 text-[34px] font-semibold leading-[1.04] tracking-[-.055em]">{mode === 'Rent' ? 'for rent in Malta & Gozo' : `${mode.toLowerCase()} in Malta & Gozo`}</h1>
+      <p className="mt-3 text-[17px] text-black/55">{mobileListings.length ? `${mobileListings.length * 84} listings · €450 – €35,000` : 'Search homes across Malta and Gozo'}</p>
+      <p className="mt-5 max-w-[340px] text-[17px] leading-relaxed text-black/70">Browse properties across Malta — from compact apartments in Valletta to villas by the sea.</p>
+      <label className="mt-5 flex h-12 items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4">
+        <Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" /><button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
+      </label>
+      <div className="mt-6 flex gap-6 overflow-x-auto border-b border-black/[.08] pb-2">
+        {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 pb-2 text-sm font-semibold ${mode === item ? 'border-b-2 border-black text-black' : 'text-black/50'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
+      </div>
+    </section>
+    <nav className="flex gap-6 overflow-x-auto border-b border-black/[.08] px-5 pb-3" aria-label="Property types">
+      {propertyTabs.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-[52px] shrink-0 flex-col items-center gap-2 text-[11px] ${category === label ? 'border-b-2 border-black pb-3 font-semibold text-black' : 'text-black/55'}`} data-testid={`button-mobile-property-${label.toLowerCase()}`}><Icon size={22} strokeWidth={1.5} />{label}</button>)}
+    </nav>
+    <div className="flex gap-2 overflow-x-auto border-b border-black/[.08] px-5 py-3">
+      {['Price', 'Beds', 'Baths', 'Garages', 'Parking'].map((label) => <button key={label} onClick={onOpenFilters} className="flex shrink-0 items-center gap-2 rounded-full border border-black/10 px-4 py-2.5 text-sm" data-testid={`button-mobile-filter-${label.toLowerCase()}`}>{label}<ChevronDown size={15} /></button>)}
+      <button onClick={onOpenFilters} className="grid size-10 shrink-0 place-items-center rounded-full border border-black/10" aria-label="More filters" data-testid="button-mobile-more-filters"><Plus size={17} /></button>
+    </div>
+    <section className="px-5 pb-28 pt-7">
+      <div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-[hsl(var(--primary))]">Fresh on AiroRent</p><h2 className="mt-1 text-[24px] font-semibold tracking-[-.045em]">{mode === 'Rent' ? 'Homes ready for a new tenant' : `${mode} properties`}</h2></div><button onClick={() => setLocation('/map')} className="text-sm font-semibold underline underline-offset-4" data-testid="link-mobile-market-map">Map</button></div>
+      {mobileListings.length ? <div className="space-y-8">{mobileListings.slice(0, 6).map((item) => <article key={item.id} data-testid={`card-mobile-market-${item.id}`}>
+        <div className="relative aspect-[1.34] overflow-hidden rounded-[24px] bg-[#f3f3f3]"><img src={item.image} alt={item.title} onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="size-full cursor-pointer object-cover" /><span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold">{item.mode === 'Short Let' ? 'SHORT LET' : item.mode.toUpperCase()}</span><button onClick={() => onSave(item.id)} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full ${saved.includes(item.id) ? 'bg-[hsl(var(--primary))] text-white' : 'bg-white/95'}`} aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'} data-testid={`button-mobile-market-save-${item.id}`}><Heart size={18} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
+        <button onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="mt-3 block w-full text-left"><h3 className="line-clamp-1 text-[18px] font-semibold">{item.title}</h3><p className="mt-1 text-[15px] text-black/55">{item.type} · {item.location.split(',')[0]}</p><p className="mt-2 text-[15px]"><b>{item.price}</b>{item.mode === 'Short Let' ? ' / night' : ''} <span className="text-black/45"> · {item.detail}</span></p></button>
+      </article>)}</div> : <EmptyState title="No properties found" body="Try another town, property type, or clear the filters." action="Clear search" onAction={() => { setQuery(''); setCategory('All'); }} />}
+    </section>
+  </div>;
+}
+
 function HomePage() {
   const [mode, setMode] = useState<Mode>('Rent');
   const [query, setQuery] = useState('');
@@ -256,14 +299,18 @@ function HomePage() {
     if (requestedMode === 'Rent' || requestedMode === 'Buy' || requestedMode === 'Short Let') setMode(requestedMode);
     if (requestedQuery !== null) setQuery(requestedQuery);
   }, [location]);
-  const matches = useMemo(() => listings.filter((item) => item.mode === mode).filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase())).filter((item) => category === 'All' || item.type === category.slice(0, -1)), [mode, query, category]);
+  const matches = useMemo(() => {
+    const categoryMap: Record<string, string | undefined> = { Penthouses: 'Apartment', Maisonettes: 'Apartment', Townhouses: 'House' };
+    const selectedType = categoryMap[category] || category.slice(0, -1);
+    return listings.filter((item) => item.mode === mode).filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase())).filter((item) => category === 'All' || item.type === selectedType);
+  }, [mode, query, category]);
   const toggleSave = (id: string) => {
     const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
     setSaved(next); localStorage.setItem('jakurzi:wishlist', JSON.stringify(next)); setToast(saved.includes(id) ? 'Removed from your wishlist' : 'Saved to your wishlist');
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
   return <main>
-    <MobileHomePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} recent={recent} saved={saved} onSave={toggleSave} />
+    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} />
     <div className="hidden md:block">
     <section className="relative overflow-hidden border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.52)]">
       <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--accent)/.55)] blur-3xl" />
