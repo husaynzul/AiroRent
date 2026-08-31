@@ -146,12 +146,12 @@ function Header({ onMenu }: { onMenu: () => void }) {
 
 function BottomNav() {
   const [location] = useLocation();
-  if (location.startsWith('/profile') || location.startsWith('/listing/')) return null;
+  if (location.startsWith('/listing/')) return null;
   const items = [
     { href: '/', label: 'Explore', icon: Search },
-    { href: '/wishlist', label: 'Wishlists', icon: Heart },
-    { href: '/trips', label: 'Trips', icon: CalendarDays },
-    { href: '/messages', label: 'Messages', icon: MessageCircle },
+    { href: '/wishlist', label: 'Saved', icon: Heart },
+    { href: '/trips', label: 'Bookings', icon: CalendarDays },
+    { href: '/messages', label: 'Inbox', icon: MessageCircle },
     { href: '/profile', label: 'Profile', icon: UserRound },
   ];
   return (
@@ -160,7 +160,7 @@ function BottomNav() {
         {items.map(({ href, label, icon: Icon }) => {
           const active = href === '/' ? location === '/' : location.startsWith(href);
           return <Link key={href} href={href} className={`flex min-w-[54px] flex-col items-center gap-1 text-[10px] font-semibold transition ${active ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-bottom-${label.toLowerCase()}`}>
-            <span className={`grid size-8 place-items-center rounded-full ${active ? 'bg-[hsl(var(--primary)/.12)]' : ''}`}><Icon size={20} strokeWidth={active ? 2.5 : 1.8} /></span>{label}
+            <span className={`relative grid size-8 place-items-center rounded-full ${active ? 'bg-[hsl(var(--primary)/.12)]' : ''}`}><Icon size={20} strokeWidth={active ? 2.5 : 1.8} />{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
           </Link>;
         })}
       </div>
@@ -171,9 +171,10 @@ function BottomNav() {
 function Shell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
-  const immersiveRoute = location.startsWith('/profile') || location.startsWith('/listing/');
+  const immersiveRoute = location.startsWith('/listing/');
   const homeRoute = location === '/' || location.startsWith('/?');
-  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  const profileRoute = location.startsWith('/profile');
+  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || profileRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
@@ -737,25 +738,49 @@ function ProfileExperiencePage() {
   const notify = () => setToast('You are all caught up.');
   const row = (label: string, Icon: typeof Settings, action: () => void, testId: string) => <button onClick={action} key={label} className="flex w-full items-center gap-3 border-b border-black/[.08] py-3 text-left last:border-b-0" data-testid={testId}><span className="grid size-8 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Icon size={17} strokeWidth={1.8} /></span><span className="flex-1 text-[14px] font-medium">{label}</span><ChevronRight size={18} className="text-black/45" /></button>;
   const profileRows = [
-    ['Profile Information', UserRound, () => setToast('Personal information is ready to customize.'), 'button-profile-overview-information'],
-    ['My Bookings', CalendarDays, () => setLocation('/trips'), 'button-profile-overview-bookings'],
-    ['Wishlist', Heart, () => setLocation('/wishlist'), 'button-profile-overview-wishlist'],
-    ['My Reviews', Star, () => setToast('Your reviews are ready to view.'), 'button-profile-overview-reviews'],
-    ['Saved Cards', WalletCards, () => setToast('Saved cards are ready to customize.'), 'button-profile-overview-cards'],
-    ['Refer & Earn', Tag, () => setToast('Referral sharing is ready.'), 'button-profile-overview-refer'],
-    ['Help Center', CircleHelp, () => setLocation('/messages'), 'button-profile-overview-help'],
-    ['Privacy & Security', ShieldCheck, () => setLocation('/profile/settings'), 'button-profile-overview-privacy'],
+    ['Personal information', UserRound, () => setToast('Personal information is ready to customize.'), 'button-profile-overview-information'],
+    ['Security', ShieldCheck, () => setLocation('/profile/settings'), 'button-profile-overview-security'],
+    ['Preferences', Settings, () => setLocation('/profile/settings'), 'button-profile-overview-preferences'],
+    ['Help & support', CircleHelp, () => setLocation('/messages'), 'button-profile-overview-help'],
   ] as const;
-  return <main className="min-h-[calc(100dvh-68px)] bg-[#fff8fb] pb-10 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
-    <section className="relative -mx-5 rounded-b-[30px] bg-gradient-to-br from-[#ed267e] via-[#f53189] to-[#ff5b9e] px-5 pb-16 pt-7 text-white md:mx-0 md:rounded-[30px] md:px-9">
-      <div className="flex items-start gap-3"><div className="grid size-[72px] shrink-0 place-items-center rounded-full border-4 border-white/70 bg-[#ffd6e9] text-[31px] font-bold text-[hsl(var(--primary))]">{userName[0]}</div><div className="min-w-0 pt-0.5"><h1 className="truncate text-[23px] font-bold tracking-[-.04em]">{userName}</h1><p className="mt-0.5 text-[13px] text-white/85">{userName.toLowerCase().replaceAll(' ', '.')}@email.com</p><span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold"><Star size={12} fill="currentColor" />Premium Member</span></div><button onClick={() => setLocation('/profile/settings')} className="ml-auto grid size-10 shrink-0 place-items-center rounded-full bg-white/15" aria-label="Open profile settings" data-testid="button-profile-overview-settings"><Settings size={21} /></button></div>
+  const stats = [
+    ['5', 'Trips', BriefcaseBusiness, '/trips'],
+    ['12', 'Saved', Heart, '/wishlist'],
+    ['3', 'Bookings', CalendarDays, '/trips'],
+    ['2', 'Reviews', MessageCircle, '/messages'],
+  ] as const;
+  const shortcuts = [
+    ['Bookings', CalendarDays, '/trips'],
+    ['Saved places', Heart, '/wishlist'],
+    ['Inbox', MessageCircle, '/messages'],
+    ['Payments', WalletCards, '/profile/settings'],
+  ] as const;
+  return <main className="min-h-[100dvh] bg-[#fff8fb] px-5 pb-28 pt-5 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
+    <section className="flex items-start justify-between" data-testid="section-profile-header">
+      <div><h1 className="text-[28px] font-semibold tracking-[-.055em] md:font-display md:text-5xl">Profile</h1><p className="mt-1 text-[13px] text-black/55 md:text-sm">Manage your account</p></div>
+      <button onClick={notify} className="relative grid size-11 place-items-center rounded-full bg-white shadow-[0_5px_16px_rgba(0,0,0,.08)]" aria-label="Notifications" data-testid="button-profile-overview-notifications"><Bell size={19} /><span className="absolute right-2.5 top-2 size-2 rounded-full bg-[hsl(var(--primary))]" /></button>
     </section>
-    <section className="relative -mt-10 mx-5 rounded-[22px] bg-white p-4 shadow-[0_6px_20px_rgba(0,0,0,.08)] md:mx-0" data-testid="section-profile-trips-overview">
-      <div className="flex items-center justify-between"><h2 className="text-[18px] font-semibold">My Trips</h2><button onClick={() => setLocation('/trips')} className="flex items-center gap-1 text-[13px] font-semibold text-[hsl(var(--primary))]" data-testid="button-profile-overview-view-all">View all <ChevronRight size={16} /></button></div>
-      <div className="mt-3 grid grid-cols-3 divide-x divide-black/[.08]"><button onClick={() => setLocation('/trips')} className="text-center" data-testid="button-profile-overview-upcoming"><span className="mx-auto grid size-10 place-items-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BriefcaseBusiness size={19} /></span><b className="mt-1.5 block text-lg">4</b><span className="text-[11px] text-black/55">Upcoming</span></button><button onClick={() => setLocation('/trips')} className="text-center" data-testid="button-profile-overview-completed"><span className="mx-auto grid size-10 place-items-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><CalendarDays size={19} /></span><b className="mt-1.5 block text-lg">7</b><span className="text-[11px] text-black/55">Completed</span></button><button onClick={() => setLocation('/wishlist')} className="text-center" data-testid="button-profile-overview-wishlisted"><span className="mx-auto grid size-10 place-items-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Heart size={19} /></span><b className="mt-1.5 block text-lg">{readSaved().length}</b><span className="text-[11px] text-black/55">Wishlisted</span></button></div>
+    <section className="mt-5 rounded-[24px] bg-gradient-to-br from-[#fff1f7] via-[#ffe8f2] to-[#ffd8e8] p-4 shadow-[0_7px_22px_rgba(110,25,65,.1)] md:p-7" data-testid="section-profile-card">
+      <div className="flex items-center gap-4">
+        <div className="relative grid size-[70px] shrink-0 place-items-center rounded-full border-4 border-white bg-[#ffd3e5] text-[32px] font-bold text-[hsl(var(--primary))] shadow-sm md:size-24 md:text-4xl">{userName[0]}<button onClick={() => setToast('Profile photo editing is ready.')} className="absolute -bottom-1 -right-1 grid size-7 place-items-center rounded-full bg-white text-[hsl(var(--primary))] shadow-sm" aria-label="Edit profile photo" data-testid="button-profile-edit-photo"><Pencil size={13} /></button></div>
+        <div className="min-w-0 flex-1"><h2 className="truncate text-[23px] font-bold tracking-[-.04em] md:text-3xl">{userName}</h2><span className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-bold text-[hsl(var(--primary))]"><Sparkles size={12} />Explorer</span><p className="mt-2 truncate text-[12px] text-black/55">{userName.toLowerCase().replaceAll(' ', '.')}@example.com</p></div>
+        <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
+      </div>
     </section>
-    <section className="mx-5 mt-4 rounded-[20px] bg-white px-3 shadow-[0_5px_18px_rgba(0,0,0,.06)] md:mx-0">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</section>
-    <button onClick={() => setToast('Log out is ready to confirm.')} className="mx-5 mt-4 flex w-[calc(100%-2.5rem)] items-center gap-3 rounded-[20px] bg-white px-3 py-3 text-left shadow-[0_5px_18px_rgba(0,0,0,.06)] md:mx-0 md:w-full" data-testid="button-profile-overview-logout"><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><DoorOpen size={18} /></span><span className="flex-1 text-[15px] font-medium">Log Out</span><ChevronRight size={19} className="text-black/45" /></button>
+    <section className="mt-4 grid grid-cols-4 divide-x divide-black/[.08] rounded-[22px] bg-white px-1 py-4 shadow-[0_5px_18px_rgba(0,0,0,.06)]" data-testid="section-profile-stats">
+      {stats.map(([value, label, Icon, href]) => <button key={label} onClick={() => setLocation(href)} className="flex min-w-0 flex-col items-center gap-1 text-center" data-testid={`button-profile-stat-${label.toLowerCase()}`}><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Icon size={17} /></span><b className="mt-1 text-lg leading-none">{label === 'Saved' ? Math.max(12, readSaved().length) : value}</b><span className="text-[11px] text-black/55">{label}</span></button>)}
+    </section>
+    <section className="mt-4 grid grid-cols-4 gap-3" data-testid="section-profile-shortcuts">
+      {shortcuts.map(([label, Icon, href]) => <button key={label} onClick={() => setLocation(href)} className="relative flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[18px] border border-black/[.04] bg-white px-2 text-center shadow-[0_4px_14px_rgba(0,0,0,.05)] transition hover:-translate-y-0.5" data-testid={`button-profile-shortcut-${label.toLowerCase().replaceAll(' ', '-')}`}><span className="grid size-9 place-items-center rounded-full bg-[#fff1f7] text-[hsl(var(--primary))]"><Icon size={18} /></span><span className="text-[11px] font-medium leading-tight">{label}</span>{label === 'Inbox' && <span className="absolute right-2 top-2 grid size-5 place-items-center rounded-full bg-[hsl(var(--primary))] text-[10px] font-bold text-white">3</span>}</button>)}
+    </section>
+    <button onClick={() => setLocation('/post')} className="mt-4 flex w-full items-center gap-4 rounded-[22px] bg-white p-4 text-left shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5 md:p-6" data-testid="button-profile-list-place">
+      <img src={images.farmhouse} alt="" className="size-[104px] shrink-0 rounded-[18px] object-cover md:size-32" /><span className="min-w-0 flex-1"><b className="block text-[17px] md:text-xl">List your place</b><span className="mt-1 block max-w-[190px] text-[12px] leading-relaxed text-black/55 md:text-sm">Share your space and start earning with AiroRent.</span><span className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--primary))] px-3 py-2 text-xs font-bold text-white">Get started <ChevronRight size={14} /></span></span>
+    </button>
+    <section className="mt-5" data-testid="section-profile-account">
+      <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
+      <div className="rounded-[20px] bg-white px-3 shadow-[0_5px_18px_rgba(0,0,0,.06)]">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</div>
+    </section>
+    <button onClick={() => setToast('Log out is ready to confirm.')} className="mt-4 flex w-full items-center gap-3 rounded-[20px] bg-white px-3 py-3 text-left shadow-[0_5px_18px_rgba(0,0,0,.06)]" data-testid="button-profile-overview-logout"><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><DoorOpen size={18} /></span><span className="flex-1 text-[15px] font-medium">Log Out</span><ChevronRight size={19} className="text-black/45" /></button>
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;
 }
