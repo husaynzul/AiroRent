@@ -175,7 +175,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   const homeRoute = location === '/' || location.startsWith('/?');
   const profileRoute = location.startsWith('/profile');
   const messagesRoute = location.startsWith('/messages');
-  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || profileRoute || messagesRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  const mobileHeaderlessRoute = immersiveRoute || profileRoute || messagesRoute || location.startsWith('/wishlist') || location.startsWith('/trips') || homeRoute;
+  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={mobileHeaderlessRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
