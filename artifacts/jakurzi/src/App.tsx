@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
-import logoSrc from '@assets/file_00000000e4348211b92589a85b813812_1788070736525.png';
+import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
 import deckReference from '@assets/Screenshot_20260830-080650_1788070712237.jpg';
 import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
@@ -15,7 +15,8 @@ import {
   Filter, Heart, Home, HousePlus, KeyRound, Layers3, ListFilter, LockKeyhole,
   MapPin, Menu, MessageCircle, Minus, Navigation, Pencil,
   Plus, Search, Send, Settings, ShieldCheck, SlidersHorizontal, Sparkles,
-  Star, Tag, UserRound, UsersRound, WalletCards, X,
+  Star, Tag, UserRound, UsersRound, WalletCards, X, Accessibility, BellRing,
+  Globe2, ReceiptText, BriefcaseBusiness,
 } from 'lucide-react';
 
 type Mode = 'Rent' | 'Buy' | 'Short Let';
@@ -78,9 +79,9 @@ function Logo({ light = false }: { light?: boolean }) {
     <Link href="/" className="flex items-center gap-2.5" data-testid="link-logo">
       <span className={`relative grid size-9 place-items-center overflow-hidden rounded-xl ${light ? 'bg-white' : 'bg-[hsl(var(--primary))]'}`}>
         <Home size={21} className={light ? 'text-[hsl(var(--primary))]' : 'text-white'} />
-        <img src={logoSrc} alt="Jakurzi house mark" className="absolute inset-0 size-full object-contain mix-blend-multiply" />
+        <img src={logoSrc} alt="AiroRent brand mark" className="absolute inset-0 size-full object-cover" />
       </span>
-      <span className={`text-[1.28rem] font-bold tracking-[-.055em] ${light ? 'text-white' : 'text-[hsl(var(--foreground))]'}`}>jakurzi</span>
+      <span className={`text-[1.28rem] font-bold tracking-[-.055em] ${light ? 'text-white' : 'text-[hsl(var(--foreground))]'}`}>AiroRent</span>
     </Link>
   );
 }
@@ -88,7 +89,7 @@ function Logo({ light = false }: { light?: boolean }) {
 function Header({ onMenu }: { onMenu: () => void }) {
   const [, setLocation] = useLocation();
   return (
-    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border)/.7)] bg-[hsl(var(--background)/.9)] backdrop-blur-xl">
+    <header className="sticky top-0 z-40 hidden border-b border-[hsl(var(--border)/.7)] bg-[hsl(var(--background)/.9)] backdrop-blur-xl md:block">
       <div className="mx-auto flex h-[70px] max-w-[1260px] items-center justify-between px-5 lg:px-8">
         <Logo />
         <div className="hidden items-center gap-2 md:flex">
@@ -110,9 +111,10 @@ function Header({ onMenu }: { onMenu: () => void }) {
 
 function BottomNav() {
   const [location] = useLocation();
+  if (location.startsWith('/profile/settings')) return null;
   const items = [
     { href: '/', label: 'Explore', icon: Search },
-    { href: '/wishlist', label: 'Wishlist', icon: Heart },
+    { href: '/wishlist', label: 'Wishlists', icon: Heart },
     { href: '/trips', label: 'Trips', icon: CalendarDays },
     { href: '/messages', label: 'Messages', icon: MessageCircle },
     { href: '/profile', label: 'Profile', icon: UserRound },
@@ -198,6 +200,47 @@ function Toast({ text, onClose }: { text: string; onClose: () => void }) {
   return <div className="fixed bottom-24 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-3 rounded-full bg-[hsl(var(--foreground))] px-4 py-3 text-sm font-semibold text-[hsl(var(--background))] shadow-lift md:bottom-8"><Check size={16} className="text-[hsl(var(--accent))]" />{text}</div>;
 }
 
+function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; recent: Listing[]; saved: string[]; onSave: (id: string) => void }) {
+  const [, setLocation] = useLocation();
+  const [browseTab, setBrowseTab] = useState('All');
+  const recentItems = recent.length ? recent : [listings[1], listings[3], listings[2]];
+  const nearbyItems = browseTab === 'Experiences' ? listings.filter((item) => item.mode === 'Short Let') : browseTab === 'Rooms' ? listings.filter((item) => item.type === 'Studio') : listings.filter((item) => item.mode !== 'Short Let');
+  return <div className="bg-white md:hidden">
+    <div className="px-5 pb-5 pt-5">
+      <label className="flex h-[58px] items-center gap-3 rounded-full border border-black/10 bg-white px-5 shadow-[0_6px_18px_rgba(0,0,0,.12)]">
+        <Search size={19} strokeWidth={2.4} />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Start your search" className="min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:text-black placeholder:opacity-90" data-testid="input-mobile-search" />
+        <button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="grid size-8 place-items-center rounded-full bg-[hsl(var(--foreground))] text-white" aria-label="Run search" data-testid="button-mobile-search"><ArrowRight size={16} /></button>
+      </label>
+      <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+        {['All', 'Homes', 'Experiences', 'Rooms'].map((item) => <button key={item} onClick={() => { setBrowseTab(item); if (item === 'Experiences') setMode('Short Let'); else if (item === 'Homes') setMode('Rent'); }} className={`shrink-0 rounded-full border px-5 py-2.5 text-sm font-medium ${browseTab === item ? 'border-black/15 bg-[#f2f2f2] shadow-inner' : 'border-black/10 bg-white'}`} data-testid={`button-mobile-tab-${item.toLowerCase()}`}>{item}</button>)}
+      </div>
+      <button onClick={() => setLocation('/trips')} className="mt-6 flex w-full items-center gap-4 rounded-[26px] border border-black/[.07] bg-white p-4 text-left shadow-[0_8px_20px_rgba(0,0,0,.08)]" data-testid="button-mobile-reservation">
+        <div className="min-w-0 flex-1"><p className="text-[16px] font-bold leading-tight">Complete your Malta<br />home reservation</p><p className="mt-2 text-sm text-black/60">Sep 4–6 · 1 guest <ChevronRight className="inline" size={14} /></p></div>
+        <img src={images.limestone} alt="" className="size-[76px] shrink-0 rounded-2xl object-cover" />
+      </button>
+    </div>
+    <section className="border-t border-black/[.06] px-5 pb-8 pt-7">
+      <div className="mb-4 flex items-center justify-between"><h2 className="text-[23px] font-bold tracking-[-.04em]">Recently viewed</h2><button onClick={() => setLocation('/wishlist')} className="grid size-9 place-items-center rounded-full bg-[#f2f2f2]" aria-label="View recently viewed" data-testid="button-mobile-recent"><ArrowRight size={18} /></button></div>
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {recentItems.map((item) => <article key={item.id} className="w-[148px] shrink-0" data-testid={`card-mobile-recent-${item.id}`}>
+          <div className="relative aspect-[.92] overflow-hidden rounded-[22px]"><img src={item.image} alt={item.title} className="size-full object-cover" /><button onClick={() => onSave(item.id)} className="absolute right-2.5 top-2.5 grid size-8 place-items-center rounded-full bg-white/90" aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'}><Heart size={17} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
+          <h3 className="mt-2 line-clamp-1 text-[15px] font-semibold">{item.location.split(',')[0]}</h3><p className="mt-1 text-sm text-black/55">{item.detail.split(' · ')[0]} · <Star className="inline" size={11} fill="currentColor" /> {item.rating}</p>
+        </article>)}
+      </div>
+    </section>
+    <section className="px-5 pb-28">
+      <div className="mb-4 flex items-center justify-between"><div><p className="text-sm font-medium text-black/55">Curated for your next move</p><h2 className="mt-1 text-[23px] font-bold tracking-[-.04em]">{browseTab === 'Experiences' ? 'Make a weekend of it' : 'Stay near Sliema'}</h2></div><button onClick={() => setLocation('/map')} className="grid size-9 place-items-center rounded-full bg-[#f2f2f2]" aria-label="Browse nearby homes" data-testid="button-mobile-nearby"><ArrowRight size={18} /></button></div>
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {nearbyItems.map((item) => <article key={item.id} className="w-[188px] shrink-0" data-testid={`card-mobile-nearby-${item.id}`}>
+          <div className="relative aspect-[.93] overflow-hidden rounded-[22px]"><img src={item.image} alt={item.title} className="size-full object-cover" />{item.tag && <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold">{item.tag}</span>}<button onClick={() => onSave(item.id)} className="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-black/35 text-white backdrop-blur-sm" aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'}><Heart size={17} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
+          <h3 className="mt-2 line-clamp-1 text-[15px] font-semibold">{item.title}</h3><p className="mt-1 line-clamp-1 text-sm text-black/55">{item.price} · <Star className="inline" size={11} fill="currentColor" /> {item.rating}</p>
+        </article>)}
+      </div>
+    </section>
+  </div>;
+}
+
 function HomePage() {
   const [mode, setMode] = useState<Mode>('Rent');
   const [query, setQuery] = useState('');
@@ -220,6 +263,8 @@ function HomePage() {
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
   return <main>
+    <MobileHomePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} recent={recent} saved={saved} onSave={toggleSave} />
+    <div className="hidden md:block">
     <section className="relative overflow-hidden border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.52)]">
       <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--accent)/.55)] blur-3xl" />
       <div className="mx-auto max-w-[1260px] px-5 pb-10 pt-12 lg:px-8 lg:pb-14 lg:pt-20">
@@ -240,7 +285,8 @@ function HomePage() {
       <section className="pb-14"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">{mode === 'Short Let' ? 'Make a weekend of it' : 'Places that feel right'}</p><h2 className="mt-1 font-display text-3xl tracking-[-.04em]">{query ? `Homes near “${query}”` : `${mode} homes in Malta`}</h2></div><Link href="/map" className="hidden items-center gap-1 text-sm font-bold text-[hsl(var(--primary))] sm:flex" data-testid="link-browse-map">Browse map <ArrowRight size={16} /></Link></div>
         {matches.length ? <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">{matches.map((item, index) => <div key={item.id} className="animate-rise" style={{ animationDelay: `${index * 55}ms` }}><ListingCard listing={item} saved={saved.includes(item.id)} onSave={toggleSave} /></div>)}</div> : <EmptyState title="No homes in this corner yet" body="Try another location or clear your category filter. Malta has a few more good corners." action="Clear filters" onAction={() => { setQuery(''); setCategory('All'); }} />}
       </section>
-      <section className="mb-10 grid overflow-hidden rounded-[30px] bg-[hsl(var(--foreground))] text-[hsl(var(--background))] md:grid-cols-[1.15fr_.85fr]"><div className="p-7 md:p-12"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--accent))]">The Jakurzi promise</p><h2 className="mt-3 max-w-md font-display text-4xl leading-[1.02] tracking-[-.045em]">Good homes.<br />Clear moves.</h2><p className="mt-5 max-w-md text-sm leading-relaxed text-[hsl(var(--background)/.7)]">From your first message to the final payment, Jakurzi Pay keeps the important moments protected. No guesswork, no awkward hand-offs.</p><Link href="/profile" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white" data-testid="link-promise-profile">How it works <ArrowRight size={16} /></Link></div><div className="relative min-h-[220px] overflow-hidden bg-[hsl(var(--primary))]"><div className="absolute -right-10 -top-16 size-64 rounded-full border-[24px] border-[hsl(var(--accent)/.55)]" /><div className="absolute bottom-8 left-10 size-28 rounded-full border-[14px] border-[hsl(var(--background)/.16)]" /><div className="absolute bottom-10 right-12 rounded-2xl bg-[hsl(var(--card))] p-4 text-[hsl(var(--foreground))] shadow-lift"><ShieldCheck size={23} className="text-[hsl(var(--primary))]" /><p className="mt-2 text-sm font-bold">Money moments,<br />made safer.</p></div></div></section>
+      <section className="mb-10 grid overflow-hidden rounded-[30px] bg-[hsl(var(--foreground))] text-[hsl(var(--background))] md:grid-cols-[1.15fr_.85fr]"><div className="p-7 md:p-12"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--accent))]">The AiroRent promise</p><h2 className="mt-3 max-w-md font-display text-4xl leading-[1.02] tracking-[-.045em]">Good homes.<br />Clear moves.</h2><p className="mt-5 max-w-md text-sm leading-relaxed text-[hsl(var(--background)/.7)]">From your first message to the final payment, AiroRent Pay keeps the important moments protected. No guesswork, no awkward hand-offs.</p><Link href="/profile" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white" data-testid="link-promise-profile">How it works <ArrowRight size={16} /></Link></div><div className="relative min-h-[220px] overflow-hidden bg-[hsl(var(--primary))]"><div className="absolute -right-10 -top-16 size-64 rounded-full border-[24px] border-[hsl(var(--accent)/.55)]" /><div className="absolute bottom-8 left-10 size-28 rounded-full border-[14px] border-[hsl(var(--background)/.16)]" /><div className="absolute bottom-10 right-12 rounded-2xl bg-[hsl(var(--card))] p-4 text-[hsl(var(--foreground))] shadow-lift"><ShieldCheck size={23} className="text-[hsl(var(--primary))]" /><p className="mt-2 text-sm font-bold">Money moments,<br />made safer.</p></div></div></section>
+    </div>
     </div>
     {filterOpen && <FilterSheet mode={mode} onClose={() => setFilterOpen(false)} />}
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
@@ -251,7 +297,7 @@ function FilterSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   const [min, setMin] = useState('Any');
   const [max, setMax] = useState('Any');
   const [beds, setBeds] = useState('Any');
-  return <div className="fixed inset-0 z-50 animate-fade bg-[hsl(var(--foreground)/.4)] p-4 backdrop-blur-sm" onClick={onClose}><div className="mx-auto mt-auto max-w-lg animate-rise rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:mt-[12vh]" onClick={(e) => e.stopPropagation()}><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button></div><div className="mt-6 space-y-5"><div><label className="text-sm font-bold">Price range</label><div className="mt-2 grid grid-cols-2 gap-3">{[['Minimum', min, setMin], ['Maximum', max, setMax]].map(([label, value, setter]) => <select key={String(label)} value={String(value)} onChange={(e) => (setter as (s: string) => void)(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" data-testid={`select-${String(label).toLowerCase()}`}><option>Any</option><option>€500</option><option>€1,000</option><option>€2,000</option><option>€500,000</option></select>)}</div></div><div><label className="text-sm font-bold">Bedrooms</label><div className="mt-2 flex gap-2">{['Any', '1', '2', '3', '4+'].map((item) => <button key={item} onClick={() => setBeds(item)} className={`rounded-full border px-4 py-2 text-sm font-semibold ${beds === item ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : ''}`} data-testid={`button-beds-${item}`}>{item}</button>)}</div></div><div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4"><div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by Jakurzi</p></div><div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div></div></div><button onClick={onClose} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Show homes</button></div></div>;
+  return <div className="fixed inset-0 z-50 animate-fade bg-[hsl(var(--foreground)/.4)] p-4 backdrop-blur-sm" onClick={onClose}><div className="mx-auto mt-auto max-w-lg animate-rise rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:mt-[12vh]" onClick={(e) => e.stopPropagation()}><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button></div><div className="mt-6 space-y-5"><div><label className="text-sm font-bold">Price range</label><div className="mt-2 grid grid-cols-2 gap-3">{[['Minimum', min, setMin], ['Maximum', max, setMax]].map(([label, value, setter]) => <select key={String(label)} value={String(value)} onChange={(e) => (setter as (s: string) => void)(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" data-testid={`select-${String(label).toLowerCase()}`}><option>Any</option><option>€500</option><option>€1,000</option><option>€2,000</option><option>€500,000</option></select>)}</div></div><div><label className="text-sm font-bold">Bedrooms</label><div className="mt-2 flex gap-2">{['Any', '1', '2', '3', '4+'].map((item) => <button key={item} onClick={() => setBeds(item)} className={`rounded-full border px-4 py-2 text-sm font-semibold ${beds === item ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : ''}`} data-testid={`button-beds-${item}`}>{item}</button>)}</div></div><div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4"><div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div><div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div></div></div><button onClick={onClose} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Show homes</button></div></div>;
 }
 
 function EmptyState({ title, body, action, onAction }: { title: string; body: string; action?: string; onAction?: () => void }) {
@@ -311,6 +357,69 @@ function ProfilePage() {
   return <main className="mx-auto max-w-[940px] px-5 py-9 lg:px-8"><div className="flex items-start justify-between"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Your space</p><h1 className="mt-1 font-display text-5xl tracking-[-.05em]">Profile</h1></div><button className="grid size-11 place-items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))]" data-testid="button-profile-notifications"><Bell size={19} /></button></div><div className="mt-8 rounded-[28px] bg-[hsl(var(--foreground))] p-7 text-[hsl(var(--background))] shadow-soft md:p-9"><div className="flex flex-col items-center text-center md:flex-row md:items-center md:gap-6 md:text-left"><div className="grid size-24 place-items-center rounded-full bg-[hsl(var(--accent))] font-display text-4xl text-[hsl(var(--foreground))]">H</div><div className="mt-4 md:mt-0"><h2 className="font-display text-4xl">Husnain</h2><p className="mt-1 text-sm text-[hsl(var(--background)/.65)]">{role} on Jakurzi · Malta</p></div><button onClick={() => setRole(role === 'Guest' ? 'Owner' : 'Guest')} className="mt-5 flex items-center gap-2 rounded-full border border-[hsl(var(--background)/.25)] px-4 py-2 text-xs font-bold md:ml-auto md:mt-0" data-testid="button-switch-role"><ArrowRight size={14} />Switch to {role === 'Guest' ? 'owner' : 'guest'}</button></div></div><div className="mt-5 grid gap-4 sm:grid-cols-2"><button onClick={() => setLocation('/trips')} className="group rounded-[24px] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 text-left transition hover:-translate-y-0.5 hover:shadow-soft" data-testid="button-profile-trips"><CalendarDays className="text-[hsl(var(--primary))]" /><h3 className="mt-8 font-display text-2xl">Past trips</h3><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">Your stays and memories</p><ArrowRight size={17} className="mt-4 transition group-hover:translate-x-1" /></button><button onClick={() => setLocation('/messages')} className="group rounded-[24px] border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 text-left transition hover:-translate-y-0.5 hover:shadow-soft" data-testid="button-profile-connections"><UsersRound className="text-[hsl(var(--primary))]" /><h3 className="mt-8 font-display text-2xl">Connections</h3><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">Owners and people you trust</p><ArrowRight size={17} className="mt-4 transition group-hover:translate-x-1" /></button></div><button onClick={() => setLocation('/post')} className="mt-5 flex w-full items-center gap-4 rounded-[24px] border border-[hsl(var(--primary)/.25)] bg-[hsl(var(--secondary)/.6)] p-5 text-left transition hover:border-[hsl(var(--primary))]" data-testid="button-become-owner"><span className="grid size-12 place-items-center rounded-2xl bg-[hsl(var(--primary))] text-white"><HousePlus size={23} /></span><span className="flex-1"><b className="block text-lg">Become an owner</b><span className="text-sm text-[hsl(var(--muted-foreground))]">Share your place and make the next move easier.</span></span><ChevronRight size={19} /></button><div className="mt-8 divide-y divide-[hsl(var(--border))] rounded-[24px] border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5"><button className="flex w-full items-center gap-4 py-5 text-left" data-testid="button-account-settings"><Settings size={20} /><span className="flex-1 font-bold">Account settings</span><ChevronRight size={18} className="text-[hsl(var(--muted-foreground))]" /></button><button className="flex w-full items-center gap-4 py-5 text-left" data-testid="button-payment-settings"><WalletCards size={20} /><span className="flex-1 font-bold">Jakurzi Pay & payment</span><ChevronRight size={18} className="text-[hsl(var(--muted-foreground))]" /></button><button className="flex w-full items-center gap-4 py-5 text-left" data-testid="button-help"><CircleHelp size={20} /><span className="flex-1 font-bold">Help centre</span><ChevronRight size={18} className="text-[hsl(var(--muted-foreground))]" /></button></div></main>;
 }
 
+function ProfileExperiencePage() {
+  const [role, setRole] = useState<'Guest' | 'Owner'>('Guest');
+  const [toast, setToast] = useState('');
+  const [, setLocation] = useLocation();
+  const row = (label: string, Icon: typeof Settings, action: () => void, testId: string) => <button onClick={action} key={label} className="flex w-full items-center gap-4 py-[17px] text-left" data-testid={testId}><Icon size={25} strokeWidth={1.7} /><span className="flex-1 text-[17px]">{label}</span><ChevronRight size={21} className="text-black/50" /></button>;
+  const notify = () => setToast('You are all caught up.');
+  return <main className="min-h-[calc(100dvh-70px)] bg-white px-5 pb-28 pt-4 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
+    <div className="flex items-center justify-between border-b border-black/[.08] pb-4 md:border-0 md:pb-0"><div><p className="hidden text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))] md:block">Your space</p><h1 className="text-[29px] font-semibold tracking-[-.045em] md:mt-1 md:font-display md:text-5xl">Profile</h1></div><button onClick={notify} className="grid size-11 place-items-center rounded-full bg-[#f5f5f5]" aria-label="Notifications" data-testid="button-profile-notifications-new"><Bell size={21} strokeWidth={1.8} /></button></div>
+    <div className="mx-auto mt-4 max-w-[660px] md:mt-8">
+      <section className="rounded-[26px] border border-black/[.07] bg-white px-5 py-7 text-center shadow-[0_7px_22px_rgba(0,0,0,.07)] md:flex md:items-center md:gap-6 md:px-8 md:text-left">
+        <div className="mx-auto grid size-[104px] place-items-center rounded-full bg-[#eee9ff] text-[47px] font-semibold text-[#5942b2] md:mx-0">H</div>
+        <div className="mt-4 md:mt-0"><h2 className="text-[34px] font-bold tracking-[-.06em]">Husnain</h2><p className="mt-1 text-[16px] text-black/55">{role}</p></div>
+        <button onClick={() => setRole(role === 'Guest' ? 'Owner' : 'Guest')} className="mx-auto mt-4 rounded-full border border-black/10 px-4 py-2 text-xs font-semibold md:ml-auto md:mt-0" data-testid="button-switch-role-reference">Switch to {role === 'Guest' ? 'owner' : 'guest'}</button>
+      </section>
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <button onClick={() => setLocation('/trips')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-trips-reference"><span className="absolute right-3 top-3 rounded-full bg-[#e9eef6] px-2 py-1 text-[10px] font-bold text-[#40516c]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[#f2e5dd] text-[#a8613f]"><CalendarDays size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Past trips</h3></button>
+        <button onClick={() => setLocation('/messages')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-connections-reference"><span className="absolute right-3 top-3 rounded-full bg-[#e9eef6] px-2 py-1 text-[10px] font-bold text-[#40516c]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[#e6f0ed] text-[#356b5e]"><UsersRound size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Connections</h3></button>
+      </div>
+      <button onClick={() => setLocation('/post')} className="mt-5 flex w-full items-center gap-4 rounded-[24px] border border-black/[.07] bg-white p-5 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-become-owner-reference"><div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#fff0eb] text-[hsl(var(--primary))]"><HousePlus size={28} strokeWidth={1.7} /></div><span className="flex-1"><b className="block text-[19px]">Become a host</b><span className="mt-1 block text-[15px] leading-snug text-black/55">It's easy to start hosting and<br className="sm:hidden" /> earn extra income.</span></span><ChevronRight className="text-black/50" /></button>
+      <section className="mt-6 divide-y divide-black/[.08]">
+        {row('Account settings', Settings, () => setLocation('/profile/settings'), 'button-account-settings-reference')}
+        {row('Get help', CircleHelp, () => setLocation('/messages'), 'button-help-reference')}
+        {row('View profile', UserRound, () => setRole('Guest'), 'button-view-profile-reference')}
+        {row('Privacy', ShieldCheck, notify, 'button-privacy-reference')}
+      </section>
+      <div className="my-2 border-t border-black/[.08]" />
+      <section className="divide-y divide-black/[.08]">
+        {row('Refer a host', UsersRound, notify, 'button-refer-host')}
+        {row('Find a co-host', HousePlus, notify, 'button-find-cohost')}
+        {row('Legal', ReceiptText, notify, 'button-legal')}
+        {row('Log out', DoorOpen, notify, 'button-log-out')}
+      </section>
+    </div>
+    {toast && <Toast text={toast} onClose={() => setToast('')} />}
+  </main>;
+}
+
+function AccountSettingsPage() {
+  const [, setLocation] = useLocation();
+  const [toast, setToast] = useState('');
+  const settings = [
+    ['Personal information', UserRound],
+    ['Login & security', ShieldCheck],
+    ['Privacy', Accessibility],
+    ['Notifications', BellRing],
+    ['Payments', WalletCards],
+    ['Taxes', ReceiptText],
+    ['Translation', Globe2],
+    ['Booking permissions', KeyRound],
+    ['Travel for work', BriefcaseBusiness],
+    ['Accessibility', Accessibility],
+  ] as const;
+  return <main className="min-h-[100dvh] bg-white px-5 pb-10 pt-4 md:mx-auto md:min-h-0 md:max-w-[720px] md:bg-transparent md:px-8 md:py-12">
+    <button onClick={() => setLocation('/profile')} className="grid size-12 place-items-center rounded-full bg-[#f6f6f6]" aria-label="Back to profile" data-testid="button-settings-back"><ArrowLeft size={23} /></button>
+    <h1 className="mt-5 text-[39px] font-semibold tracking-[-.055em] md:font-display md:text-5xl">Account settings</h1>
+    <section className="mt-8 divide-y divide-black/[.08]">
+      {settings.map(([label, Icon]) => <button key={label} onClick={() => setToast(`${label} is ready to customize`)} className="flex w-full items-center gap-5 py-[17px] text-left" data-testid={`button-settings-${label.toLowerCase().replaceAll(' ', '-')}`}><Icon size={27} strokeWidth={1.55} /><span className="flex-1 text-[17px]">{label}</span>{label === 'Booking permissions' && <span className="rounded-full bg-[#ffe9f4] px-2.5 py-1 text-xs font-semibold text-[#bf2c74]">New</span>}<ChevronRight size={22} className="text-black/50" /></button>)}
+    </section>
+  <p className="mt-8 border-t border-black/[.08] pt-8 text-sm text-black/55">Version 1.0.0 · AiroRent</p>
+    {toast && <Toast text={toast} onClose={() => setToast('')} />}
+  </main>;
+}
+
 function PostPage() {
   const [step, setStep] = useState(1);
   const [transaction, setTransaction] = useState<Mode>('Rent');
@@ -332,7 +441,7 @@ function PostPage() {
 }
 
 function AppRouter() {
-  return <Shell><Switch><Route path="/" component={HomePage} /><Route path="/map" component={MapPage} /><Route path="/wishlist" component={WishlistPage} /><Route path="/trips" component={TripsPage} /><Route path="/messages" component={MessagesPage} /><Route path="/profile" component={ProfilePage} /><Route path="/post" component={PostPage} /><Route path="/listing/:id">{(params) => <DetailPage id={params.id} />}</Route><Route><NotFound /></Route></Switch></Shell>;
+  return <Shell><Switch><Route path="/" component={HomePage} /><Route path="/map" component={MapPage} /><Route path="/wishlist" component={WishlistPage} /><Route path="/trips" component={TripsPage} /><Route path="/messages" component={MessagesPage} /><Route path="/profile/settings" component={AccountSettingsPage} /><Route path="/profile" component={ProfileExperiencePage} /><Route path="/post" component={PostPage} /><Route path="/listing/:id">{(params) => <DetailPage id={params.id} />}</Route><Route><NotFound /></Route></Switch></Shell>;
 }
 
 function NotFound() {
