@@ -73,6 +73,9 @@ function saveRecent(id: string) {
   const next = [id, ...readRecent().filter((item) => item !== id)].slice(0, 6);
   localStorage.setItem('jakurzi:recent', JSON.stringify(next));
 }
+function readUserName(): string {
+  try { return localStorage.getItem('jakurzi:profile-name')?.trim() || 'Husnain'; } catch { return 'Husnain'; }
+}
 
 function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -258,34 +261,68 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
     ['Villas', Sparkles],
     ['Studios', DoorOpen],
   ] as const;
-  const mobileListings = matches.length ? matches : query ? [] : listings.filter((item) => item.mode === mode);
+  const userName = readUserName();
+  const mobileListings = matches;
+  const trendingListings = query ? matches.slice(0, 5) : listings.filter((item) => item.mode === mode).slice(0, 5);
+  const popularRentals = listings.filter((item) => item.mode === 'Rent').slice(0, 5);
+  const categoryCards = propertyTabs.filter(([label]) => label !== 'All');
+  const renderListingRow = (items: Listing[], rowName: string) => items.length ? (
+    <div className="flex snap-x gap-4 overflow-x-auto pb-2 pr-1">
+      {items.map((item) => (
+        <div key={`${rowName}-${item.id}`} className="snap-start">
+          <ListingCard listing={item} saved={saved.includes(item.id)} onSave={onSave} compact />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="rounded-2xl bg-[hsl(var(--muted))] px-4 py-5 text-sm text-[hsl(var(--muted-foreground))]">No properties match this search yet.</p>
+  );
   return <div className="bg-white md:hidden">
-    <section className="px-5 pb-6 pt-6">
-      <div className="flex items-center gap-2 text-xs font-medium text-black/45"><span>AiroRent</span><span>/</span><span>{mode === 'Short Let' ? 'Short Let' : mode}</span></div>
-      <h1 className="mt-3 text-[34px] font-semibold leading-[1.04] tracking-[-.055em]">{mode === 'Rent' ? 'for rent in Malta & Gozo' : `${mode.toLowerCase()} in Malta & Gozo`}</h1>
-      <p className="mt-3 text-[17px] text-black/55">{mobileListings.length ? `${mobileListings.length * 84} listings · €450 – €35,000` : 'Search homes across Malta and Gozo'}</p>
-      <p className="mt-5 max-w-[340px] text-[17px] leading-relaxed text-black/70">Browse properties across Malta — from compact apartments in Valletta to villas by the sea.</p>
-      <label className="mt-5 flex h-12 items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4">
+    <section className="px-5 pb-4 pt-4">
+      <div className="mb-3 flex items-center justify-between">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Good morning</p>
+          <h1 className="mt-1 text-[24px] font-semibold tracking-[-.05em]">Hi, {userName}</h1>
+        </div>
+        <button onClick={() => setLocation('/profile')} className="text-xs font-semibold text-[hsl(var(--primary))]" data-testid="link-mobile-profile-greeting">View profile</button>
+      </div>
+      <label className="flex h-12 w-full items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)]">
         <Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" /><button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
       </label>
-      <div className="mt-6 flex gap-6 overflow-x-auto border-b border-black/[.08] pb-2">
+      <div className="mt-4 flex gap-6 overflow-x-auto border-b border-black/[.08] pb-2">
         {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 pb-2 text-sm font-semibold ${mode === item ? 'border-b-2 border-black text-black' : 'text-black/50'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
       </div>
     </section>
-    <nav className="flex gap-6 overflow-x-auto border-b border-black/[.08] px-5 pb-3" aria-label="Property types">
-      {propertyTabs.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-[52px] shrink-0 flex-col items-center gap-2 text-[11px] ${category === label ? 'border-b-2 border-black pb-3 font-semibold text-black' : 'text-black/55'}`} data-testid={`button-mobile-property-${label.toLowerCase()}`}><Icon size={22} strokeWidth={1.5} />{label}</button>)}
+    <nav className="flex gap-5 overflow-x-auto border-b border-black/[.08] px-5 pb-3" aria-label="Property types">
+      {propertyTabs.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-[58px] shrink-0 flex-col items-center gap-1.5 text-[10px] ${category === label ? 'border-b-2 border-black pb-2 font-semibold text-black' : 'text-black/55'}`} data-testid={`button-mobile-property-${label.toLowerCase()}`}><Icon size={21} strokeWidth={1.5} />{label}</button>)}
     </nav>
     <div className="flex gap-2 overflow-x-auto border-b border-black/[.08] px-5 py-3">
-      {['Price', 'Beds', 'Baths', 'Garages', 'Parking'].map((label) => <button key={label} onClick={onOpenFilters} className="flex shrink-0 items-center gap-2 rounded-full border border-black/10 px-4 py-2.5 text-sm" data-testid={`button-mobile-filter-${label.toLowerCase()}`}>{label}<ChevronDown size={15} /></button>)}
-      <button onClick={onOpenFilters} className="grid size-10 shrink-0 place-items-center rounded-full border border-black/10" aria-label="More filters" data-testid="button-mobile-more-filters"><Plus size={17} /></button>
+      {['Price', 'Beds', 'Baths', 'Garages'].map((label) => <button key={label} onClick={onOpenFilters} className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/10 px-3.5 py-2 text-xs font-medium" data-testid={`button-mobile-filter-${label.toLowerCase()}`}>{label}<ChevronDown size={14} /></button>)}
+      <button onClick={onOpenFilters} className="grid size-8 shrink-0 place-items-center rounded-full border border-black/10" aria-label="More filters" data-testid="button-mobile-more-filters"><Plus size={15} /></button>
     </div>
-    <section className="px-5 pb-28 pt-7">
-      <div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-[hsl(var(--primary))]">Fresh on AiroRent</p><h2 className="mt-1 text-[24px] font-semibold tracking-[-.045em]">{mode === 'Rent' ? 'Homes ready for a new tenant' : `${mode} properties`}</h2></div><button onClick={() => setLocation('/map')} className="text-sm font-semibold underline underline-offset-4" data-testid="link-mobile-market-map">Map</button></div>
-      {mobileListings.length ? <div className="space-y-8">{mobileListings.slice(0, 6).map((item) => <article key={item.id} data-testid={`card-mobile-market-${item.id}`}>
-        <div className="relative aspect-[1.34] overflow-hidden rounded-[24px] bg-[#f3f3f3]"><img src={item.image} alt={item.title} onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="size-full cursor-pointer object-cover" /><span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold">{item.mode === 'Short Let' ? 'SHORT LET' : item.mode.toUpperCase()}</span><button onClick={() => onSave(item.id)} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full ${saved.includes(item.id) ? 'bg-[hsl(var(--primary))] text-white' : 'bg-white/95'}`} aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'} data-testid={`button-mobile-market-save-${item.id}`}><Heart size={18} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
-        <button onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="mt-3 block w-full text-left"><h3 className="line-clamp-1 text-[18px] font-semibold">{item.title}</h3><p className="mt-1 text-[15px] text-black/55">{item.type} · {item.location.split(',')[0]}</p><p className="mt-2 text-[15px]"><b>{item.price}</b>{item.mode === 'Short Let' ? ' / night' : ''} <span className="text-black/45"> · {item.detail}</span></p></button>
-      </article>)}</div> : <EmptyState title="No properties found" body="Try another town, property type, or clear the filters." action="Clear search" onAction={() => { setQuery(''); setCategory('All'); }} />}
-    </section>
+    <div className="space-y-7 px-5 pb-28 pt-5">
+      <section aria-labelledby="mobile-top-categories">
+        <div className="mb-3 flex items-center justify-between"><h2 id="mobile-top-categories" className="text-[20px] font-semibold tracking-[-.04em]">Top Categories</h2><span className="text-xs text-black/45">Browse all</span></div>
+        <div className="flex gap-3 overflow-x-auto pb-1">
+          {categoryCards.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex w-[116px] shrink-0 flex-col items-start rounded-2xl border p-3 text-left transition ${category === label ? 'border-[hsl(var(--primary))] bg-[hsl(var(--secondary))]' : 'border-black/[.08] bg-white'}`} data-testid={`card-mobile-top-category-${label.toLowerCase()}`}><span className="grid size-9 place-items-center rounded-xl bg-[hsl(var(--accent)/.65)] text-[hsl(var(--primary))]"><Icon size={19} /></span><span className="mt-3 text-xs font-semibold">{label}</span><span className="mt-1 text-[11px] text-black/45">{label === 'Villas' ? 'Sea views' : 'Popular homes'}</span></button>)}
+        </div>
+      </section>
+      <section aria-labelledby="mobile-trending-now">
+        <div className="mb-3 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-[hsl(var(--primary))]">Most loved this week</p><h2 id="mobile-trending-now" className="mt-1 text-[20px] font-semibold tracking-[-.04em]">Trending Now</h2></div><button onClick={() => setLocation('/map')} className="text-xs font-semibold underline underline-offset-4" data-testid="link-mobile-trending-map">Map</button></div>
+        {renderListingRow(trendingListings, 'trending')}
+      </section>
+      <section aria-labelledby="mobile-popular-rentals">
+        <div className="mb-3 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-[hsl(var(--primary))]">Made for your next move</p><h2 id="mobile-popular-rentals" className="mt-1 text-[20px] font-semibold tracking-[-.04em]">Popular Rentals</h2></div><button onClick={() => { setMode('Rent'); setCategory('All'); }} className="text-xs font-semibold text-[hsl(var(--primary))]" data-testid="button-mobile-popular-rentals">See all</button></div>
+        {renderListingRow(popularRentals, 'popular-rentals')}
+      </section>
+      <section aria-labelledby="mobile-search-results">
+        <div className="mb-3 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-[hsl(var(--primary))]">Fresh on AiroRent</p><h2 id="mobile-search-results" className="mt-1 text-[20px] font-semibold tracking-[-.04em]">{query ? `Results for “${query}”` : `${mode} homes in Malta`}</h2></div><button onClick={() => setLocation('/map')} className="text-xs font-semibold underline underline-offset-4" data-testid="link-mobile-market-map">Map</button></div>
+        {mobileListings.length ? <div className="space-y-7">{mobileListings.slice(0, 6).map((item) => <article key={item.id} data-testid={`card-mobile-market-${item.id}`}>
+          <div className="relative aspect-[1.34] overflow-hidden rounded-[24px] bg-[#f3f3f3]"><img src={item.image} alt={item.title} onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="size-full cursor-pointer object-cover" /><span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold">{item.mode === 'Short Let' ? 'SHORT LET' : item.mode.toUpperCase()}</span><button onClick={() => onSave(item.id)} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full ${saved.includes(item.id) ? 'bg-[hsl(var(--primary))] text-white' : 'bg-white/95'}`} aria-label={saved.includes(item.id) ? 'Remove from wishlist' : 'Save listing'} data-testid={`button-mobile-market-save-${item.id}`}><Heart size={18} fill={saved.includes(item.id) ? 'currentColor' : 'none'} /></button></div>
+          <button onClick={() => { saveRecent(item.id); setLocation(`/listing/${item.id}`); }} className="mt-3 block w-full text-left"><h3 className="line-clamp-1 text-[17px] font-semibold">{item.title}</h3><p className="mt-1 text-sm text-black/55">{item.type} · {item.location.split(',')[0]}</p><p className="mt-2 text-sm"><b>{item.price}</b>{item.mode === 'Short Let' ? ' / night' : ''} <span className="text-black/45"> · {item.detail}</span></p></button>
+        </article>)}</div> : <EmptyState title="No properties found" body="Try another town, property type, or clear the filters." action="Clear search" onAction={() => { setQuery(''); setCategory('All'); }} />}
+      </section>
+    </div>
   </div>;
 }
 
@@ -413,14 +450,15 @@ function ProfileExperiencePage() {
   const [role, setRole] = useState<'Guest' | 'Owner'>('Guest');
   const [toast, setToast] = useState('');
   const [, setLocation] = useLocation();
+  const userName = readUserName();
   const row = (label: string, Icon: typeof Settings, action: () => void, testId: string) => <button onClick={action} key={label} className="flex w-full items-center gap-4 py-[17px] text-left" data-testid={testId}><Icon size={25} strokeWidth={1.7} /><span className="flex-1 text-[17px]">{label}</span><ChevronRight size={21} className="text-black/50" /></button>;
   const notify = () => setToast('You are all caught up.');
   return <main className="min-h-[calc(100dvh-70px)] bg-white px-5 pb-28 pt-4 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
     <div className="flex items-center justify-between border-b border-black/[.08] pb-4 md:border-0 md:pb-0"><div><p className="hidden text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))] md:block">Your space</p><h1 className="text-[29px] font-semibold tracking-[-.045em] md:mt-1 md:font-display md:text-5xl">Profile</h1></div><button onClick={notify} className="grid size-11 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]" aria-label="Notifications" data-testid="button-profile-notifications-new"><Bell size={21} strokeWidth={1.8} /></button></div>
     <div className="mx-auto mt-4 max-w-[660px] md:mt-8">
       <section className="rounded-[26px] border border-black/[.07] bg-white px-5 py-7 text-center shadow-[0_7px_22px_rgba(0,0,0,.07)] md:flex md:items-center md:gap-6 md:px-8 md:text-left">
-        <div className="mx-auto grid size-[104px] place-items-center rounded-full bg-[hsl(var(--accent))] text-[47px] font-bold text-[hsl(var(--primary))] md:mx-0">H</div>
-        <div className="mt-4 md:mt-0"><h2 className="text-[34px] font-bold tracking-[-.06em]">Husnain</h2><p className="mt-1 text-[16px] text-black/55">{role}</p></div>
+         <div className="mx-auto grid size-[104px] place-items-center rounded-full bg-[hsl(var(--accent))] text-[47px] font-bold text-[hsl(var(--primary))] md:mx-0">{userName[0]}</div>
+         <div className="mt-4 md:mt-0"><h2 className="text-[34px] font-bold tracking-[-.06em]">{userName}</h2><p className="mt-1 text-[16px] text-black/55">{role}</p></div>
         <button onClick={() => setRole(role === 'Guest' ? 'Owner' : 'Guest')} className="mx-auto mt-4 rounded-full border border-black/10 px-4 py-2 text-xs font-semibold md:ml-auto md:mt-0" data-testid="button-switch-role-reference">Switch to {role === 'Guest' ? 'owner' : 'guest'}</button>
       </section>
       <div className="mt-5 grid grid-cols-2 gap-4">
@@ -428,19 +466,22 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/messages')} className="relative rounded-[22px] border border-black/[.07] bg-white px-4 pb-5 pt-4 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-profile-connections-reference"><span className="absolute right-3 top-3 rounded-full bg-[hsl(var(--secondary))] px-2 py-1 text-[10px] font-bold text-[hsl(var(--primary))]">NEW</span><div className="grid size-16 place-items-center rounded-2xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><UsersRound size={34} strokeWidth={1.5} /></div><h3 className="mt-5 text-[18px] font-bold">Connections</h3></button>
       </div>
       <button onClick={() => setLocation('/post')} className="mt-5 flex w-full items-center gap-4 rounded-[24px] border border-black/[.07] bg-white p-5 text-left shadow-[0_7px_20px_rgba(0,0,0,.07)]" data-testid="button-become-owner-reference"><div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[hsl(var(--accent)/.55)] text-[hsl(var(--primary))]"><HousePlus size={28} strokeWidth={1.7} /></div><span className="flex-1"><b className="block text-[19px]">Become a host</b><span className="mt-1 block text-[15px] leading-snug text-black/55">It's easy to start hosting and<br className="sm:hidden" /> earn extra income.</span></span><ChevronRight className="text-black/50" /></button>
-      <section className="mt-6 divide-y divide-black/[.08]">
-        {row('Account settings', Settings, () => setLocation('/profile/settings'), 'button-account-settings-reference')}
-        {row('Get help', CircleHelp, () => setLocation('/messages'), 'button-help-reference')}
-        {row('View profile', UserRound, () => setRole('Guest'), 'button-view-profile-reference')}
-        {row('Privacy', ShieldCheck, notify, 'button-privacy-reference')}
-      </section>
-      <div className="my-2 border-t border-black/[.08]" />
-      <section className="divide-y divide-black/[.08]">
-        {row('Refer a host', UsersRound, notify, 'button-refer-host')}
-        {row('Find a co-host', HousePlus, notify, 'button-find-cohost')}
-        {row('Legal', ReceiptText, notify, 'button-legal')}
-        {row('Log out', DoorOpen, notify, 'button-log-out')}
-      </section>
+       <section className="mt-6 divide-y divide-black/[.08]">
+         {row('Account', Settings, () => setLocation('/profile/settings'), 'button-profile-account')}
+         {row('Personal information', UserRound, () => setToast('Personal information is ready to customize.'), 'button-profile-personal-information')}
+         {row('My listings', HousePlus, () => setLocation('/post'), 'button-profile-my-listings')}
+         {row('Bookings', CalendarDays, () => setLocation('/trips'), 'button-profile-bookings')}
+         {row('Settings', Settings, () => setLocation('/profile/settings'), 'button-profile-settings')}
+         {row('Notifications', Bell, notify, 'button-profile-notifications-settings')}
+         {row('Help & support', CircleHelp, () => setLocation('/messages'), 'button-profile-help-support')}
+         {row('Log out', DoorOpen, notify, 'button-profile-log-out')}
+       </section>
+       <div className="my-2 border-t border-black/[.08]" />
+       <section className="divide-y divide-black/[.08]">
+         {row('Refer a host', UsersRound, notify, 'button-refer-host')}
+         {row('Find a co-host', HousePlus, notify, 'button-find-cohost')}
+         {row('Legal', ReceiptText, notify, 'button-legal')}
+       </section>
     </div>
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;

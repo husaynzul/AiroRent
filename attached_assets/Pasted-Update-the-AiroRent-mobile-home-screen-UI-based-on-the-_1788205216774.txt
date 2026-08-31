@@ -1,0 +1,135 @@
+Update the AiroRent mobile home screen UI based on the current design.
+
+IMPORTANT: Keep the existing AiroRent branding, logo, pink/white color scheme, fonts, icons, property cards, and overall visual style. Do NOT redesign the app from scratch. Only modify the layout and navigation as described below.
+
+1. HEADER
+- Keep the AiroRent logo and name at the top-left.
+- Keep the Profile icon and hamburger/menu icon at the top-right.
+- The Profile icon and hamburger icon should remain functional.
+- Move all Settings/account-related options into the bottom Profile section.
+- When a user is logged in, show a compact personalized greeting below/near the header:
+  "Hi, Husnain"
+- Dynamically replace "Husnain" with the logged-in user's actual name.
+- Do NOT show the large "AiroRent / Rent", "for rent in Malta & Gozo", listings count, price range, or descriptive paragraph currently taking up the large top area.
+- Remove that entire large hero/title section.
+
+2. SEARCH
+- Move the search bar much higher so it appears immediately below the compact header/greeting.
+- Keep the existing search functionality.
+- Keep the placeholder:
+  "Search town, property or postcode"
+- Keep the Search button.
+- Make the search bar compact and full-width.
+
+3. RENT / BUY / SHORT LET
+- Move the Rent / Buy / Short Let tabs upward directly below the search bar.
+- Keep them functional.
+- Keep Rent selected by default.
+
+4. PROPERTY CATEGORIES
+- Move the property category row upward so it is visible within the first screen.
+- Keep categories such as:
+  All
+  Apartments
+  Penthouses
+  Maisonettes
+  Townhouses
+  Villas
+- Make the category row horizontally scrollable.
+- Keep the icons and existing AiroRent style.
+
+5. FILTERS
+- Move the filter chips upward directly below the property categories.
+- Keep:
+  Price
+  Beds
+  Baths
+  Garages
+- Make the filters horizontally scrollable.
+- Keep all filter functionality working.
+
+6. MAXIMIZE INITIAL SCREEN CONTENT
+- The main goal is to let the user see actual properties/listings much earlier.
+- Reduce unnecessary vertical spacing.
+- The user should be able to see the beginning of the property listings within the initial viewport without excessive scrolling.
+- Do NOT make the header/hero section large.
+- Keep everything compact, clean, and mobile-friendly.
+
+7. CREATE THREE SEPARATE CONTENT SECTIONS
+Below the filters, create three clearly separated horizontal sections:
+
+SECTION 1:
+"Top Categories"
+Show the most important/popular property categories.
+
+SECTION 2:
+"Trending Now"
+Show properties/listings that are currently trending or getting the most interest.
+
+SECTION 3:
+"Popular Rentals"
+Show rental properties that are currently popular.
+
+Each section should contain horizontally scrollable property/category cards and use the same existing AiroRent card design.
+
+8. BOTTOM NAVIGATION
+Keep the existing bottom navigation:
+Explore
+Wishlists
+Trips
+Messages
+Profile
+
+- Explore remains the home screen.
+- Profile should become the main place for:
+  Account
+  Personal information
+  My listings
+  Bookings
+  Settings
+  Notifications
+  Help/Support
+  Logout
+- Any settings/account options currently accessible through the top profile/menu should also be accessible inside Profile.
+- Do not create a large settings panel on the Explore/Home screen.
+
+9. RESPONSIVE DESIGN
+- Make sure the entire layout works properly on mobile screens.
+- No horizontal overflow except intentional horizontal scrolling rows.
+- Keep the bottom navigation fixed.
+- Make sure content is not hidden behind the bottom navigation.
+- Maintain smooth scrolling.
+
+10. DO NOT CHANGE
+- Do not remove existing functionality.
+- Do not break search.
+- Do not break filters.
+- Do not break Rent/Buy/Short Let.
+- Do not break navigation.
+- Do not change the AiroRent logo.
+- Do not change the overall pink/white branding.
+- Do not add unnecessary large text or hero sections.
+
+FINAL TARGET LAYOUT:
+
+[Header: AiroRent + Profile + Menu]
+        ↓
+[Hi, Husnain]
+        ↓
+[Search Bar]
+        ↓
+[Rent | Buy | Short Let]
+        ↓
+[Property Categories →]
+        ↓
+[Price | Beds | Baths | Garages →]
+        ↓
+[Top Categories →]
+        ↓
+[Trending Now →]
+        ↓
+[Popular Rentals →]
+        ↓
+[Bottom Navigation]
+
+Please implement these changes directly in the existing AiroRent project and preserve all existing functionality.
