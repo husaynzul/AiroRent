@@ -1,15 +1,16 @@
-# [Project name]
+# AiroRent
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+AiroRent is a pink-first property marketplace for discovering, saving, and booking homes, rentals, and short stays.
 
 ## Run & Operate
 
+- `pnpm --filter @workspace/jakurzi run dev` — run the AiroRent Vite frontend (the Replit `AiroRent web` workflow supplies `PORT=18514` and `BASE_PATH=/`)
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- API/database env: `DATABASE_URL` is required only when running database-backed API or Drizzle commands.
 
 ## Stack
 
@@ -22,7 +23,12 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/jakurzi/src/App.tsx` — AiroRent routes, page composition, listings, and interactions
+- `artifacts/jakurzi/src/index.css` — global Inter typography, pink palette, responsive tokens, shadows, and motion
+- `attached_assets/` — supplied AiroRent logo, reference images, and property imagery
+- `artifacts/api-server/src/` — Express API entry point and `/api/healthz` route
+- `lib/db/src/schema/` — Drizzle database schema source of truth
+- `lib/api-spec/openapi.yaml` — OpenAPI contract source of truth
 
 ## Architecture decisions
 
@@ -30,7 +36,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+AiroRent supports browsing Malta and Gozo property listings by rent, buy, and short-let modes; location search; category filters; map browsing; wishlists; listing details; trips; messages; profile/settings; and a multi-step listing-posting flow.
 
 ## User preferences
 
@@ -38,7 +44,8 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- The frontend Vite config requires both `PORT` and `BASE_PATH`; use the configured `AiroRent web` workflow or provide both variables manually.
+- Keep the provided AiroRent logo asset unchanged when updating the UI.
 
 ## Pointers
 

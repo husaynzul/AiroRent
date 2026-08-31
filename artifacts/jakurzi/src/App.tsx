@@ -77,10 +77,7 @@ function saveRecent(id: string) {
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-2.5" data-testid="link-logo">
-      <span className={`relative grid size-9 place-items-center overflow-hidden rounded-xl ${light ? 'bg-white' : 'bg-[hsl(var(--primary))]'}`}>
-        <Home size={21} className={light ? 'text-[hsl(var(--primary))]' : 'text-white'} />
-        <img src={logoSrc} alt="AiroRent brand mark" className="absolute inset-0 size-full object-cover" />
-      </span>
+      <img src={logoSrc} alt="AiroRent brand mark" className={`size-9 rounded-xl object-cover ${light ? 'bg-white' : ''}`} />
       <span className={`text-[1.28rem] font-bold tracking-[-.055em] ${light ? 'text-white' : 'text-[hsl(var(--foreground))]'}`}>AiroRent</span>
     </Link>
   );
@@ -100,7 +97,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
           <Link href="/map" className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-[hsl(var(--muted))]" data-testid="link-map-header">Map</Link>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/post" className="rounded-full bg-[hsl(var(--foreground))] px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 md:text-sm" data-testid="link-post-header"><span className="md:hidden">Post free</span><span className="hidden md:inline">List a property</span></Link>
+           <Link href="/post" className="rounded-full bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-white shadow-[0_7px_16px_hsl(var(--primary)/.2)] transition hover:-translate-y-0.5 md:text-sm" data-testid="link-post-header"><span className="md:hidden">Post free</span><span className="hidden md:inline">List a property</span></Link>
           <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-black/10 bg-white transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
             <Menu size={19} />
           </button>
@@ -147,7 +144,7 @@ function MenuSheet({ onClose }: { onClose: () => void }) {
       <div className="mb-3 flex items-center justify-between"><Logo /><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[#f3f3f3]" data-testid="button-close-menu"><X size={18} /></button></div>
       <div className="divide-y divide-black/[.08]">{links.map(([label, href]) => <Link key={href + label} href={href} onClick={onClose} className="flex items-center justify-between py-3.5 text-[1.03rem] font-medium" data-testid={`link-menu-${label.toLowerCase().replace(' ', '-')}`}>{label}<ChevronRight size={17} className="text-black/50" /></Link>)}</div>
       <div className="mt-3 border-t border-black/[.08] pt-3">
-        <button onClick={() => { onClose(); setLocation('/post'); }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-3.5 font-bold text-white" data-testid="button-menu-post"><HousePlus size={18} />Post a listing</button>
+         <button onClick={() => { onClose(); setLocation('/post'); }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-menu-post"><HousePlus size={18} />Post a listing</button>
         <Link href="/profile" onClick={onClose} className="mt-1 flex items-center gap-3 rounded-xl py-3 text-[1.03rem] font-medium" data-testid="link-menu-profile"><UserRound size={18} />Sign in</Link>
       </div>
     </div>
@@ -160,7 +157,7 @@ function SearchBar({ mode, setMode, query, setQuery }: { mode: Mode; setMode: (m
   const [location, setLocation] = useLocation();
   return <div className="mx-auto max-w-[1040px]">
     <div className="mb-4 flex w-fit items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-1 shadow-soft">
-      {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`rounded-full px-4 py-2 text-sm font-bold transition ${mode === item ? 'bg-[hsl(var(--foreground))] text-[hsl(var(--background))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`} data-testid={`button-mode-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
+      {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`rounded-full px-4 py-2 text-sm font-bold transition ${mode === item ? 'bg-[hsl(var(--primary))] text-white shadow-sm' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`} data-testid={`button-mode-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
     </div>
     <div className="grid overflow-visible rounded-[24px] border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-lift md:grid-cols-[1.45fr_1fr_1fr_auto]">
       <label className="flex items-center gap-3 border-b border-[hsl(var(--border))] px-5 py-4 md:border-b-0 md:border-r">
@@ -173,7 +170,7 @@ function SearchBar({ mode, setMode, query, setQuery }: { mode: Mode; setMode: (m
         <UsersRound size={20} className="text-[hsl(var(--primary))]" /><span><span className="block text-[10px] font-bold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))]">Guests</span><span className="text-sm font-semibold">{guests} guests</span></span>
         <div className="ml-auto flex items-center gap-1"><button onClick={() => setGuests(Math.max(1, guests - 1))} className="grid size-7 place-items-center rounded-full border border-[hsl(var(--border))]" data-testid="button-guests-minus"><Minus size={13} /></button><button onClick={() => setGuests(guests + 1)} className="grid size-7 place-items-center rounded-full border border-[hsl(var(--border))]" data-testid="button-guests-plus"><Plus size={13} /></button></div>
       </div>
-      <button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="m-2 flex items-center justify-center gap-2 rounded-[18px] bg-[hsl(var(--primary))] px-5 py-3 font-bold text-white transition hover:-translate-y-0.5" data-testid="button-search"><Search size={18} />Search</button>
+       <button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="m-2 flex items-center justify-center gap-2 rounded-[18px] bg-[hsl(var(--primary))] px-5 py-3 font-bold text-white shadow-[0_8px_18px_hsl(var(--primary)/.22)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_hsl(var(--primary)/.3)]" data-testid="button-search"><Search size={18} />Search</button>
     </div>
     {dateOpen && <div className="relative z-10 mt-2 max-w-sm rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-lift animate-rise"><div className="flex items-center justify-between"><span className="font-display text-xl">Choose your dates</span><button onClick={() => setDateOpen(false)} data-testid="button-close-dates"><X size={17} /></button></div><div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs"><span className="text-[hsl(var(--muted-foreground))]">M</span><span className="text-[hsl(var(--muted-foreground))]">T</span><span className="text-[hsl(var(--muted-foreground))]">W</span><span className="text-[hsl(var(--muted-foreground))]">T</span><span className="text-[hsl(var(--muted-foreground))]">F</span><span className="text-[hsl(var(--muted-foreground))]">S</span><span className="text-[hsl(var(--muted-foreground))]">S</span>{Array.from({ length: 28 }, (_, i) => <button key={i} onClick={() => setDateOpen(false)} className={`grid aspect-square place-items-center rounded-full text-sm hover:bg-[hsl(var(--primary)/.12)] ${i === 14 ? 'bg-[hsl(var(--primary))] font-bold text-white' : ''}`} data-testid={`button-date-${i + 1}`}>{i + 1}</button>)}</div></div>}
   </div>;
@@ -211,7 +208,7 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
       <label className="flex h-[58px] items-center gap-3 rounded-full border border-black/10 bg-white px-5 shadow-[0_6px_18px_rgba(0,0,0,.12)]">
         <Search size={19} strokeWidth={2.4} />
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Start your search" className="min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:text-black placeholder:opacity-90" data-testid="input-mobile-search" />
-        <button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="grid size-8 place-items-center rounded-full bg-[hsl(var(--foreground))] text-white" aria-label="Run search" data-testid="button-mobile-search"><ArrowRight size={16} /></button>
+         <button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="grid size-8 place-items-center rounded-full bg-[hsl(var(--primary))] text-white" aria-label="Run search" data-testid="button-mobile-search"><ArrowRight size={16} /></button>
       </label>
       <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
         {['All', 'Homes', 'Experiences', 'Rooms'].map((item) => <button key={item} onClick={() => { setBrowseTab(item); if (item === 'Experiences') setMode('Short Let'); else if (item === 'Homes') setMode('Rent'); }} className={`shrink-0 rounded-full border px-5 py-2.5 text-sm font-medium ${browseTab === item ? 'border-black/15 bg-[#f2f2f2] shadow-inner' : 'border-black/10 bg-white'}`} data-testid={`button-mobile-tab-${item.toLowerCase()}`}>{item}</button>)}
@@ -312,12 +309,12 @@ function HomePage() {
   return <main>
     <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} />
     <div className="hidden md:block">
-    <section className="relative overflow-hidden border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.52)]">
-      <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--accent)/.55)] blur-3xl" />
+     <section className="airo-hero relative overflow-hidden border-b border-[hsl(var(--border))]">
+       <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--primary)/.18)] blur-3xl" />
       <div className="mx-auto max-w-[1260px] px-5 pb-10 pt-12 lg:px-8 lg:pb-14 lg:pt-20">
         <div className="relative mx-auto max-w-[1040px] animate-rise">
-          <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-[hsl(var(--primary))]"><Sparkles size={14} />Property, without the runaround</p>
-          <h1 className="max-w-2xl font-display text-[clamp(2.65rem,6vw,5.6rem)] leading-[.98] tracking-[-.055em]">Find your place<br /><span className="text-[hsl(var(--primary))]">in Malta.</span></h1>
+           <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.18em] text-[hsl(var(--primary))]"><Sparkles size={14} />Property, without the runaround</p>
+           <h1 className="max-w-2xl font-display text-[clamp(2.65rem,6vw,5.6rem)] leading-[.98] tracking-[-.065em]">Find your place<br /><span className="text-[hsl(var(--primary))]">in Malta.</span></h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-[hsl(var(--muted-foreground))]">Real homes, real people, and a safer way to move into what comes next.</p>
           <div className="mt-8"><SearchBar mode={mode} setMode={setMode} query={query} setQuery={setQuery} /></div>
         </div>
@@ -326,7 +323,7 @@ function HomePage() {
     <div className="mx-auto max-w-[1260px] px-5 lg:px-8">
       <section className="py-8 md:py-11">
         <div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Browse your way</p><h2 className="mt-1 font-display text-3xl tracking-[-.04em]">What are you looking for?</h2></div><button onClick={() => setFilterOpen(true)} className="flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 text-sm font-bold" data-testid="button-open-filters"><SlidersHorizontal size={16} />Filters</button></div>
-        <div className="flex gap-3 overflow-x-auto pb-2">{[{ label: 'All', icon: Layers3 }, ...categories].map(({ label, icon: Icon }) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-fit items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition ${category === label ? 'border-[hsl(var(--foreground))] bg-[hsl(var(--foreground))] text-[hsl(var(--background))]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--foreground)/.45)]'}`} data-testid={`button-category-${label.toLowerCase()}`}><Icon size={16} />{label}</button>)}</div>
+         <div className="flex gap-3 overflow-x-auto pb-2">{[{ label: 'All', icon: Layers3 }, ...categories].map(({ label, icon: Icon }) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-fit items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition ${category === label ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-white shadow-sm' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.5)] hover:text-[hsl(var(--primary))]'}`} data-testid={`button-category-${label.toLowerCase()}`}><Icon size={16} />{label}</button>)}</div>
       </section>
       {recent.length > 0 && <section className="pb-10"><div className="mb-4 flex items-center justify-between"><h2 className="font-display text-2xl">Pick up where you left off</h2><Link href="/wishlist" className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="link-see-wishlist">See saved</Link></div><div className="flex gap-4 overflow-x-auto pb-2">{recent.slice(0, 4).map((item) => <ListingCard key={item.id} listing={item} saved={saved.includes(item.id)} onSave={toggleSave} compact />)}</div></section>}
       <section className="pb-14"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">{mode === 'Short Let' ? 'Make a weekend of it' : 'Places that feel right'}</p><h2 className="mt-1 font-display text-3xl tracking-[-.04em]">{query ? `Homes near “${query}”` : `${mode} homes in Malta`}</h2></div><Link href="/map" className="hidden items-center gap-1 text-sm font-bold text-[hsl(var(--primary))] sm:flex" data-testid="link-browse-map">Browse map <ArrowRight size={16} /></Link></div>

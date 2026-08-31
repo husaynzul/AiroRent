@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -36,57 +36,57 @@
 }
 
 :root {
-  --background: 39 46% 96%;
-  --foreground: 171 20% 16%;
-  --border: 35 22% 87%;
-  --input: 35 22% 82%;
-  --ring: 333 82% 52%;
-  --card: 40 50% 99%;
-  --card-foreground: 171 20% 16%;
-  --card-border: 35 22% 89%;
-  --popover: 40 50% 99%;
-  --popover-foreground: 171 20% 16%;
-  --popover-border: 35 22% 86%;
-  --primary: 333 82% 52%;
-  --primary-foreground: 40 50% 99%;
-  --secondary: 169 25% 90%;
-  --secondary-foreground: 171 26% 20%;
-  --muted: 37 29% 92%;
-  --muted-foreground: 170 10% 42%;
-  --accent: 333 88% 91%;
-  --accent-foreground: 171 20% 16%;
+  --background: 346 48% 98%;
+  --foreground: 338 22% 14%;
+  --border: 345 25% 89%;
+  --input: 345 25% 84%;
+  --ring: 336 88% 56%;
+  --card: 0 0% 100%;
+  --card-foreground: 338 22% 14%;
+  --card-border: 345 25% 90%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 338 22% 14%;
+  --popover-border: 345 25% 88%;
+  --primary: 336 88% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 345 100% 96%;
+  --secondary-foreground: 338 22% 18%;
+  --muted: 345 24% 95%;
+  --muted-foreground: 338 10% 47%;
+  --accent: 337 100% 91%;
+  --accent-foreground: 338 22% 14%;
   --destructive: 2 72% 48%;
-  --destructive-foreground: 40 50% 99%;
-  --sidebar: 171 22% 19%;
-  --sidebar-foreground: 40 50% 99%;
-  --app-font-sans: 'DM Sans', sans-serif;
-  --app-font-serif: 'Fraunces', Georgia, serif;
-  --app-font-mono: 'DM Sans', sans-serif;
-  --radius: 1.15rem;
-  --shadow-soft: 0 12px 30px rgba(38, 46, 40, .08);
-  --shadow-lift: 0 18px 42px rgba(38, 46, 40, .13);
+  --destructive-foreground: 0 0% 100%;
+  --sidebar: 338 22% 14%;
+  --sidebar-foreground: 0 0% 100%;
+  --app-font-sans: 'Inter', sans-serif;
+  --app-font-serif: 'Inter', sans-serif;
+  --app-font-mono: 'Inter', sans-serif;
+  --radius: 1.35rem;
+  --shadow-soft: 0 12px 32px rgba(116, 27, 69, .08);
+  --shadow-lift: 0 20px 48px rgba(116, 27, 69, .14);
 }
 
 .dark {
-  --background: 171 21% 11%;
-  --foreground: 40 36% 94%;
-  --border: 171 14% 25%;
-  --input: 171 14% 29%;
-  --ring: 333 82% 58%;
-  --card: 171 19% 15%;
-  --card-foreground: 40 36% 94%;
-  --card-border: 171 14% 25%;
-  --popover: 171 19% 15%;
-  --popover-foreground: 40 36% 94%;
-  --popover-border: 171 14% 25%;
-  --primary: 333 82% 58%;
-  --primary-foreground: 171 21% 11%;
-  --secondary: 171 19% 23%;
-  --secondary-foreground: 40 36% 94%;
-  --muted: 171 16% 20%;
-  --muted-foreground: 40 12% 69%;
-  --accent: 333 82% 28%;
-  --accent-foreground: 171 21% 11%;
+  --background: 338 20% 11%;
+  --foreground: 345 45% 96%;
+  --border: 338 14% 25%;
+  --input: 338 14% 29%;
+  --ring: 336 88% 62%;
+  --card: 338 19% 15%;
+  --card-foreground: 345 45% 96%;
+  --card-border: 338 14% 25%;
+  --popover: 338 19% 15%;
+  --popover-foreground: 345 45% 96%;
+  --popover-border: 338 14% 25%;
+  --primary: 336 88% 62%;
+  --primary-foreground: 338 20% 11%;
+  --secondary: 338 19% 23%;
+  --secondary-foreground: 345 45% 96%;
+  --muted: 338 16% 20%;
+  --muted-foreground: 345 12% 72%;
+  --accent: 336 78% 30%;
+  --accent-foreground: 345 45% 96%;
   --destructive: 2 72% 55%;
   --destructive-foreground: 40 36% 94%;
 }
@@ -97,12 +97,16 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     min-width: 320px;
+    letter-spacing: -0.012em;
   }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button, a { transition: transform .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, opacity .2s ease; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid hsl(var(--primary) / .28); outline-offset: 3px; }
+  ::selection { background: hsl(var(--primary) / .2); color: hsl(var(--foreground)); }
 }
 
 @layer utilities {
-  .font-display { font-family: var(--app-font-serif); }
+  .font-display { font-family: var(--app-font-sans); font-weight: 800; }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-lift { box-shadow: var(--shadow-lift); }
   .texture {
@@ -120,6 +124,7 @@
   }
   .animate-rise { animation: rise .55s cubic-bezier(.22, .75, .2, 1) both; }
   .animate-fade { animation: fade .4s ease both; }
+  .texture { background: hsl(var(--background)); }
 }
 
 @keyframes rise {
@@ -129,4 +134,38 @@
 @keyframes fade {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* AiroRent's visual signature: an airy shell with one unmistakable pink moment. */
+.airo-hero {
+  background:
+    radial-gradient(circle at 88% 18%, hsl(var(--primary) / .18), transparent 28%),
+    linear-gradient(135deg, hsl(var(--secondary) / .72), hsl(var(--card)) 64%);
+}
+
+.airo-hero .shadow-lift {
+  box-shadow: 0 22px 50px hsl(var(--primary) / .13);
+}
+
+/* Keep legacy reference-screen utility colors on-brand without changing interactions. */
+[class~="bg-black"] { background-color: hsl(var(--foreground)); }
+[class~="text-black"] { color: hsl(var(--foreground)); }
+[class~="text-black/45"] { color: hsl(var(--muted-foreground) / .72); }
+[class~="text-black/50"] { color: hsl(var(--muted-foreground) / .82); }
+[class~="text-black/55"] { color: hsl(var(--muted-foreground)); }
+[class~="text-black/60"] { color: hsl(var(--muted-foreground) / .9); }
+[class~="text-black/70"] { color: hsl(var(--foreground) / .8); }
+[class~="border-black/10"],
+[class~="border-black/[.07]"],
+[class~="border-black/[.08]"],
+[class~="border-black/15"] { border-color: hsl(var(--border)); }
+[class~="bg-[#f2f2f2]"],
+[class~="bg-[#f3f3f3]"],
+[class~="bg-[#f5f5f5]"],
+[class~="bg-[#f6f6f6]"],
+[class~="bg-[#fafafa]"] { background-color: hsl(var(--muted)); }
+
+@media (max-width: 767px) {
+  body { background: hsl(var(--card)); }
+  .font-display { letter-spacing: -.055em; }
 }
