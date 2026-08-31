@@ -36,26 +36,27 @@
 }
 
 :root {
-  --background: 346 48% 98%;
-  --foreground: 338 22% 14%;
-  --border: 345 25% 89%;
-  --input: 345 25% 84%;
-  --ring: 336 88% 56%;
+  --background: 210 16% 97%;
+  --foreground: 220 15% 16%;
+  --border: 210 13% 87%;
+  --input: 210 13% 82%;
+  --ring: 220 12% 42%;
   --card: 0 0% 100%;
-  --card-foreground: 338 22% 14%;
-  --card-border: 345 25% 90%;
+  --card-foreground: 220 15% 16%;
+  --card-border: 210 13% 89%;
   --popover: 0 0% 100%;
-  --popover-foreground: 338 22% 14%;
-  --popover-border: 345 25% 88%;
-  --primary: 336 88% 56%;
+  --popover-foreground: 220 15% 16%;
+  --popover-border: 210 13% 86%;
+  --primary: 220 13% 22%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 345 100% 96%;
-  --secondary-foreground: 338 22% 18%;
-  --muted: 345 24% 95%;
-  --muted-foreground: 338 10% 47%;
-  --accent: 337 100% 91%;
-  --accent-foreground: 338 22% 14%;
-  --destructive: 2 72% 48%;
+  --brand-accent: 336 58% 52%;
+  --secondary: 210 14% 93%;
+  --secondary-foreground: 220 15% 22%;
+  --muted: 210 14% 94%;
+  --muted-foreground: 220 8% 45%;
+  --accent: 210 16% 90%;
+  --accent-foreground: 220 15% 16%;
+  --destructive: 2 65% 48%;
   --destructive-foreground: 0 0% 100%;
   --sidebar: 338 22% 14%;
   --sidebar-foreground: 0 0% 100%;
@@ -63,30 +64,31 @@
   --app-font-serif: 'Inter', sans-serif;
   --app-font-mono: 'Inter', sans-serif;
   --radius: 1.35rem;
-  --shadow-soft: 0 12px 32px rgba(116, 27, 69, .08);
-  --shadow-lift: 0 20px 48px rgba(116, 27, 69, .14);
+  --shadow-soft: 0 8px 24px rgba(22, 28, 35, .07);
+  --shadow-lift: 0 16px 36px rgba(22, 28, 35, .1);
 }
 
 .dark {
-  --background: 338 20% 11%;
-  --foreground: 345 45% 96%;
-  --border: 338 14% 25%;
-  --input: 338 14% 29%;
-  --ring: 336 88% 62%;
-  --card: 338 19% 15%;
-  --card-foreground: 345 45% 96%;
-  --card-border: 338 14% 25%;
-  --popover: 338 19% 15%;
-  --popover-foreground: 345 45% 96%;
-  --popover-border: 338 14% 25%;
-  --primary: 336 88% 62%;
-  --primary-foreground: 338 20% 11%;
-  --secondary: 338 19% 23%;
-  --secondary-foreground: 345 45% 96%;
-  --muted: 338 16% 20%;
-  --muted-foreground: 345 12% 72%;
-  --accent: 336 78% 30%;
-  --accent-foreground: 345 45% 96%;
+  --background: 220 15% 10%;
+  --foreground: 210 20% 96%;
+  --border: 220 10% 25%;
+  --input: 220 10% 29%;
+  --ring: 210 15% 70%;
+  --card: 220 14% 15%;
+  --card-foreground: 210 20% 96%;
+  --card-border: 220 10% 25%;
+  --popover: 220 14% 15%;
+  --popover-foreground: 210 20% 96%;
+  --popover-border: 220 10% 25%;
+  --primary: 210 15% 88%;
+  --primary-foreground: 220 15% 10%;
+  --brand-accent: 336 58% 62%;
+  --secondary: 220 12% 23%;
+  --secondary-foreground: 210 20% 94%;
+  --muted: 220 12% 20%;
+  --muted-foreground: 210 10% 72%;
+  --accent: 220 14% 30%;
+  --accent-foreground: 210 20% 96%;
   --destructive: 2 72% 55%;
   --destructive-foreground: 40 36% 94%;
 }
@@ -98,7 +100,10 @@
     @apply font-sans antialiased bg-background text-foreground;
     min-width: 320px;
     letter-spacing: -0.012em;
+    font-weight: 450;
   }
+  h1, h2, h3, h4, h5, h6 { font-weight: 700; }
+  button, a, label { font-weight: 500; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   button, a { transition: transform .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, opacity .2s ease; }
   button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid hsl(var(--primary) / .28); outline-offset: 3px; }
@@ -124,7 +129,7 @@
   }
   .animate-rise { animation: rise .55s cubic-bezier(.22, .75, .2, 1) both; }
   .animate-fade { animation: fade .4s ease both; }
-  .texture { background: hsl(var(--background)); }
+   .texture { background: hsl(var(--background)); }
 }
 
 @keyframes rise {
@@ -136,15 +141,13 @@
   to { opacity: 1; }
 }
 
-/* AiroRent's visual signature: an airy shell with one unmistakable pink moment. */
+/* AiroRent's visual signature: a quiet neutral canvas with a restrained active accent. */
 .airo-hero {
-  background:
-    radial-gradient(circle at 88% 18%, hsl(var(--primary) / .18), transparent 28%),
-    linear-gradient(135deg, hsl(var(--secondary) / .72), hsl(var(--card)) 64%);
+  background: hsl(var(--secondary));
 }
 
 .airo-hero .shadow-lift {
-  box-shadow: 0 22px 50px hsl(var(--primary) / .13);
+  box-shadow: 0 16px 36px rgba(22, 28, 35, .1);
 }
 
 /* Keep legacy reference-screen utility colors on-brand without changing interactions. */
@@ -168,4 +171,5 @@
 @media (max-width: 767px) {
   body { background: hsl(var(--card)); }
   .font-display { letter-spacing: -.055em; }
+  svg { stroke-width: 2.05; }
 }

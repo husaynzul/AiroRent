@@ -1,0 +1,154 @@
+Professional Prompt for Replit
+
+Update the entire app UI based on the following design requirements. Keep the existing brand/logo and overall structure, but make the interface feel more premium, clean, modern, and completely unique. Do NOT copy Airbnb’s design.
+
+1. Overall Color Theme
+
+Remove the current green theme completely from the UI.
+
+The primary UI color should be very light neutral gray / soft gray.
+
+Use a clean, almost-white light-gray background throughout the application.
+
+Interactive elements, selected states, cards, search sections, and filters should use subtle light-gray shades.
+
+Avoid strong colors throughout the main UI.
+
+Pink should be extremely minimal.
+
+Pink should only be used subtly for the bottom navigation selected/active state and very small accent details where necessary.
+
+Do NOT use pink glowing effects, neon effects, gradients, shadows, or pink halos.
+
+There should be zero pink glow anywhere in the application.
+
+The pink accent must look flat, clean, elegant, and professional—not bright or flashy.
+
+
+2. Search Experience
+
+Redesign the search destination screen I provided so it feels like a premium, unique travel/rental search experience, not an Airbnb clone.
+
+When the user taps the search bar:
+
+Open a dedicated, polished search interface.
+
+Use the same very light gray/neutral theme instead of green.
+
+Make the search field clean, spacious, and easy to understand.
+
+Use clear sections such as:
+
+Recent Searches
+
+Popular Destinations
+
+Nearby
+
+Recommended Destinations
+
+Search by City/Area
+
+
+Make the interaction feel smooth and intuitive.
+
+The screen should feel visually rich without becoming cluttered.
+
+Do not replicate Airbnb’s exact layout, wording, icons, colors, or component arrangement.
+
+
+3. Icons
+
+Increase icon visibility and clarity.
+
+Icons should be clean, bold, sharp, and high-resolution.
+
+Use slightly thicker/bolder icon strokes so they remain clearly visible on mobile screens.
+
+Do not make them excessively thick.
+
+Keep the icon proportions appropriate for a professional mobile application.
+
+Icons should feel similar in clarity and visual weight to premium travel apps, but do not copy Airbnb’s icons.
+
+Avoid tiny or thin icons that are difficult to see.
+
+
+4. Typography
+
+Make the overall typography slightly bolder and more readable.
+
+Headings should use strong/bold typography.
+
+Important labels and section titles should be clearly bold.
+
+Body text should remain clean and readable, but slightly heavier than the current version.
+
+Improve hierarchy between:
+
+Main headings
+
+Section headings
+
+Destination names
+
+Supporting text
+
+Buttons
+
+
+Make sure text remains perfectly readable on mobile screens.
+
+
+5. Landing/Home Page Images
+
+Reduce the size of the large destination/property images currently shown on the landing page.
+
+Do not show only one huge image/card dominating the screen.
+
+Display approximately 3–4 property/destination cards visible within the initial screen/scroll area, depending on the mobile screen size.
+
+Use a compact, premium card layout that allows users to quickly browse multiple properties.
+
+Images should still be high-quality and attractive, but should not consume the entire screen.
+
+The goal is to let users see more options at once and scroll naturally through multiple listings.
+
+Keep spacing clean and avoid making the page feel crowded.
+
+
+6. Overall Mobile UI Quality
+
+Optimize everything specifically for a modern mobile screen.
+
+Use consistent spacing, padding, border radius, shadows, and alignment.
+
+Keep the interface minimal and premium.
+
+Make all buttons, cards, icons, and text visually balanced.
+
+Ensure the UI looks sharp, HD, polished, and production-ready.
+
+Avoid unnecessary visual effects.
+
+No excessive gradients.
+
+No neon colors.
+
+No glowing effects.
+
+No overly colorful UI.
+
+
+Important Design Direction
+
+The final result should feel like a premium modern rental/travel platform with its own identity.
+
+Color direction:
+Soft White + Very Light Gray + Neutral Gray + Black/Dark Gray Text + Minimal Flat Pink Accent
+
+Pink = only a tiny accent.
+Green = remove completely.
+Pink glow = absolutely zero.
+
+Most importantly, do not make this look like Airbnb. Use the screenshots only as a reference for the type of user flow and functionality—not for copying the visual design. Create a distinct, original interface for my app.
