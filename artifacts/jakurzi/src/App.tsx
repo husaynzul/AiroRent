@@ -33,27 +33,6 @@ type Listing = {
   tag?: string;
   verified?: boolean;
 };
-type SearchFilters = {
-  minPrice: string;
-  maxPrice: string;
-  beds: string;
-  baths: string;
-  garages: string;
-  propertyType: string;
-  location: string;
-  verifiedOnly: boolean;
-};
-
-const defaultSearchFilters: SearchFilters = {
-  minPrice: 'Any',
-  maxPrice: 'Any',
-  beds: 'Any',
-  baths: 'Any',
-  garages: 'Any',
-  propertyType: 'Any',
-  location: '',
-  verifiedOnly: false,
-};
 
 const images = {
   deck: seaviewTerraceImage,
@@ -107,6 +86,14 @@ function Logo({ light = false }: { light?: boolean }) {
   );
 }
 
+function ProfileButton() {
+  return (
+    <Link href="/profile" className="grid size-10 place-items-center rounded-full border border-[hsl(var(--primary)/.22)] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] shadow-[0_5px_14px_hsl(var(--primary)/.12)] transition hover:-translate-y-0.5 hover:bg-[hsl(var(--accent))]" aria-label="Open profile" data-testid="button-header-profile">
+      <UserRound size={18} strokeWidth={2.1} />
+    </Link>
+  );
+}
+
 function Header({ onMenu }: { onMenu: () => void }) {
   const [location, setLocation] = useLocation();
   return (
@@ -121,6 +108,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
         </div>
         <div className="flex items-center gap-2">
            <Link href="/post" className="hidden rounded-full bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-white shadow-[0_7px_16px_hsl(var(--primary)/.2)] transition hover:-translate-y-0.5 md:inline-flex md:text-sm" data-testid="link-post-header">List a property</Link>
+          <ProfileButton />
           <button onClick={onMenu} className="grid size-10 place-items-center rounded-full border border-black/10 bg-white transition hover:bg-[hsl(var(--muted))]" aria-label="Open menu" data-testid="button-menu">
             <Menu size={19} />
           </button>
@@ -262,7 +250,7 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
   </div>;
 }
 
-function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters, activeFilterCount }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void; activeFilterCount: number }) {
+function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCategory, matches, saved, onSave, onOpenFilters }: { mode: Mode; setMode: (mode: Mode) => void; query: string; setQuery: (query: string) => void; category: string; setCategory: (category: string) => void; matches: Listing[]; saved: string[]; onSave: (id: string) => void; onOpenFilters: () => void }) {
   const [, setLocation] = useLocation();
   const propertyTabs = [
     ['All', Layers3],
@@ -291,10 +279,13 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
   );
   return <div className="bg-white md:hidden">
     <section className="px-5 pb-4 pt-4">
-       <div className="mb-3">
-         <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Good morning</p>
-         <h1 className="mt-1 text-[24px] font-semibold tracking-[-.05em]">Hi, {userName}</h1>
-       </div>
+      <div className="mb-3 flex items-center justify-between">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Good morning</p>
+          <h1 className="mt-1 text-[24px] font-semibold tracking-[-.05em]">Hi, {userName}</h1>
+        </div>
+        <button onClick={() => setLocation('/profile')} className="text-xs font-semibold text-[hsl(var(--primary))]" data-testid="link-mobile-profile-greeting">View profile</button>
+      </div>
       <label className="flex h-12 w-full items-center gap-3 rounded-full border border-black/10 bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)]">
         <Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search town, property or postcode" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" /><button onClick={() => setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`)} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
       </label>
@@ -302,10 +293,13 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
         {(['Rent', 'Buy', 'Short Let'] as Mode[]).map((item) => <button key={item} onClick={() => setMode(item)} className={`shrink-0 pb-2 text-sm font-semibold ${mode === item ? 'border-b-2 border-black text-black' : 'text-black/50'}`} data-testid={`button-mobile-transaction-${item.toLowerCase().replace(' ', '-')}`}>{item}</button>)}
       </div>
     </section>
-     <div className="flex items-center justify-between border-b border-black/[.08] px-5 py-3">
-       <button onClick={onOpenFilters} className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-bold shadow-sm" data-testid="button-mobile-filters"><SlidersHorizontal size={15} />Filters</button>
-       {activeFilterCount > 0 && <span className="text-[11px] font-semibold text-[hsl(var(--primary))]">{activeFilterCount} applied</span>}
-     </div>
+    <nav className="flex gap-5 overflow-x-auto border-b border-black/[.08] px-5 pb-3" aria-label="Property types">
+      {propertyTabs.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex min-w-[58px] shrink-0 flex-col items-center gap-1.5 text-[10px] ${category === label ? 'border-b-2 border-black pb-2 font-semibold text-black' : 'text-black/55'}`} data-testid={`button-mobile-property-${label.toLowerCase()}`}><Icon size={21} strokeWidth={1.5} />{label}</button>)}
+    </nav>
+    <div className="flex gap-2 overflow-x-auto border-b border-black/[.08] px-5 py-3">
+      {['Price', 'Beds', 'Baths', 'Garages'].map((label) => <button key={label} onClick={onOpenFilters} className="flex shrink-0 items-center gap-1.5 rounded-full border border-black/10 px-3.5 py-2 text-xs font-medium" data-testid={`button-mobile-filter-${label.toLowerCase()}`}>{label}<ChevronDown size={14} /></button>)}
+      <button onClick={onOpenFilters} className="grid size-8 shrink-0 place-items-center rounded-full border border-black/10" aria-label="More filters" data-testid="button-mobile-more-filters"><Plus size={15} /></button>
+    </div>
     <div className="space-y-7 px-5 pb-28 pt-5">
       <section aria-labelledby="mobile-top-categories">
         <div className="mb-3 flex items-center justify-between"><h2 id="mobile-top-categories" className="text-[20px] font-semibold tracking-[-.04em]">Top Categories</h2><span className="text-xs text-black/45">Browse all</span></div>
@@ -332,19 +326,6 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
   </div>;
 }
 
-function numericAmount(value: string): number {
-  return Number(value.replace(/[^\d]/g, '')) || 0;
-}
-
-function detailCount(detail: string, unit: 'beds' | 'baths' | 'garages'): number {
-  const match = detail.match(new RegExp(`(\\d+)\\s+${unit.slice(0, -1)}s?`, 'i'));
-  return match ? Number(match[1]) : 0;
-}
-
-function countActiveFilters(filters: SearchFilters): number {
-  return Object.entries(filters).filter(([key, value]) => key === 'verifiedOnly' ? value === true : value !== 'Any' && value !== '').length;
-}
-
 function HomePage() {
   const [mode, setMode] = useState<Mode>('Rent');
   const [query, setQuery] = useState('');
@@ -352,7 +333,6 @@ function HomePage() {
   const [toast, setToast] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [category, setCategory] = useState('All');
-  const [filters, setFilters] = useState<SearchFilters>(defaultSearchFilters);
   const [location] = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(location.split('?')[1] || '');
@@ -364,26 +344,15 @@ function HomePage() {
   const matches = useMemo(() => {
     const categoryMap: Record<string, string | undefined> = { Penthouses: 'Apartment', Maisonettes: 'Apartment', Townhouses: 'House' };
     const selectedType = categoryMap[category] || category.slice(0, -1);
-    return listings
-      .filter((item) => item.mode === mode)
-      .filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase()))
-      .filter((item) => category === 'All' || item.type === selectedType)
-      .filter((item) => filters.minPrice === 'Any' || numericAmount(item.price) >= numericAmount(filters.minPrice))
-      .filter((item) => filters.maxPrice === 'Any' || numericAmount(item.price) <= numericAmount(filters.maxPrice))
-      .filter((item) => filters.beds === 'Any' || (filters.beds === '4+' ? detailCount(item.detail, 'beds') >= 4 : detailCount(item.detail, 'beds') === Number(filters.beds)))
-      .filter((item) => filters.baths === 'Any' || (filters.baths === '3+' ? detailCount(item.detail, 'baths') >= 3 : detailCount(item.detail, 'baths') === Number(filters.baths)))
-      .filter((item) => filters.garages === 'Any' || (filters.garages === '2+' ? detailCount(item.detail, 'garages') >= 2 : detailCount(item.detail, 'garages') === Number(filters.garages)))
-      .filter((item) => filters.propertyType === 'Any' || item.type === filters.propertyType)
-      .filter((item) => !filters.location || item.location.toLowerCase().includes(filters.location.toLowerCase()))
-      .filter((item) => !filters.verifiedOnly || item.verified);
-  }, [mode, query, category, filters]);
+    return listings.filter((item) => item.mode === mode).filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase())).filter((item) => category === 'All' || item.type === selectedType);
+  }, [mode, query, category]);
   const toggleSave = (id: string) => {
     const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
     setSaved(next); localStorage.setItem('jakurzi:wishlist', JSON.stringify(next)); setToast(saved.includes(id) ? 'Removed from your wishlist' : 'Saved to your wishlist');
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
   return <main>
-    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} activeFilterCount={countActiveFilters(filters)} />
+    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} />
     <div className="hidden md:block">
      <section className="airo-hero relative overflow-hidden border-b border-[hsl(var(--border))]">
        <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--primary)/.18)] blur-3xl" />
@@ -408,57 +377,16 @@ function HomePage() {
       <section className="mb-10 grid overflow-hidden rounded-[30px] bg-[hsl(var(--foreground))] text-[hsl(var(--background))] md:grid-cols-[1.15fr_.85fr]"><div className="p-7 md:p-12"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--accent))]">The AiroRent promise</p><h2 className="mt-3 max-w-md font-display text-4xl leading-[1.02] tracking-[-.045em]">Good homes.<br />Clear moves.</h2><p className="mt-5 max-w-md text-sm leading-relaxed text-[hsl(var(--background)/.7)]">From your first message to the final payment, AiroRent Pay keeps the important moments protected. No guesswork, no awkward hand-offs.</p><Link href="/profile" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white" data-testid="link-promise-profile">How it works <ArrowRight size={16} /></Link></div><div className="relative min-h-[220px] overflow-hidden bg-[hsl(var(--primary))]"><div className="absolute -right-10 -top-16 size-64 rounded-full border-[24px] border-[hsl(var(--accent)/.55)]" /><div className="absolute bottom-8 left-10 size-28 rounded-full border-[14px] border-[hsl(var(--background)/.16)]" /><div className="absolute bottom-10 right-12 rounded-2xl bg-[hsl(var(--card))] p-4 text-[hsl(var(--foreground))] shadow-lift"><ShieldCheck size={23} className="text-[hsl(var(--primary))]" /><p className="mt-2 text-sm font-bold">Money moments,<br />made safer.</p></div></div></section>
     </div>
     </div>
-    {filterOpen && <FilterSheet mode={mode} filters={filters} onClose={() => setFilterOpen(false)} onApply={(next) => { setFilters(next); setFilterOpen(false); }} />}
+    {filterOpen && <FilterSheet mode={mode} onClose={() => setFilterOpen(false)} />}
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;
 }
 
-function FilterSheet({ mode, filters, onClose, onApply }: { mode: Mode; filters: SearchFilters; onClose: () => void; onApply: (filters: SearchFilters) => void }) {
-  const [minPrice, setMinPrice] = useState(filters.minPrice);
-  const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
-  const [beds, setBeds] = useState(filters.beds);
-  const [baths, setBaths] = useState(filters.baths);
-  const [garages, setGarages] = useState(filters.garages);
-  const [propertyType, setPropertyType] = useState(filters.propertyType);
-  const [location, setLocation] = useState(filters.location);
-  const [verifiedOnly, setVerifiedOnly] = useState(filters.verifiedOnly);
-  const choices = (items: string[], value: string, setter: (item: string) => void, prefix: string) => (
-    <div className="mt-2 flex flex-wrap gap-2">
-      {items.map((item) => <button key={item} onClick={() => setter(item)} className={`rounded-full border px-3.5 py-2 text-sm font-semibold ${value === item ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`} data-testid={`button-${prefix}-${item.toLowerCase().replace('+', 'plus')}`}>{item}</button>)}
-    </div>
-  );
-  const apply = () => onApply({ minPrice, maxPrice, beds, baths, garages, propertyType, location: location.trim(), verifiedOnly });
-  const reset = () => {
-    setMinPrice('Any'); setMaxPrice('Any'); setBeds('Any'); setBaths('Any'); setGarages('Any');
-    setPropertyType('Any'); setLocation(''); setVerifiedOnly(false);
-  };
-  return <div className="fixed inset-0 z-50 flex items-end animate-fade bg-[hsl(var(--foreground)/.4)] p-4 backdrop-blur-sm md:items-start md:justify-center" onClick={onClose}>
-    <div className="max-h-[calc(100dvh-32px)] w-full max-w-lg animate-rise overflow-y-auto rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:mt-[12vh]" onClick={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between">
-        <div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Filters</h2></div>
-        <button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" aria-label="Close filters" data-testid="button-close-filters"><X size={18} /></button>
-      </div>
-      <div className="mt-6 space-y-5">
-        <div><label className="text-sm font-bold">Price</label><div className="mt-2 grid grid-cols-2 gap-3">
-          <select value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" aria-label="Minimum price" data-testid="select-minimum-price"><option>Any</option><option>€500</option><option>€1,000</option><option>€2,000</option><option>€500,000</option></select>
-          <select value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" aria-label="Maximum price" data-testid="select-maximum-price"><option>Any</option><option>€1,000</option><option>€2,000</option><option>€500,000</option><option>€2,000,000</option></select>
-        </div></div>
-        <div><label className="text-sm font-bold">Beds</label>{choices(['Any', '1', '2', '3', '4+'], beds, setBeds, 'beds')}</div>
-        <div><label className="text-sm font-bold">Baths</label>{choices(['Any', '1', '2', '3+'], baths, setBaths, 'baths')}</div>
-        <div><label className="text-sm font-bold">Garages</label>{choices(['Any', '1', '2+'], garages, setGarages, 'garages')}</div>
-        <div><label className="text-sm font-bold" htmlFor="filter-property-type">Property type</label><select id="filter-property-type" value={propertyType} onChange={(e) => setPropertyType(e.target.value)} className="mt-2 w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" data-testid="select-property-type"><option>Any</option><option>Apartment</option><option>House</option><option>Studio</option><option>Villa</option></select></div>
-        <div><label className="text-sm font-bold" htmlFor="filter-location">Location</label><input id="filter-location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Town or area" className="mt-2 w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm outline-none focus:border-[hsl(var(--primary))]" data-testid="input-filter-location" /></div>
-        <button onClick={() => setVerifiedOnly((value) => !value)} className="flex w-full items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4 text-left" aria-pressed={verifiedOnly} data-testid="button-filter-verified">
-          <div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div>
-          <span className={`grid size-6 place-items-center rounded-full p-1 text-white ${verifiedOnly ? 'bg-[hsl(var(--primary))]' : 'border border-black/20 bg-white'}`}>{verifiedOnly && <Check size={16} />}</span>
-        </button>
-      </div>
-      <div className="mt-7 flex items-center gap-3">
-        <button onClick={reset} className="rounded-2xl border border-[hsl(var(--border))] px-4 py-3.5 text-sm font-bold" data-testid="button-reset-filters">Reset</button>
-        <button onClick={apply} className="flex-1 rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Apply Filters</button>
-      </div>
-    </div>
-  </div>;
+function FilterSheet({ mode, onClose }: { mode: Mode; onClose: () => void }) {
+  const [min, setMin] = useState('Any');
+  const [max, setMax] = useState('Any');
+  const [beds, setBeds] = useState('Any');
+  return <div className="fixed inset-0 z-50 animate-fade bg-[hsl(var(--foreground)/.4)] p-4 backdrop-blur-sm" onClick={onClose}><div className="mx-auto mt-auto max-w-lg animate-rise rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:mt-[12vh]" onClick={(e) => e.stopPropagation()}><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div><button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button></div><div className="mt-6 space-y-5"><div><label className="text-sm font-bold">Price range</label><div className="mt-2 grid grid-cols-2 gap-3">{[['Minimum', min, setMin], ['Maximum', max, setMax]].map(([label, value, setter]) => <select key={String(label)} value={String(value)} onChange={(e) => (setter as (s: string) => void)(e.target.value)} className="rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-3 text-sm" data-testid={`select-${String(label).toLowerCase()}`}><option>Any</option><option>€500</option><option>€1,000</option><option>€2,000</option><option>€500,000</option></select>)}</div></div><div><label className="text-sm font-bold">Bedrooms</label><div className="mt-2 flex gap-2">{['Any', '1', '2', '3', '4+'].map((item) => <button key={item} onClick={() => setBeds(item)} className={`rounded-full border px-4 py-2 text-sm font-semibold ${beds === item ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : ''}`} data-testid={`button-beds-${item}`}>{item}</button>)}</div></div><div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4"><div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div><div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div></div></div><button onClick={onClose} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Show homes</button></div></div>;
 }
 
 function EmptyState({ title, body, action, onAction }: { title: string; body: string; action?: string; onAction?: () => void }) {
