@@ -174,7 +174,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   const immersiveRoute = location.startsWith('/listing/');
   const homeRoute = location === '/' || location.startsWith('/?');
   const profileRoute = location.startsWith('/profile');
-  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || profileRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  const messagesRoute = location.startsWith('/messages');
+  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={immersiveRoute || profileRoute || messagesRoute || homeRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
@@ -680,8 +681,49 @@ function TripsPage() {
 }
 
 function MessagesPage() {
-  const [sent, setSent] = useState(false);
-  return <main className="mx-auto max-w-[1060px] px-5 py-9 lg:px-8"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">Keep it on Jakurzi</p><h1 className="mt-1 font-display text-5xl tracking-[-.05em]">Messages</h1><div className="mt-8 grid min-h-[520px] overflow-hidden rounded-[28px] border border-[hsl(var(--border))] bg-[hsl(var(--card))] md:grid-cols-[280px_1fr]"><aside className="border-b border-[hsl(var(--border))] p-4 md:border-b-0 md:border-r"><div className="flex items-center justify-between px-2"><h2 className="font-bold">Inbox</h2><button className="grid size-8 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-message-filter"><ListFilter size={15} /></button></div><button onClick={() => setSent(false)} className={`mt-4 flex w-full gap-3 rounded-2xl p-3 text-left ${!sent ? 'bg-[hsl(var(--secondary))]' : ''}`} data-testid="button-inquiry-thread"><div className="grid size-10 shrink-0 place-items-center rounded-full bg-[hsl(var(--accent))] font-bold">M</div><div className="min-w-0"><p className="text-sm font-bold">Maria Camilleri</p><p className="truncate text-xs text-[hsl(var(--muted-foreground))]">The Limestone Harbour Loft</p></div><span className="ml-auto text-[10px] text-[hsl(var(--muted-foreground))]">Tue</span></button></aside><section className="flex flex-col"><div className="flex items-center gap-3 border-b border-[hsl(var(--border))] p-4"><div className="grid size-9 place-items-center rounded-full bg-[hsl(var(--accent))] font-bold">M</div><div><p className="text-sm font-bold">Maria Camilleri</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Usually replies within an hour</p></div><ShieldCheck size={17} className="ml-auto text-[hsl(var(--primary))]" /></div><div className="flex flex-1 flex-col justify-end gap-3 p-5"><div className="mx-auto max-w-sm rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4 text-center text-sm leading-relaxed text-[hsl(var(--muted-foreground))]"><LockKeyhole size={18} className="mx-auto mb-2 text-[hsl(var(--primary))]" />Keep your conversation here. Jakurzi Pay only protects payments made on-platform.</div><div className="max-w-[75%] self-start rounded-2xl rounded-bl-sm bg-[hsl(var(--muted))] p-3 text-sm">Hi there — thanks for your interest. What dates were you thinking?</div>{sent && <div className="max-w-[75%] self-end rounded-2xl rounded-br-sm bg-[hsl(var(--primary))] p-3 text-sm text-white">Hi Maria, I’m looking at August 12–16. Is the loft still available?</div>}</div><div className="flex gap-2 border-t border-[hsl(var(--border))] p-4"><input placeholder="Write a message..." className="min-w-0 flex-1 rounded-full bg-[hsl(var(--muted))] px-4 text-sm outline-none" data-testid="input-message" /><button onClick={() => setSent(true)} className="grid size-11 shrink-0 place-items-center rounded-full bg-[hsl(var(--primary))] text-white" data-testid="button-send-inquiry"><Send size={17} /></button></div></section></div></main>;
+  const [tab, setTab] = useState<'messages' | 'notifications'>('messages');
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState<string | null>(null);
+  const [toast, setToast] = useState('');
+  const messages = [
+    { id: 'oceanview', name: 'Oceanview Villa Host', first: 'Hi Husnain, thank you for your interest!', second: 'The villa is available for your selected dates...', date: '10:30 AM', unread: 2, image: images.seaview, online: true },
+    { id: 'mountain-cabin', name: 'Mountain Cabin Host', first: 'Sure! I can send you more details and', second: 'photos of the cabin.', date: 'Yesterday', unread: 1, image: images.farmhouse, online: true },
+    { id: 'city-apartment', name: 'City Apartment Host', first: 'Check-in instructions sent.', second: 'Let me know if you need anything!', date: 'May 10', unread: 0, image: images.limestone, online: false },
+    { id: 'support', name: 'AiroRent Support', first: 'Your booking was confirmed.', second: 'We’re here to help if you need anything.', date: 'May 8', unread: 0, image: images.profile, online: false },
+    { id: 'offers', name: 'AiroRent Offers', first: 'Special discounts for your next trip!', second: 'Explore new stays with great deals.', date: 'May 5', unread: 0, image: images.explore, online: false },
+    { id: 'seaside', name: 'Seaside Villa Host', first: 'Thank you for staying with us!', second: 'We hope to host you again.', date: 'Apr 28', unread: 0, image: images.seaview, online: false },
+    { id: 'skyline', name: 'Skyline Penthouse Host', first: 'Hope you had a great stay.', second: 'Would love to host you again!', date: 'Apr 20', unread: 0, image: images.deck, online: false },
+  ];
+  const notifications = [
+    { id: 'booking-confirmed', name: 'Booking confirmed', first: 'Your stay at The Limestone Harbour Loft', second: 'is confirmed for May 12–16.', date: 'Today', unread: 1, image: images.limestone, online: false },
+    { id: 'price-drop', name: 'Price drop nearby', first: 'A home in Sliema you viewed is now', second: '€120 less per month.', date: 'Yesterday', unread: 0, image: images.seaview, online: false },
+    { id: 'welcome', name: 'Welcome to AiroRent', first: 'Your profile is ready. Find a place', second: 'that feels right for your next move.', date: 'May 8', unread: 0, image: images.profile, online: false },
+  ];
+  const source = tab === 'messages' ? messages : notifications;
+  const visible = source.filter((item) => `${item.name} ${item.first} ${item.second}`.toLowerCase().includes(query.toLowerCase()));
+  return <main className="min-h-[100dvh] bg-[#fffafb] px-5 pb-28 pt-5 md:mx-auto md:min-h-0 md:max-w-[1060px] md:bg-transparent md:px-8 md:py-10">
+    <section className="flex items-start justify-between">
+      <div><h1 className="text-[29px] font-semibold tracking-[-.055em] md:font-display md:text-5xl">Inbox</h1><p className="mt-1 text-[13px] text-black/55 md:text-sm">Your messages and notifications</p></div>
+      <div className="flex gap-2"><button onClick={() => setToast('Inbox filters are ready.')} className="grid size-11 place-items-center rounded-full bg-white shadow-[0_5px_16px_rgba(0,0,0,.07)]" aria-label="Filter inbox" data-testid="button-message-filter"><SlidersHorizontal size={18} /></button><button onClick={() => setToast('New message is ready to start.')} className="grid size-11 place-items-center rounded-full bg-white text-[hsl(var(--primary))] shadow-[0_5px_16px_rgba(0,0,0,.07)]" aria-label="Compose message" data-testid="button-compose-message"><Pencil size={18} /></button></div>
+    </section>
+    <section className="mt-6 rounded-[16px] bg-white p-1.5 shadow-[0_5px_16px_rgba(0,0,0,.05)]" aria-label="Inbox sections">
+      <div className="grid grid-cols-2 gap-1">
+        <button onClick={() => setTab('messages')} className={`flex items-center justify-center gap-2 rounded-[11px] py-2.5 text-[13px] font-semibold transition ${tab === 'messages' ? 'bg-[#ffe7f1] text-[hsl(var(--primary))]' : 'text-black/55'}`} data-testid="button-inbox-messages"><MessageCircle size={16} />Messages</button>
+        <button onClick={() => setTab('notifications')} className={`flex items-center justify-center gap-2 rounded-[11px] py-2.5 text-[13px] font-semibold transition ${tab === 'notifications' ? 'bg-[#ffe7f1] text-[hsl(var(--primary))]' : 'text-black/55'}`} data-testid="button-inbox-notifications"><Bell size={16} />Notifications</button>
+      </div>
+    </section>
+    <div className="mt-5 flex h-11 items-center gap-3 rounded-full bg-[#f5f4f5] px-4">
+      <Search size={18} className="shrink-0 text-black/55" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={tab === 'messages' ? 'Search messages' : 'Search notifications'} aria-label={tab === 'messages' ? 'Search messages' : 'Search notifications'} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-black/45" data-testid="input-inbox-search" />{query && <button onClick={() => setQuery('')} aria-label="Clear inbox search" data-testid="button-clear-inbox-search"><X size={16} className="text-black/45" /></button>}
+    </div>
+    <section className="mt-4 overflow-hidden rounded-[22px] bg-white shadow-[0_5px_18px_rgba(0,0,0,.04)] md:border md:border-[hsl(var(--border))]" data-testid="section-inbox-list">
+      {visible.length ? visible.map((item) => <button key={item.id} onClick={() => { setSelected(item.id); setToast(`${item.name} opened`); }} className={`flex w-full items-center gap-3 border-b border-black/[.07] px-1 py-4 text-left transition last:border-b-0 hover:bg-[#fff7fa] ${selected === item.id ? 'bg-[#fff7fa]' : ''}`} data-testid={`button-inbox-thread-${item.id}`}>
+        <div className="relative ml-2 shrink-0"><img src={item.image} alt="" className="size-[54px] rounded-full object-cover" /><span className={`absolute bottom-0 right-0 size-3.5 rounded-full border-2 border-white ${item.online ? 'bg-[#39b45a]' : 'bg-transparent'}`} /></div>
+        <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h2 className="min-w-0 flex-1 truncate text-[14px] font-bold">{item.name}</h2><span className={`shrink-0 text-[11px] ${item.unread ? 'font-bold text-[hsl(var(--primary))]' : 'text-black/50'}`}>{item.date}</span></div><p className="mt-1 truncate text-[12px] text-black/65">{item.first}</p><p className="truncate text-[12px] text-black/65">{item.second}</p></div>
+        {item.unread ? <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[hsl(var(--primary))] text-[11px] font-bold text-white">{item.unread}</span> : <Star size={19} className="mr-2 shrink-0 text-black/30" />}
+      </button>) : <div className="px-5 py-14 text-center"><Search size={25} className="mx-auto text-black/30" /><h2 className="mt-4 font-semibold">Nothing found</h2><p className="mt-1 text-sm text-black/50">Try a different search term.</p></div>}
+    </section>
+    {toast && <Toast text={toast} onClose={() => setToast('')} />}
+  </main>;
 }
 
 function ProfilePage() {
