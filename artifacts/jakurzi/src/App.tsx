@@ -156,7 +156,7 @@ function BottomNav() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  return <div className="texture min-h-[100dvh]"><Header onMenu={() => setMenuOpen(true)} />{children}{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  return <div className="texture min-h-[100dvh] pb-20 md:pb-0"><Header onMenu={() => setMenuOpen(true)} />{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
@@ -383,7 +383,8 @@ function HomePage() {
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
   return <main>
-    <div>
+    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} activeFilterCount={countActiveFilters(filters)} />
+    <div className="hidden md:block">
      <section className="airo-hero relative overflow-hidden border-b border-[hsl(var(--border))]">
        <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--primary)/.18)] blur-3xl" />
       <div className="mx-auto max-w-[1260px] px-5 pb-10 pt-12 lg:px-8 lg:pb-14 lg:pt-20">
