@@ -122,7 +122,7 @@ function Logo({ light = false }: { light?: boolean }) {
 }
 
 function Header({ onMenu }: { onMenu: () => void }) {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   return (
     <header className="sticky top-0 z-40 border-b border-[hsl(var(--border)/.7)] bg-white/95 backdrop-blur-xl">
       <div className="mx-auto flex h-[68px] max-w-[1260px] items-center justify-between px-5 lg:px-8">
@@ -221,7 +221,7 @@ function SearchBar({ mode, setMode, query, setQuery }: { mode: Mode; setMode: (m
 
 function ListingCard({ listing, saved, onSave, compact = false }: { listing: Listing; saved: boolean; onSave: (id: string) => void; compact?: boolean }) {
   const [, setLocation] = useLocation();
-  const open = () => { saveRecent(listing.id); setLocation(`/listing/${listing.id}`); };
+  const open = () => { saveRecent(listing.id); setLocation(`/listing/${listing.id}?book=1`); };
   return <article className={`group ${compact ? 'w-[164px] shrink-0' : ''}`} data-testid={`card-listing-${listing.id}`}>
     <div className={`relative overflow-hidden rounded-[18px] bg-[hsl(var(--muted))] ${compact ? 'aspect-[1.2]' : 'aspect-[1.12]'}`}>
       <img src={listing.image} alt={listing.title} onClick={open} className="size-full cursor-pointer object-cover transition duration-500 group-hover:scale-[1.035]" />
@@ -285,8 +285,6 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
 function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilters }: { query: string; setQuery: (query: string) => void; onClose: () => void; onSearch: (nextQuery?: string) => void; onOpenFilters: () => void }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [showAllDestinations, setShowAllDestinations] = useState(false);
-  const [checkIn, setCheckIn] = useState('Add dates');
-  const [guests, setGuests] = useState(2);
   const [likedDestination, setLikedDestination] = useState('');
   const categories = [
     ['All', Globe2],
@@ -310,7 +308,7 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
     { place: 'New York, United States', details: '2 Guests', icon: Building2 },
     { place: 'Lahore, Punjab', details: 'Aug 20 – 22  ·  3 Guests', icon: Sparkles },
   ];
-  return <div className="fixed inset-0 z-50 h-[100dvh] overflow-y-auto bg-[#f7f8f9] pb-[150px] text-[#1d2329] md:hidden" data-testid="mobile-search-experience">
+  return <div className="fixed inset-0 z-50 h-[100dvh] overflow-y-auto bg-[#f7f8f9] pb-8 text-[#1d2329] md:hidden" data-testid="mobile-search-experience">
     <div className="mx-auto max-w-md px-7 pb-8 pt-5">
       <header className="flex items-center justify-between">
         <button onClick={onClose} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white" aria-label="Close search" data-testid="button-close-search-experience"><ArrowLeft size={22} /></button>
@@ -350,14 +348,6 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
           {listings.slice(0, 2).map((listing) => <button key={listing.id} onClick={() => { setQuery(listing.location.split(',')[0]); onSearch(listing.location.split(',')[0]); }} className="overflow-hidden rounded-[15px] border border-black/[.06] bg-white text-left shadow-[0_2px_7px_rgba(0,0,0,.02)]" data-testid={`button-search-recommended-${listing.id}`}><img src={listing.image} alt={listing.title} className="h-[92px] w-full object-cover" /><span className="block px-3 py-2.5"><b className="block truncate text-[12px]">{listing.location.split(',')[0]}</b><span className="mt-1 block truncate text-[11px] text-black/50">{listing.type} · {listing.price}</span></span></button>)}
         </div>
       </section>
-    </div>
-    <div className="fixed inset-x-0 bottom-[69px] z-30 border-t border-black/[.06] bg-white/95 px-7 py-3 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-md items-center rounded-[17px] border border-black/[.06] bg-white shadow-[0_4px_16px_rgba(0,0,0,.05)]">
-        <button onClick={() => setCheckIn(checkIn === 'Add dates' ? 'Sep 1 – 2' : 'Add dates')} className="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-left" data-testid="button-search-check-in"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#e7e9eb] text-[#4b535b]"><CalendarDays size={17} /></span><span className="min-w-0"><span className="block text-[10px] text-black/50">Check-in</span><b className="block truncate text-[11px]">{checkIn}</b></span></button>
-        <div className="h-9 w-px bg-black/10" />
-        <button onClick={() => setGuests(guests === 5 ? 1 : guests + 1)} className="flex min-w-0 flex-1 items-center gap-2 px-3 py-3 text-left" data-testid="button-search-guests"><span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#e7e9eb] text-[#4b535b]"><UserRound size={17} /></span><span className="min-w-0"><span className="block text-[10px] text-black/50">Guests</span><b className="block truncate text-[11px]">{guests === 1 ? 'Add guests' : `${guests} Guests`}</b></span></button>
-        <button onClick={() => onSearch()} className="grid size-[50px] shrink-0 place-items-center rounded-full bg-[#252b31] text-white shadow-[0_5px_12px_rgba(22,28,35,.15)]" aria-label="Search stays" data-testid="button-search-experience-submit"><Search size={22} /></button>
-      </div>
     </div>
   </div>;
 }
@@ -592,9 +582,9 @@ function LegacyDetailPage({ id }: { id: string }) {
 
 function DetailPage({ id }: { id: string }) {
   const listing = listings.find((item) => item.id === id) || listings[0];
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [saved, setSaved] = useState(readSaved().includes(listing.id));
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(() => new URLSearchParams(window.location.search).get('book') === '1');
   const [contactOpen, setContactOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [toast, setToast] = useState('');
