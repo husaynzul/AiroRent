@@ -8,6 +8,7 @@ import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.j
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
 import hostBannerSrc from '@assets/file_00000000e18481fb9f77a46c32720fa9_1788299200324.png';
+import listPlaceBannerSrc from '@assets/file_0000000061a881fa8660af4de8b524cb_1_1788299610339.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
@@ -936,6 +937,9 @@ function ProfileExperiencePage() {
     </section>
     <button onClick={() => setLocation('/post')} className="mt-4 block w-full overflow-hidden rounded-[22px] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5" data-testid="button-profile-list-place">
       <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="block w-full" />
+    </button>
+    <button onClick={() => setLocation('/post')} className="mt-3 block w-full overflow-hidden rounded-[22px] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5" data-testid="button-profile-list-place-secondary">
+      <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="block w-full" />
     </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
