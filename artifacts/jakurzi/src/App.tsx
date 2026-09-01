@@ -167,7 +167,7 @@ function BottomNav() {
     { href: '/profile', label: 'Profile', icon: UserRound },
   ];
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] px-3 pb-[max(9px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl md:hidden">
+    <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-24px)] max-w-md -translate-x-1/2 rounded-[24px] border border-[hsl(var(--border)/.8)] bg-[hsl(var(--card)/.96)] px-3 pb-[max(9px,env(safe-area-inset-bottom))] pt-2 shadow-lift backdrop-blur-xl md:hidden">
       <div className="mx-auto flex max-w-md justify-between">
         {items.map(({ href, label, icon: Icon }) => {
           const active = href === '/' ? location === '/' : location.startsWith(href);
