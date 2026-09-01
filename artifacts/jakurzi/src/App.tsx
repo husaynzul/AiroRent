@@ -939,7 +939,7 @@ function ProfileExperiencePage() {
       <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="size-full object-contain" />
     </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[132px] w-full overflow-hidden rounded-[24px] border border-black/[.045] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5 sm:h-[146px]" data-testid="button-profile-list-place-secondary">
-      <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="size-full object-contain" />
+      <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.16] object-contain" />
     </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
