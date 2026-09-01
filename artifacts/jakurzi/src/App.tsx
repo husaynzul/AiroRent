@@ -653,8 +653,8 @@ function DetailPage({ id }: { id: string }) {
         <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-2.5 py-2">{gallery.map((image, index) => <button key={image + index} onClick={() => selectImage(index)} className={`size-2 rounded-full ${index === selectedImageIndex ? 'bg-[hsl(var(--primary))]' : 'bg-white/75'}`} aria-label={`Show photo ${index + 1}`} data-testid={`button-detail-dot-${index}`} />)}</div>
       </section>
       <section className="relative -mx-5 -mt-7 rounded-t-[30px] bg-white px-6 pb-28 pt-7">
-        <h1 className="text-[30px] font-semibold tracking-[-.055em]">{listing.title}</h1>
-        <div className="mt-2 flex items-center gap-2 text-sm text-black/60"><MapPin size={15} />{listing.location}<span className="text-black/25">·</span><Star size={16} fill="currentColor" className="text-[hsl(var(--primary))]" /><b className="text-black">{listing.rating}</b><span>(18 reviews)</span></div>
+         <h1 className="mx-auto max-w-[350px] text-center text-[30px] font-semibold leading-[1.18] tracking-[-.055em]">{listing.title}</h1>
+         <div className="mx-auto mt-3 flex max-w-[350px] flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-black/60"><MapPin size={15} />{listing.location}<span className="text-black/25">·</span><Star size={16} fill="currentColor" className="text-[hsl(var(--primary))]" /><b className="text-black">{listing.rating}</b><span>(18 reviews)</span></div>
         <div className="mt-7 grid grid-cols-5 gap-2 border-b border-black/[.1] pb-6 text-center">
           {[[UsersRound, `${guests} Guests`], [BedDouble, `${beds} Bedrooms`], [BedDouble, `${beds} Beds`], [Bath, `${baths} Baths`], [Navigation, 'Wifi']].map(([Icon, label]) => <div key={String(label)} className="flex min-w-0 flex-col items-center gap-2 text-[10px] font-medium"><Icon size={23} strokeWidth={1.7} /><span>{String(label)}</span></div>)}
         </div>
