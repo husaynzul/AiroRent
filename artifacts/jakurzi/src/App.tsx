@@ -7,8 +7,6 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
-import hostBannerSrc from '@assets/file_00000000e18481fb9f77a46c32720fa9_1788299200324.png';
-import listPlaceBannerSrc from '@assets/file_0000000061a881fa8660af4de8b524cb_1_1788299610339.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
@@ -935,12 +933,6 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
-    <button onClick={() => setLocation('/post')} className="mt-4 block h-[132px] w-full overflow-hidden rounded-[24px] border border-black/[.045] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5 sm:h-[146px]" data-testid="button-profile-list-place">
-      <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="size-full object-contain" />
-    </button>
-    <button onClick={() => setLocation('/post')} className="mt-3 block h-[132px] w-full overflow-hidden rounded-[24px] border border-black/[.045] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5 sm:h-[146px]" data-testid="button-profile-list-place-secondary">
-      <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.16] object-contain" />
-    </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
       <div className="rounded-[20px] bg-white px-3 shadow-[0_5px_18px_rgba(0,0,0,.06)]">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</div>
