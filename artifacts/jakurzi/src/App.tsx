@@ -7,6 +7,7 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
+import hostBannerSrc from '@assets/file_00000000e18481fb9f77a46c32720fa9_1788299200324.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
@@ -915,12 +916,6 @@ function ProfileExperiencePage() {
     ['Preferences', Settings, () => setLocation('/profile/settings'), 'button-profile-overview-preferences'],
     ['Help & support', CircleHelp, () => setLocation('/messages'), 'button-profile-overview-help'],
   ] as const;
-  const stats = [
-    ['5', 'Trips', BriefcaseBusiness, '/trips'],
-    ['12', 'Saved', Heart, '/wishlist'],
-    ['3', 'Bookings', CalendarDays, '/trips'],
-    ['2', 'Reviews', MessageCircle, '/messages'],
-  ] as const;
   const shortcuts = [
     ['Bookings', CalendarDays, '/trips'],
     ['Saved places', Heart, '/wishlist'],
@@ -939,11 +934,8 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
-    <section className="mt-4 grid grid-cols-4 divide-x divide-black/[.08] rounded-[22px] bg-white px-1 py-4 shadow-[0_5px_18px_rgba(0,0,0,.06)]" data-testid="section-profile-stats">
-      {stats.map(([value, label, Icon, href]) => <button key={label} onClick={() => setLocation(href)} className="flex min-w-0 flex-col items-center gap-1 text-center" data-testid={`button-profile-stat-${label.toLowerCase()}`}><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Icon size={17} /></span><b className="mt-1 text-lg leading-none">{label === 'Saved' ? Math.max(12, readSaved().length) : value}</b><span className="text-[11px] text-black/55">{label}</span></button>)}
-    </section>
-    <button onClick={() => setLocation('/post')} className="mt-4 flex w-full items-center gap-4 rounded-[22px] bg-white p-4 text-left shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5 md:p-6" data-testid="button-profile-list-place">
-      <img src={images.farmhouse} alt="" className="size-[104px] shrink-0 rounded-[18px] object-cover md:size-32" /><span className="min-w-0 flex-1"><b className="block text-[17px] md:text-xl">List your place</b><span className="mt-1 block max-w-[190px] text-[12px] leading-relaxed text-black/55 md:text-sm">Share your space and start earning with AiroRent.</span><span className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--primary))] px-3 py-2 text-xs font-bold text-white">Get started <ChevronRight size={14} /></span></span>
+    <button onClick={() => setLocation('/post')} className="mt-4 block w-full overflow-hidden rounded-[22px] bg-white shadow-[0_5px_18px_rgba(0,0,0,.06)] transition hover:-translate-y-0.5" data-testid="button-profile-list-place">
+      <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="block w-full" />
     </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
