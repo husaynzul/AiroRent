@@ -938,7 +938,10 @@ function ProfileExperiencePage() {
     </section>
     <button onClick={() => setLocation('/post')} className="relative mt-4 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place">
       <img src={hostBannerSrc} alt="Become Co-Host. It's easy to start hosting and earn extra income." className="size-full object-cover" />
-      <span className="absolute left-[35%] top-[12%] h-[28%] w-[62%] bg-white text-left text-[24px] font-bold leading-none tracking-[-.04em] text-[#101a2b] sm:text-[28px]">Become Co-Host</span>
+      <span className="absolute bottom-[6%] right-[3%] top-[6%] left-[31%] rounded-r-[28px] bg-white text-left">
+        <span className="absolute left-[8%] right-[4%] top-[13%] text-[21px] font-bold leading-tight tracking-[-.04em] text-[#101a2b] sm:text-[24px]">Become Co-Host</span>
+        <span className="absolute left-[8%] right-[4%] top-[43%] text-[13px] leading-[1.35] text-black/55 sm:text-[14px]">It's easy to start hosting and earn extra income.</span>
+      </span>
     </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
       <img src={listPlaceCardReference} alt="List your place. Share your space and start earning with AiroRent." className="size-full object-cover" />
