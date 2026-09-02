@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
 import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
@@ -23,23 +23,127 @@ import {
 } from 'lucide-react';
 
 type Mode = 'Rent' | 'Buy' | 'Short Let';
+type FilterPurpose = 'Rent' | 'Short Rent' | 'Buy' | 'Trip / Booking';
 type FilterState = {
+  purpose: FilterPurpose;
   price: string;
+  minPrice: number;
+  maxPrice: number;
   beds: string;
   baths: string;
   garages: string;
   propertyType: string;
+  propertyTypes: string[];
   location: string;
+  rentType: string;
+  stayType: string;
+  furnishing: string;
+  availability: string;
+  moveInDate: string;
+  amenities: string[];
+  listedBy: string;
+  verifiedOnly: boolean;
+  contactPreference: string;
+  duration: string;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  children: number;
+  infants: number;
+  pets: number;
+  priceUnit: string;
+  buyingPurpose: string;
+  propertyStatus: string;
+  propertySize: string;
+  parking: string;
+  outdoorFeatures: string[];
+  views: string;
+  investmentFilters: string[];
+  seller: string;
+  documents: string[];
+  bookingOptions: string[];
+  petPolicy: string;
+  accessibility: string[];
+  hostLanguage: string;
+  hostType: string;
 };
 
 const defaultFilters: FilterState = {
+  purpose: 'Rent',
   price: 'Any',
+  minPrice: 500,
+  maxPrice: 5000,
   beds: 'Any',
   baths: 'Any',
   garages: 'Any',
   propertyType: 'Any',
+  propertyTypes: [],
   location: 'Any',
+  rentType: 'Long Term',
+  stayType: 'Long Term',
+  furnishing: 'Any',
+  availability: 'Any',
+  moveInDate: '',
+  amenities: [],
+  listedBy: 'Any',
+  verifiedOnly: false,
+  contactPreference: 'Any',
+  duration: 'Any',
+  checkIn: '',
+  checkOut: '',
+  guests: 2,
+  children: 0,
+  infants: 0,
+  pets: 0,
+  priceUnit: 'Per Night',
+  buyingPurpose: 'Buy to Live',
+  propertyStatus: 'Any',
+  propertySize: 'Any',
+  parking: 'Any',
+  outdoorFeatures: [],
+  views: 'Any',
+  investmentFilters: [],
+  seller: 'Any',
+  documents: [],
+  bookingOptions: [],
+  petPolicy: 'Any',
+  accessibility: [],
+  hostLanguage: 'Any Language',
+  hostType: 'Any',
 };
+
+const filterPropertyTypes = [
+  { label: 'House', icon: Home, image: gozoFarmhouseImage },
+  { label: 'Apartment', icon: Building2, image: seaviewTerraceImage },
+  { label: 'Villa', icon: Sparkles, image: seaviewTerraceImage },
+  { label: 'Townhouse', icon: Home, image: gozoFarmhouseImage },
+  { label: 'Penthouse', icon: Building2, image: seaviewTerraceImage },
+  { label: 'Studio', icon: DoorOpen, image: limestoneLoftImage },
+  { label: 'Guesthouse', icon: Home, image: gozoFarmhouseImage },
+  { label: 'Duplex', icon: Building2, image: seaviewTerraceImage },
+] as const;
+
+const filterAmenities = [
+  ['Wi-Fi', Navigation], ['Air Conditioning', Sparkles], ['Heating', Sparkles],
+  ['Kitchen', Home], ['Washing Machine', CircleHelp], ['TV', CircleHelp],
+  ['Refrigerator', CircleHelp], ['Dishwasher', CircleHelp], ['Elevator', Building2],
+  ['Balcony', Home], ['Garden', Sparkles], ['Swimming Pool', Sparkles],
+  ['Bathtub', CircleHelp], ['Shower', CircleHelp], ['Workspace', BriefcaseBusiness],
+  ['Security', ShieldCheck], ['Private Entrance', KeyRound], ['Parking', Navigation],
+] as const;
+
+const filterBookingOptions = [
+  ['Instant Book', Sparkles], ['Self Check-in', KeyRound], ['Free Cancellation', Check],
+  ['Pets Allowed', UsersRound], ['Pay Online', WalletCards], ['Entire Place', Home],
+  ['Private Room', DoorOpen], ['Shared Room', UsersRound],
+] as const;
+
+const filterAccessibilityOptions = [
+  ['Step-free Entrance', Accessibility], ['Wide Entrance', DoorOpen],
+  ['Elevator Access', Building2], ['Accessible Parking', Navigation],
+  ['Accessible Bathroom', Accessibility], ['Grab Bars', ShieldCheck],
+  ['Shower Chair', CircleHelp], ['Wide Bedroom Entrance', DoorOpen],
+] as const;
 
 type Listing = {
   id: string;
@@ -453,7 +557,7 @@ function HomePage() {
       .filter((item) => item.mode === mode)
       .filter((item) => !query || `${item.title} ${item.location}`.toLowerCase().includes(query.toLowerCase()))
       .filter((item) => category === 'All' || item.type === selectedType)
-      .filter((item) => filters.propertyType === 'Any' || item.type === filters.propertyType)
+      .filter((item) => filters.propertyTypes.length === 0 ? filters.propertyType === 'Any' || item.type === filters.propertyType : filters.propertyTypes.includes(item.type))
       .filter((item) => filters.location === 'Any' || item.location.toLowerCase().includes(filters.location.toLowerCase()))
       .filter((item) => {
         const price = Number(item.price.replace(/[^0-9]/g, ''));
@@ -475,13 +579,18 @@ function HomePage() {
       .filter((item) => {
         const minimum = Number(filters.garages.replace('+', ''));
         return filters.garages === 'Any' || (item.garages || 0) >= minimum;
-      });
+      })
+      .filter((item) => !filters.verifiedOnly || item.verified);
   }, [mode, query, category, filters]);
   const toggleSave = (id: string) => {
     const next = saved.includes(id) ? saved.filter((x) => x !== id) : [...saved, id];
     setSaved(next); localStorage.setItem('jakurzi:wishlist', JSON.stringify(next)); setToast(saved.includes(id) ? 'Removed from your wishlist' : 'Saved to your wishlist');
   };
   const recent = readRecent().map((id) => listings.find((item) => item.id === id)).filter(Boolean) as Listing[];
+  const applyFilters = (nextFilters: FilterState, nextMode: Mode) => {
+    setFilters(nextFilters);
+    setMode(nextMode);
+  };
   return <main>
     <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} onClearFilters={() => setFilters(defaultFilters)} />
     <div className="hidden md:block">
@@ -508,62 +617,150 @@ function HomePage() {
       <section className="mb-10 grid overflow-hidden rounded-[30px] bg-[hsl(var(--foreground))] text-[hsl(var(--background))] md:grid-cols-[1.15fr_.85fr]"><div className="p-7 md:p-12"><p className="text-xs font-bold uppercase tracking-[.16em] text-[hsl(var(--accent))]">The AiroRent promise</p><h2 className="mt-3 max-w-md font-display text-4xl leading-[1.02] tracking-[-.045em]">Good homes.<br />Clear moves.</h2><p className="mt-5 max-w-md text-sm leading-relaxed text-[hsl(var(--background)/.7)]">From your first message to the final payment, AiroRent Pay keeps the important moments protected. No guesswork, no awkward hand-offs.</p><Link href="/profile" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white" data-testid="link-promise-profile">How it works <ArrowRight size={16} /></Link></div><div className="relative min-h-[220px] overflow-hidden bg-[hsl(var(--primary))]"><div className="absolute -right-10 -top-16 size-64 rounded-full border-[24px] border-[hsl(var(--accent)/.55)]" /><div className="absolute bottom-8 left-10 size-28 rounded-full border-[14px] border-[hsl(var(--background)/.16)]" /><div className="absolute bottom-10 right-12 rounded-2xl bg-[hsl(var(--card))] p-4 text-[hsl(var(--foreground))] shadow-lift"><ShieldCheck size={23} className="text-[hsl(var(--primary))]" /><p className="mt-2 text-sm font-bold">Money moments,<br />made safer.</p></div></div></section>
     </div>
     </div>
-     {filterOpen && <FilterSheet mode={mode} filters={filters} onApply={setFilters} onClose={() => setFilterOpen(false)} />}
+     {filterOpen && <FilterSheet mode={mode} filters={filters} onApply={applyFilters} onClose={() => setFilterOpen(false)} />}
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;
 }
 
-function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState) => void; onClose: () => void }) {
-  const [draft, setDraft] = useState<FilterState>(filters);
-  const update = (key: keyof FilterState, value: string) => setDraft((current) => ({ ...current, [key]: value }));
+function FilterSection({ step, title, subtitle, children }: { step: string; title: string; subtitle: string; children: ReactNode }) {
+  return <section className="border-t border-[hsl(var(--border))] pt-6 first:border-t-0 first:pt-0">
+    <div className="flex items-start gap-3">
+      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[hsl(var(--primary))] text-sm font-extrabold text-white">{step}</span>
+      <div><h3 className="font-display text-xl tracking-[-.025em]">{title}</h3><p className="mt-0.5 text-xs text-[hsl(var(--muted-foreground))]">{subtitle}</p></div>
+    </div>
+    <div className="mt-5">{children}</div>
+  </section>;
+}
+
+function FilterChoice({ label, selected, onClick, icon: Icon, image, description }: { label: string; selected: boolean; onClick: () => void; icon?: typeof Settings; image?: string; description?: string }) {
+  return <button type="button" onClick={onClick} className={`group relative flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl border p-2 text-center transition ${selected ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))] shadow-[0_0_0_1px_hsl(var(--primary)/.12)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.45)]'}`} aria-pressed={selected}>
+    {image ? <img src={image} alt="" className="h-12 w-full rounded-xl object-cover" /> : Icon && <Icon size={24} strokeWidth={selected ? 2.5 : 1.9} />}
+    <span className="text-[11px] font-bold leading-tight">{label}</span>
+    {description && <span className="text-[9px] leading-tight text-[hsl(var(--muted-foreground))]">{description}</span>}
+    {selected && <span className="absolute right-1.5 top-1.5 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-white"><Check size={10} /></span>}
+  </button>;
+}
+
+function FilterToggle({ label, selected, onClick, icon: Icon }: { label: string; selected: boolean; onClick: () => void; icon?: typeof Settings }) {
+  return <button type="button" onClick={onClick} className={`flex items-center gap-2.5 rounded-xl border px-3 py-3 text-left transition ${selected ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))]'}`} aria-pressed={selected}>
+    {Icon && <Icon size={18} />}<span className="flex-1 text-xs font-bold">{label}</span><span className={`h-5 w-9 rounded-full p-0.5 transition ${selected ? 'bg-[hsl(var(--primary))]' : 'bg-[hsl(var(--muted))]'}`}><span className={`block size-4 rounded-full bg-white shadow-sm transition ${selected ? 'translate-x-4' : ''}`} /></span>
+  </button>;
+}
+
+function Counter({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
+  return <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] px-3 py-2.5"><span className="text-xs font-bold">{label}</span><span className="flex items-center gap-2"><button type="button" onClick={() => onChange(Math.max(0, value - 1))} className="grid size-7 place-items-center rounded-full border border-[hsl(var(--border))]" aria-label={`Decrease ${label}`}><Minus size={13} /></button><b className="w-4 text-center text-sm">{value}</b><button type="button" onClick={() => onChange(value + 1)} className="grid size-7 place-items-center rounded-full border border-[hsl(var(--border))]" aria-label={`Increase ${label}`}><Plus size={13} /></button></span></div>;
+}
+
+function modeToFilterPurpose(mode: Mode): FilterPurpose {
+  return mode === 'Buy' ? 'Buy' : mode === 'Short Let' ? 'Short Rent' : 'Rent';
+}
+
+function purposeToMode(purpose: FilterPurpose): Mode {
+  return purpose === 'Buy' ? 'Buy' : purpose === 'Rent' ? 'Rent' : 'Short Let';
+}
+
+function formatFilterPrice(value: number) {
+  return `€${value.toLocaleString('en-US')}${value >= 5000 || value >= 2000000 ? '+' : ''}`;
+}
+
+function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState, mode: Mode) => void; onClose: () => void }) {
+  const [draft, setDraft] = useState<FilterState>(() => ({ ...filters, purpose: modeToFilterPurpose(mode) }));
+  const purpose = draft.purpose;
+  const isBuy = purpose === 'Buy';
+  const isShortStay = purpose === 'Short Rent' || purpose === 'Trip / Booking';
+  const priceFloor = isBuy ? 50000 : 500;
+  const priceCeiling = isBuy ? 2000000 : 5000;
   const selectClass = 'mt-2 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-3 text-sm outline-none focus:border-[hsl(var(--primary))]';
-  return <div className="fixed inset-0 z-50 flex animate-fade items-end bg-[hsl(var(--foreground)/.4)] p-3 backdrop-blur-sm md:items-center md:justify-center" onClick={onClose}>
-    <div className="w-full max-w-lg animate-rise overflow-y-auto rounded-[28px] bg-[hsl(var(--card))] p-6 shadow-lift md:max-h-[86dvh]" onClick={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between">
-        <div><p className="text-xs font-bold uppercase tracking-[.15em] text-[hsl(var(--primary))]">{mode}</p><h2 className="font-display text-3xl">Tune your search</h2></div>
-        <button onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" data-testid="button-close-filters"><X size={18} /></button>
+  const update = <K extends keyof FilterState>(key: K, value: FilterState[K]) => setDraft((current) => ({ ...current, [key]: value }));
+  const toggleArray = (key: 'propertyTypes' | 'amenities' | 'outdoorFeatures' | 'investmentFilters' | 'documents' | 'bookingOptions' | 'accessibility', value: string) => {
+    setDraft((current) => {
+      const values = current[key];
+      return { ...current, [key]: values.includes(value) ? values.filter((item) => item !== value) : [...values, value] };
+    });
+  };
+  const choosePurpose = (nextPurpose: FilterPurpose) => update('purpose', nextPurpose);
+  const selectedTypes = draft.propertyTypes.length ? draft.propertyTypes : draft.propertyType === 'Any' ? [] : [draft.propertyType];
+  const apply = () => {
+    const nextFilters = { ...draft, propertyType: selectedTypes[0] || 'Any' };
+    onApply(nextFilters, purposeToMode(purpose));
+    onClose();
+  };
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+  return <div className="fixed inset-0 z-50 flex animate-fade items-end bg-[hsl(var(--foreground)/.45)] p-0 backdrop-blur-sm md:items-center md:justify-center md:p-3" onClick={onClose} role="presentation">
+    <div className="flex max-h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[28px] bg-[hsl(var(--card))] shadow-lift md:max-h-[92dvh] md:rounded-[28px]" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="filter-sheet-title">
+      <header className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-4 md:px-7">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">AiroRent filters</p><h2 id="filter-sheet-title" className="mt-1 font-display text-2xl tracking-[-.035em]">Find your perfect stay</h2></div>
+        <div className="flex items-center gap-2"><button type="button" onClick={() => setDraft({ ...defaultFilters, purpose: modeToFilterPurpose(mode) })} className="rounded-full px-3 py-2 text-xs font-bold text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]" data-testid="button-reset-filters">Reset</button><button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" aria-label="Close filters" data-testid="button-close-filters"><X size={18} /></button></div>
+      </header>
+      <div className="min-h-0 flex-1 space-y-7 overflow-y-auto px-5 py-6 md:px-7">
+        <FilterSection step="01" title="Main Filters" subtitle="All in one filter overview">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))]">I'm looking for</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {([['Rent', Home], ['Short Rent', CalendarDays], ['Buy', Building2], ['Trip / Booking', Sparkles]] as const).map(([label, Icon]) => <FilterChoice key={label} label={label} icon={Icon} selected={purpose === label} onClick={() => choosePurpose(label)} />)}
+          </div>
+          <div className="mt-6">
+            <div className="flex items-center justify-between"><p className="text-sm font-bold">{isBuy ? 'Budget' : 'Price Range'}</p><span className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">{formatFilterPrice(draft.minPrice)} – {formatFilterPrice(draft.maxPrice)}</span></div>
+            <div className="mt-3 space-y-2">
+              <input type="range" min={priceFloor} max={priceCeiling} step={isBuy ? 10000 : 100} value={Math.max(priceFloor, Math.min(draft.minPrice, priceCeiling))} onChange={(event) => update('minPrice', Math.min(Number(event.target.value), draft.maxPrice - (isBuy ? 10000 : 100)))} className="w-full accent-[hsl(var(--primary))]" aria-label="Minimum price" data-testid="range-min-price" />
+              <input type="range" min={priceFloor} max={priceCeiling} step={isBuy ? 10000 : 100} value={Math.min(priceCeiling, Math.max(draft.maxPrice, draft.minPrice + (isBuy ? 10000 : 100)))} onChange={(event) => update('maxPrice', Math.max(Number(event.target.value), draft.minPrice + (isBuy ? 10000 : 100)))} className="w-full accent-[hsl(var(--primary))]" aria-label="Maximum price" data-testid="range-max-price" />
+            </div>
+            <div className="mt-3 flex gap-2 overflow-x-auto">
+              {(isBuy ? ['Any', 'Under €500,000', '€500,000–€1,000,000', 'Over €1,000,000'] : ['Any', 'Under €1,000', '€1,000–€2,000', 'Over €2,000']).map((option) => <button type="button" key={option} onClick={() => update('price', option)} className={`shrink-0 rounded-full border px-3 py-2 text-[11px] font-bold ${draft.price === option ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.08)] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`} data-testid={`button-price-${option.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-')}`}>{option}</button>)}
+            </div>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <label className="text-xs font-bold">Beds<select value={draft.beds} onChange={(event) => update('beds', event.target.value)} className={selectClass} data-testid="select-beds">{['Any', 'Studio', '1+', '2+', '3+', '4+', '5+'].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="text-xs font-bold">Baths<select value={draft.baths} onChange={(event) => update('baths', event.target.value)} className={selectClass} data-testid="select-baths">{['Any', '1+', '2+', '3+', '4+', '5+'].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="text-xs font-bold">Property type<select value={draft.propertyType} onChange={(event) => update('propertyType', event.target.value)} className={selectClass} data-testid="select-property-type">{['Any', ...filterPropertyTypes.map(({ label }) => label)].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="text-xs font-bold">Location<select value={draft.location} onChange={(event) => update('location', event.target.value)} className={selectClass} data-testid="select-location">{['Any', 'Valletta', 'Sliema', 'Rabat', 'Msida', 'Gozo'].map((option) => <option key={option}>{option}</option>)}</select></label>
+          </div>
+        </FilterSection>
+
+        <FilterSection step="02" title={isBuy ? 'Property Type & Purchase' : 'Property Type & Stay'} subtitle={isBuy ? 'Choose what you want to buy' : 'Choose type and stay preferences'}>
+          <p className="mb-3 text-xs font-bold">Property Type <span className="font-normal text-[hsl(var(--muted-foreground))]">Select one or more</span></p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {filterPropertyTypes.map(({ label, icon: Icon, image }) => <FilterChoice key={label} label={label} icon={Icon} image={image} selected={selectedTypes.includes(label)} onClick={() => toggleArray('propertyTypes', label)} />)}
+          </div>
+          {isBuy ? <div className="mt-6 space-y-5">
+            <label className="block text-xs font-bold">Buying Purpose<select value={draft.buyingPurpose} onChange={(event) => update('buyingPurpose', event.target.value)} className={selectClass}>{['Buy to Live', 'Investment', 'Holiday Home', 'Rental Investment', 'Commercial Investment'].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="block text-xs font-bold">Property Status<select value={draft.propertyStatus} onChange={(event) => update('propertyStatus', event.target.value)} className={selectClass}>{['Any', 'Ready to Move', 'Under Construction', 'Off Plan', 'New Build', 'Resale'].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <div><p className="text-xs font-bold">Property Size</p><div className="mt-2 grid grid-cols-3 gap-2">{['Any', '50–150 m²', '150–300 m²', '300+ m²'].map((option) => <FilterChoice key={option} label={option} selected={draft.propertySize === option} onClick={() => update('propertySize', option)} />)}</div></div>
+          </div> : <div className="mt-6 space-y-5">
+            {purpose === 'Rent' && <div><p className="text-xs font-bold">Rent Type</p><div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">{['Long Term', 'Monthly', 'Yearly', 'Student Rental'].map((option) => <FilterChoice key={option} label={option} selected={draft.rentType === option} onClick={() => update('rentType', option)} />)}</div></div>}
+            {isShortStay && <div><p className="text-xs font-bold">Duration</p><div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">{['Any', '1–3 Days', '4–7 Days', '1–2 Weeks', '2–4 Weeks', '1–3 Months'].map((option) => <FilterChoice key={option} label={option} selected={draft.duration === option} onClick={() => update('duration', option)} />)}</div></div>}
+            {purpose === 'Rent' && <div><p className="text-xs font-bold">Furnishing</p><div className="mt-2 grid grid-cols-3 gap-2">{['Any', 'Fully Furnished', 'Semi Furnished', 'Unfurnished'].map((option) => <FilterChoice key={option} label={option} selected={draft.furnishing === option} onClick={() => update('furnishing', option)} />)}</div></div>}
+            {isShortStay ? <div className="grid grid-cols-2 gap-3"><label className="text-xs font-bold">Check-in<input type="date" value={draft.checkIn} onChange={(event) => update('checkIn', event.target.value)} className={selectClass} /></label><label className="text-xs font-bold">Check-out<input type="date" value={draft.checkOut} onChange={(event) => update('checkOut', event.target.value)} className={selectClass} /></label></div> : <label className="block text-xs font-bold">Availability<select value={draft.availability} onChange={(event) => update('availability', event.target.value)} className={selectClass}>{['Any', 'Available Now', 'Available This Month', 'Available Next Month'].map((option) => <option key={option}>{option}</option>)}</select></label>}
+          </div>}
+          {isShortStay && <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4"><Counter label="Guests" value={draft.guests} onChange={(value) => update('guests', value)} /><Counter label="Children" value={draft.children} onChange={(value) => update('children', value)} /><Counter label="Infants" value={draft.infants} onChange={(value) => update('infants', value)} /><Counter label="Pets" value={draft.pets} onChange={(value) => update('pets', value)} /></div>}
+        </FilterSection>
+
+        <FilterSection step="03" title="Amenities & Features" subtitle="Select amenities and accessibility">
+          <p className="mb-3 text-xs font-bold">Amenities <span className="font-normal text-[hsl(var(--muted-foreground))]">Choose as many as you need</span></p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{filterAmenities.map(([label, Icon]) => <FilterChoice key={label} label={label} icon={Icon} selected={draft.amenities.includes(label)} onClick={() => toggleArray('amenities', label)} />)}</div>
+          <div className="mt-6 border-t border-[hsl(var(--border))] pt-5"><p className="mb-3 text-xs font-bold">Accessibility Features</p><div className="grid grid-cols-2 gap-2 sm:grid-cols-3">{filterAccessibilityOptions.map(([label, Icon]) => <FilterChoice key={label} label={label} icon={Icon} selected={draft.accessibility.includes(label)} onClick={() => toggleArray('accessibility', label)} />)}</div></div>
+          <div className="mt-6"><p className="mb-3 text-xs font-bold">Parking / Garage</p><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{['Any', 'No Parking', 'Parking Space', 'Garage', '1 Garage', '2+ Garages'].map((option) => <FilterChoice key={option} label={option} icon={Navigation} selected={draft.parking === option} onClick={() => update('parking', option)} />)}</div></div>
+        </FilterSection>
+
+        <FilterSection step="04" title="More Options" subtitle="More filters and preferences">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="text-xs font-bold">Host Language<select value={draft.hostLanguage} onChange={(event) => update('hostLanguage', event.target.value)} className={selectClass}>{['Any Language', 'English', 'Arabic', 'French', 'Italian', 'German', 'Spanish', 'Portuguese'].map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="text-xs font-bold">Host Type<select value={draft.hostType} onChange={(event) => update('hostType', event.target.value)} className={selectClass}>{['Any', 'Property Owner', 'Verified Host', 'Professional Host', 'Property Manager'].map((option) => <option key={option}>{option}</option>)}</select></label>
+          </div>
+          <div className="mt-6"><p className="mb-3 text-xs font-bold">Booking Options</p><div className="grid grid-cols-1 gap-2 sm:grid-cols-2">{filterBookingOptions.map(([label, Icon]) => <FilterToggle key={label} label={label} icon={Icon} selected={draft.bookingOptions.includes(label)} onClick={() => toggleArray('bookingOptions', label)} />)}</div></div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div><p className="mb-3 text-xs font-bold">Verification</p><FilterToggle label="Verified listings only" icon={ShieldCheck} selected={draft.verifiedOnly} onClick={() => update('verifiedOnly', !draft.verifiedOnly)} /></div>
+            <label className="text-xs font-bold">Pet Policy<select value={draft.petPolicy} onChange={(event) => update('petPolicy', event.target.value)} className={selectClass}>{['Any', 'Pets Allowed', 'Small Pets', 'Large Pets', 'No Pets'].map((option) => <option key={option}>{option}</option>)}</select></label>
+          </div>
+          {isBuy && <div className="mt-6 grid gap-4 sm:grid-cols-2"><label className="text-xs font-bold">View<select value={draft.views} onChange={(event) => update('views', event.target.value)} className={selectClass}>{['Any', 'Sea View', 'City View', 'Garden View', 'Pool View'].map((option) => <option key={option}>{option}</option>)}</select></label><div><p className="mb-3 text-xs font-bold">Outdoor Features</p><div className="flex flex-wrap gap-2">{['Balcony', 'Terrace', 'Garden', 'Roof Terrace', 'Private Pool'].map((option) => <button type="button" key={option} onClick={() => toggleArray('outdoorFeatures', option)} className={`rounded-full border px-3 py-2 text-xs font-bold ${draft.outdoorFeatures.includes(option) ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.08)] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`}>{option}</button>)}</div></div></div>}
+        </FilterSection>
       </div>
-      <div className="mt-6 space-y-5">
-        <label className="block text-sm font-bold">Price range
-          <select value={draft.price} onChange={(event) => update('price', event.target.value)} className={selectClass} data-testid="select-price">
-            {['Any', 'Under €1,000', '€1,000–€2,000', 'Over €2,000'].map((option) => <option key={option}>{option}</option>)}
-          </select>
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="text-sm font-bold">Beds
-            <select value={draft.beds} onChange={(event) => update('beds', event.target.value)} className={selectClass} data-testid="select-beds">
-              {['Any', '1+', '2+', '3+', '4+'].map((option) => <option key={option}>{option}</option>)}
-            </select>
-          </label>
-          <label className="text-sm font-bold">Baths
-            <select value={draft.baths} onChange={(event) => update('baths', event.target.value)} className={selectClass} data-testid="select-baths">
-              {['Any', '1+', '2+', '3+'].map((option) => <option key={option}>{option}</option>)}
-            </select>
-          </label>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="text-sm font-bold">Garages
-            <select value={draft.garages} onChange={(event) => update('garages', event.target.value)} className={selectClass} data-testid="select-garages">
-              {['Any', '1+', '2+'].map((option) => <option key={option}>{option}</option>)}
-            </select>
-          </label>
-          <label className="text-sm font-bold">Property type
-            <select value={draft.propertyType} onChange={(event) => update('propertyType', event.target.value)} className={selectClass} data-testid="select-property-type">
-              {['Any', 'Apartment', 'House', 'Studio', 'Villa'].map((option) => <option key={option}>{option}</option>)}
-            </select>
-          </label>
-        </div>
-        <label className="block text-sm font-bold">Location
-          <select value={draft.location} onChange={(event) => update('location', event.target.value)} className={selectClass} data-testid="select-location">
-            {['Any', 'Valletta', 'Sliema', 'Rabat', 'Msida', 'Gozo'].map((option) => <option key={option}>{option}</option>)}
-          </select>
-        </label>
-        <div className="flex items-center justify-between rounded-2xl bg-[hsl(var(--secondary)/.55)] p-4">
-          <div><p className="font-bold">Verified listings only</p><p className="text-xs text-[hsl(var(--muted-foreground))]">Owners and agents checked by AiroRent</p></div>
-          <div className="size-6 rounded-full bg-[hsl(var(--primary))] p-1 text-white"><Check size={16} /></div>
-        </div>
-      </div>
-      <button onClick={() => { onApply(draft); onClose(); }} className="mt-7 w-full rounded-2xl bg-[hsl(var(--primary))] py-3.5 font-bold text-white" data-testid="button-apply-filters">Apply Filters</button>
+      <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-4 md:px-7">
+        <button type="button" onClick={apply} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] py-3.5 text-sm font-bold text-white shadow-[0_8px_18px_hsl(var(--primary)/.22)] transition hover:-translate-y-0.5" data-testid="button-apply-filters">Apply Filters <ArrowRight size={17} /></button>
+      </footer>
     </div>
   </div>;
 }

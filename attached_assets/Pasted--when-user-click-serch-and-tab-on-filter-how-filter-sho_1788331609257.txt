@@ -1,0 +1,885 @@
+‎when user click serch and tab on filter how filter show detiled explain blow and I attached all design how its look user just scrolling and fill up all thats 
+‎
+‎AiroRent — Complete Filter Logic
+‎
+‎Main Filter
+‎
+‎“I’m looking for”
+‎
+‎User ko 4 main options nazar aayen:
+‎
+‎1. 🏠 Rent
+‎
+‎
+‎2. 📅 Short Rent
+‎
+‎
+‎3. 🏢 Buy
+‎
+‎
+‎4. 🧳 Trip / Booking
+‎
+‎
+‎
+‎Jo option user select kare, woh red/pink outline + light red background + red icon mein show ho.
+‎
+‎
+‎---
+‎
+‎01 — 🏠 RENT
+‎
+‎Ye mainly Long-Term Rental ke liye hoga.
+‎
+‎Rent Type
+‎
+‎Dropdown:
+‎
+‎Long Term
+‎
+‎Monthly
+‎
+‎Yearly
+‎
+‎6 Months
+‎
+‎12 Months+
+‎
+‎Student Rental
+‎
+‎Family Rental
+‎
+‎Professional Rental
+‎
+‎
+‎Price Range
+‎
+‎User khud slider se apna budget select kare:
+‎
+‎€500 ───────── €5,000+
+‎
+‎Saath mein:
+‎
+‎Minimum Price
+‎
+‎Maximum Price
+‎
+‎
+‎Property Type
+‎
+‎Yahan large 3D / isometric style property illustrations hon:
+‎
+‎🏠 House
+‎
+‎🏢 Apartment
+‎
+‎🏡 Villa
+‎
+‎🏘️ Townhouse
+‎
+‎🏙️ Penthouse
+‎
+‎🛏️ Studio
+‎
+‎🏚️ Guesthouse
+‎
+‎🏢 Duplex
+‎
+‎🏠 Maisonette
+‎
+‎
+‎User ek ya multiple properties select kar sake.
+‎
+‎Bedrooms
+‎
+‎Studio
+‎
+‎1 Bedroom
+‎
+‎2 Bedrooms
+‎
+‎3 Bedrooms
+‎
+‎4 Bedrooms
+‎
+‎5+ Bedrooms
+‎
+‎
+‎Bathrooms
+‎
+‎1+
+‎
+‎2+
+‎
+‎3+
+‎
+‎4+
+‎
+‎5+
+‎
+‎
+‎Furnishing
+‎
+‎Fully Furnished
+‎
+‎Semi Furnished
+‎
+‎Unfurnished
+‎
+‎
+‎Availability
+‎
+‎Available Now
+‎
+‎Available This Month
+‎
+‎Available Next Month
+‎
+‎Choose Move-in Date
+‎
+‎
+‎Location
+‎
+‎Search Location
+‎
+‎Current Location
+‎
+‎Select City / Area
+‎
+‎Select on Map
+‎
+‎
+‎🚗 Parking / Garage
+‎
+‎No Parking
+‎
+‎Street Parking
+‎
+‎Private Parking
+‎
+‎Garage
+‎
+‎1 Garage
+‎
+‎2+ Garages
+‎
+‎
+‎
+‎---
+‎
+‎🏠 RENT → Amenities
+‎
+‎Ye section bohat important hai.
+‎
+‎Large, clear icons ke saath:
+‎
+‎📶 Wi-Fi
+‎
+‎❄️ Air Conditioning
+‎
+‎🔥 Heating
+‎
+‎🍳 Kitchen
+‎
+‎🧺 Washing Machine
+‎
+‎📺 TV
+‎
+‎🧊 Refrigerator
+‎
+‎🍽️ Dishwasher
+‎
+‎🛗 Elevator
+‎
+‎🌿 Balcony
+‎
+‎🌳 Garden
+‎
+‎🏊 Swimming Pool
+‎
+‎🛁 Bathtub
+‎
+‎🚿 Shower
+‎
+‎🛋️ Living Room
+‎
+‎💻 Workspace
+‎
+‎🔐 Security
+‎
+‎🔑 Private Entrance
+‎
+‎
+‎User multiple options select kar sake.
+‎
+‎Example:
+‎
+‎Wi-Fi ✓
+‎Air Conditioning ✓
+‎Washing Machine ✓
+‎Garage ✓
+‎Balcony ✓
+‎
+‎Selected icon/card red outline + light red background mein ho.
+‎
+‎
+‎---
+‎
+‎👤 RENT → Host / Owner
+‎
+‎Listed By
+‎
+‎Property Owner
+‎
+‎Verified Agent
+‎
+‎Property Management Company
+‎
+‎Any
+‎
+‎
+‎Verification
+‎
+‎Verified Listing Only
+‎
+‎Small description:
+‎
+‎> Owner/Agent and property details verified by AiroRent.
+‎
+‎
+‎
+‎Contact Preference
+‎
+‎Chat
+‎
+‎Phone
+‎
+‎WhatsApp
+‎
+‎Any
+‎
+‎
+‎
+‎---
+‎
+‎02 — 📅 SHORT RENT
+‎
+‎Ye few days se few weeks/months ke liye hoga.
+‎
+‎Duration
+‎
+‎1–3 Days
+‎
+‎4–7 Days
+‎
+‎1–2 Weeks
+‎
+‎2–4 Weeks
+‎
+‎1–3 Months
+‎
+‎
+‎Check-in
+‎
+‎📅 Select Date
+‎
+‎Check-out
+‎
+‎📅 Select Date
+‎
+‎Guests
+‎
+‎Adults
+‎
+‎Children
+‎
+‎Infants
+‎
+‎Pets
+‎
+‎
+‎Price
+‎
+‎User choose kar sake:
+‎
+‎Per Night
+‎
+‎Per Week
+‎
+‎Per Month
+‎
+‎
+‎Property Type
+‎
+‎Large visual cards:
+‎
+‎🏠 House
+‎🏢 Apartment
+‎🏡 Villa
+‎🏙️ Penthouse
+‎🛏️ Studio
+‎🏨 Hotel
+‎🏘️ Guesthouse
+‎
+‎Amenities
+‎
+‎Wi-Fi
+‎
+‎AC
+‎
+‎Kitchen
+‎
+‎TV
+‎
+‎Washing Machine
+‎
+‎Parking
+‎
+‎Elevator
+‎
+‎Balcony
+‎
+‎Pool
+‎
+‎Workspace
+‎
+‎etc.
+‎
+‎
+‎Booking Options
+‎
+‎Instant Book
+‎
+‎Request to Book
+‎
+‎Self Check-in
+‎
+‎Free Cancellation
+‎
+‎Flexible Cancellation
+‎
+‎Pay at Property
+‎
+‎
+‎Pet Policy
+‎
+‎Pets Allowed
+‎
+‎Small Pets
+‎
+‎Large Pets
+‎
+‎No Pets
+‎
+‎
+‎
+‎---
+‎
+‎03 — 🏢 BUY
+‎
+‎Buy section Rent ke filters jaisa nahi hona chahiye.
+‎
+‎Buying Purpose
+‎
+‎Buy to Live
+‎
+‎Investment
+‎
+‎Holiday Home
+‎
+‎Rental Investment
+‎
+‎Commercial Investment
+‎
+‎
+‎Budget
+‎
+‎€50,000 ───────── €2,000,000+
+‎
+‎User khud minimum aur maximum budget select kare.
+‎
+‎Property Type
+‎
+‎Large 3D visual cards:
+‎
+‎🏠 House
+‎🏢 Apartment
+‎🏡 Villa
+‎🏙️ Penthouse
+‎🏘️ Townhouse
+‎🏗️ Commercial Property
+‎🌊 Sea View Property
+‎🏚️ Farmhouse
+‎
+‎Property Status
+‎
+‎Ready to Move
+‎
+‎Under Construction
+‎
+‎Off Plan
+‎
+‎New Build
+‎
+‎Resale
+‎
+‎
+‎Bedrooms
+‎
+‎Studio
+‎
+‎1
+‎
+‎2
+‎
+‎3
+‎
+‎4
+‎
+‎5+
+‎
+‎
+‎Bathrooms
+‎
+‎1+
+‎
+‎2+
+‎
+‎3+
+‎
+‎4+
+‎
+‎
+‎Property Size
+‎
+‎50 m² ───────── 500+ m²
+‎
+‎Parking
+‎
+‎No Parking
+‎
+‎Parking Space
+‎
+‎Garage
+‎
+‎Multiple Garages
+‎
+‎
+‎Outdoor Features
+‎
+‎Balcony
+‎
+‎Terrace
+‎
+‎Garden
+‎
+‎Roof Terrace
+‎
+‎Private Pool
+‎
+‎
+‎View
+‎
+‎Sea View
+‎
+‎City View
+‎
+‎Garden View
+‎
+‎Pool View
+‎
+‎Any View
+‎
+‎
+‎Investment Filters
+‎
+‎Rental Potential
+‎
+‎High Rental Demand
+‎
+‎ROI Potential
+‎
+‎Currently Rented
+‎
+‎Vacant Property
+‎
+‎Investment Property
+‎
+‎
+‎Seller
+‎
+‎Owner
+‎
+‎Agent
+‎
+‎Developer
+‎
+‎Verified Seller
+‎
+‎
+‎Documents / Legal
+‎
+‎Verified Ownership
+‎
+‎Property Documents Available
+‎
+‎Planning Approved
+‎
+‎No Outstanding Issues
+‎
+‎
+‎
+‎---
+‎
+‎04 — 🧳 TRIP / BOOKING
+‎
+‎Ye AiroRent ka travel / holiday stay section hoga.
+‎
+‎Location
+‎
+‎📍 Where do you want to stay?
+‎
+‎Dates
+‎
+‎📅 Check-in
+‎📅 Check-out
+‎
+‎Guests
+‎
+‎👤 Guests
+‎
+‎Adults
+‎
+‎Children
+‎
+‎Infants
+‎
+‎Pets
+‎
+‎
+‎
+‎---
+‎
+‎Trip / Booking → Property Type
+‎
+‎Large visual cards:
+‎
+‎🏠 House
+‎🏢 Apartment
+‎🏡 Villa
+‎🏨 Hotel
+‎🛏️ Studio
+‎🏘️ Guesthouse
+‎🏙️ Penthouse
+‎🌴 Resort
+‎
+‎
+‎---
+‎
+‎🧳 Trip → Amenities
+‎
+‎Large icons ke saath:
+‎
+‎📶 Wi-Fi
+‎❄️ Air Conditioning
+‎🍳 Kitchen
+‎🧺 Washing Machine
+‎📺 TV
+‎🚗 Free Parking
+‎🛗 Elevator
+‎🌿 Balcony
+‎🏊 Pool
+‎🌊 Sea View
+‎💻 Workspace
+‎🛁 Bathtub
+‎🔥 Heating
+‎
+‎User multiple amenities select kar sake.
+‎
+‎Example:
+‎
+‎Wi-Fi ✓ + Pool ✓ + Parking ✓
+‎
+‎Toh results mein sirf woh properties show hon jin mein ye facilities available hain.
+‎
+‎
+‎---
+‎
+‎🧳 Trip → Booking Preferences
+‎
+‎Booking
+‎
+‎⚡ Instant Book
+‎
+‎🔑 Self Check-in
+‎
+‎📅 Free Cancellation
+‎
+‎🐾 Pets Allowed
+‎
+‎💳 Pay Online
+‎
+‎🏠 Entire Place
+‎
+‎🚪 Private Room
+‎
+‎👥 Shared Room
+‎
+‎
+‎
+‎---
+‎
+‎⭐ Trip → Stay Quality
+‎
+‎AiroRent ki apni categories:
+‎
+‎⭐ Guest Favorite
+‎
+‎🏆 Top Rated
+‎
+‎💎 Premium
+‎
+‎✨ Newly Listed
+‎
+‎🔥 Popular
+‎
+‎💰 Best Value
+‎
+‎
+‎Airbnb ke exact names/design ko copy nahi karna.
+‎
+‎
+‎---
+‎
+‎♿ Accessibility Features
+‎
+‎Entrance
+‎
+‎Step-free Entrance
+‎
+‎Wide Entrance
+‎
+‎Elevator Access
+‎
+‎Accessible Parking
+‎
+‎
+‎Bathroom
+‎
+‎Step-free Shower
+‎
+‎Accessible Bathroom
+‎
+‎Grab Bars
+‎
+‎Shower Chair
+‎
+‎
+‎Bedroom
+‎
+‎Step-free Bedroom Access
+‎
+‎Wide Bedroom Entrance
+‎
+‎
+‎
+‎---
+‎
+‎🌍 Host Language
+‎
+‎User host ki language bhi filter kar sake:
+‎
+‎English
+‎
+‎Arabic
+‎
+‎French
+‎
+‎Italian
+‎
+‎German
+‎
+‎Spanish
+‎
+‎Portuguese
+‎
+‎Chinese
+‎
+‎Russian
+‎
+‎etc.
+‎
+‎
+‎Host Type
+‎
+‎Property Owner
+‎
+‎Verified Host
+‎
+‎Professional Host
+‎
+‎Property Manager
+‎
+‎
+‎
+‎---
+‎
+‎🔥 “More Filters”
+‎
+‎Main screen ko bohat zyada options se bharna achha UX nahi hoga.
+‎
+‎Main screen par sirf important filters rakho:
+‎
+‎Purpose → Price → Location → Property Type → Beds → Baths → Duration → Availability
+‎
+‎Phir:
+‎
+‎+ More Filters
+‎
+‎Iske andar:
+‎
+‎Amenities
+‎
+‎Parking
+‎
+‎Furnishing
+‎
+‎Accessibility
+‎
+‎Booking Options
+‎
+‎Host
+‎
+‎Languages
+‎
+‎Views
+‎
+‎Outdoor Features
+‎
+‎Pet Policy
+‎
+‎Verification
+‎
+‎Stay Quality
+‎
+‎
+‎
+‎---
+‎
+‎👆 User Flow
+‎
+‎Step 1
+‎
+‎User Filters open karta hai.
+‎
+‎I'M LOOKING FOR
+‎
+‎🏠 Rent
+‎📅 Short Rent
+‎🏢 Buy
+‎🧳 Trip / Booking
+‎
+‎
+‎---
+‎
+‎Step 2 — User Rent select karta hai
+‎
+‎Rent red/pink selected state mein aa jayega.
+‎
+‎Phir relevant filters:
+‎
+‎Long-Term Rental
+‎
+‎Price Range
+‎Bedrooms
+‎Bathrooms
+‎Property Type
+‎Furnished
+‎Availability
+‎Location
+‎
+‎↓
+‎
+‎Amenities
+‎
+‎📶 Wi-Fi
+‎❄️ AC
+‎🧺 Washing Machine
+‎📺 TV
+‎🚗 Parking
+‎🛗 Elevator
+‎🌿 Balcony
+‎🏊 Pool
+‎
+‎↓
+‎
+‎More Filters
+‎
+‎Host
+‎Accessibility
+‎Pet Policy
+‎Verification etc.
+‎
+‎↓
+‎
+‎Apply Filters
+‎
+‎
+‎---
+‎
+‎Step 3 — User Trip / Booking select karta hai
+‎
+‎Rent wale irrelevant options remove/replace ho jayen.
+‎
+‎Show:
+‎
+‎Check-in → Check-out → Guests → Price per Night → Property Type → Amenities → Booking Options → Cancellation → Pets → Accessibility → Host
+‎
+‎
+‎---
+‎
+‎Step 4 — User Buy select karta hai
+‎
+‎Show:
+‎
+‎Budget → Property Type → Bedrooms → Bathrooms → Property Size → Property Status → Parking → Outdoor → View → Investment → Seller → Documents
+‎
+‎
+‎---
+‎
+‎🎨 Design Direction
+‎
+‎Sabse important point:
+‎
+‎Airbnb ko copy nahi karna.
+‎
+‎Reference se sirf UX logic lena hai.
+‎
+‎AiroRent ka apna:
+‎
+‎Unique layout
+‎
+‎Unique icons
+‎
+‎Large 3D/isometric property illustrations
+‎
+‎Bold typography
+‎
+‎Clean white/very-light-grey background
+‎
+‎Red/pink AiroRent accent
+‎
+‎Rounded cards
+‎
+‎Clear selected states
+‎
+‎Smooth dropdowns
+‎
+‎Range sliders
+‎
+‎Large, easy-to-understand icons
+‎
+‎Minimal but premium interface
+‎
+‎
+‎Aur Wi-Fi, House, Apartment, Garage, Parking, Pool, AC, Kitchen, Washing Machine etc. ke icons large aur instantly recognizable hone chahiye — sirf tiny generic icons nahi.
+‎
