@@ -12,14 +12,14 @@ import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b33
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
-import propertyHouse3d from '@assets/file_000000004b40820b83b00321816d086b_1_1788359199655.png';
-import propertyApartment3d from '@assets/file_000000004b40820b83b00321816d086b_2_1788359199715.png';
-import propertyVilla3d from '@assets/file_000000004b40820b83b00321816d086b_3_1788359199738.png';
-import propertyStudio3d from '@assets/file_000000004b40820b83b00321816d086b_4_1788359199762.png';
-import propertyTownhouse3d from '@assets/file_000000004b40820b83b00321816d086b_5_1788359199788.png';
-import propertyPenthouse3d from '@assets/file_000000004b40820b83b00321816d086b_6_1788359199817.png';
-import propertyGuesthouse3d from '@assets/file_000000004b40820b83b00321816d086b_7_1788359199847.png';
-import propertyDuplex3d from '@assets/file_000000004b40820b83b00321816d086b_8_1788359199880.png';
+import propertyHouse3d from '@assets/property-house-card.png';
+import propertyApartment3d from '@assets/property-apartment-card.png';
+import propertyVilla3d from '@assets/property-villa-card.png';
+import propertyStudio3d from '@assets/property-studio-card.png';
+import propertyTownhouse3d from '@assets/property-townhouse-card.png';
+import propertyPenthouse3d from '@assets/property-penthouse-card.png';
+import propertyGuesthouse3d from '@assets/property-guesthouse-card.png';
+import propertyDuplex3d from '@assets/property-duplex-card.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
