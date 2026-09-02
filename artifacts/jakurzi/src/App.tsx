@@ -936,11 +936,13 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
-    <button onClick={() => setLocation('/post')} className="relative mt-4 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place">
-      <img src={hostBannerSrc} alt="Become Co-Host. It's easy to start hosting and earn extra income." className="size-full object-cover" />
-      <span className="absolute bottom-[6%] right-[3%] top-[6%] left-[31%] rounded-r-[28px] bg-white text-left">
-        <span className="absolute left-[8%] right-[4%] top-[13%] text-[21px] font-bold leading-tight tracking-[-.04em] text-[#101a2b] sm:text-[24px]">Become Co-Host</span>
-        <span className="absolute left-[8%] right-[4%] top-[43%] text-[13px] leading-[1.35] text-black/55 sm:text-[14px]">It's easy to start hosting and earn extra income.</span>
+    <button onClick={() => setLocation('/post')} className="relative mt-4 block h-[144px] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_16px_rgba(22,28,35,.05)] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place">
+      <span className="absolute inset-y-0 left-0 w-[34%] overflow-hidden">
+        <img src={hostBannerSrc} alt="" className="absolute left-[-16px] top-[-10px] h-[calc(100%+20px)] max-w-none" />
+      </span>
+      <span className="absolute inset-y-0 right-0 left-[31%] text-left">
+        <span className="absolute left-[8%] right-[3%] top-[16%] text-[21px] font-bold leading-tight tracking-[-.04em] text-[#101a2b] sm:text-[24px]">Become Co-Host</span>
+        <span className="absolute left-[8%] right-[4%] top-[46%] text-[13px] leading-[1.35] text-black/55 sm:text-[14px]">It's easy to start hosting and earn extra income.</span>
       </span>
     </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
