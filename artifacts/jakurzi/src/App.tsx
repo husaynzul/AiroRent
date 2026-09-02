@@ -12,14 +12,14 @@ import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b33
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
-import propertyHouse3d from '@assets/property-house-3d.png';
-import propertyApartment3d from '@assets/property-apartment-3d.png';
-import propertyVilla3d from '@assets/property-villa-3d.png';
-import propertyTownhouse3d from '@assets/property-townhouse-3d.png';
-import propertyPenthouse3d from '@assets/property-penthouse-3d.png';
-import propertyStudio3d from '@assets/property-studio-3d.png';
-import propertyGuesthouse3d from '@assets/property-guesthouse-3d.png';
-import propertyDuplex3d from '@assets/property-duplex-3d.png';
+import propertyHouse3d from '@assets/file_000000004b40820b83b00321816d086b_1_1788359199655.png';
+import propertyApartment3d from '@assets/file_000000004b40820b83b00321816d086b_2_1788359199715.png';
+import propertyVilla3d from '@assets/file_000000004b40820b83b00321816d086b_3_1788359199738.png';
+import propertyStudio3d from '@assets/file_000000004b40820b83b00321816d086b_4_1788359199762.png';
+import propertyTownhouse3d from '@assets/file_000000004b40820b83b00321816d086b_5_1788359199788.png';
+import propertyPenthouse3d from '@assets/file_000000004b40820b83b00321816d086b_6_1788359199817.png';
+import propertyGuesthouse3d from '@assets/file_000000004b40820b83b00321816d086b_7_1788359199847.png';
+import propertyDuplex3d from '@assets/file_000000004b40820b83b00321816d086b_8_1788359199880.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
@@ -641,9 +641,9 @@ function FilterSection({ step, title, subtitle, children, darkStep = false }: { 
 }
 
 function FilterChoice({ label, selected, onClick, icon: Icon, image, description, largeImage = false }: { label: string; selected: boolean; onClick: () => void; icon?: typeof Settings; image?: string; description?: string; largeImage?: boolean }) {
-  return <button type="button" onClick={onClick} className={`group relative flex ${largeImage ? 'min-h-[190px] sm:min-h-[200px] rounded-[20px]' : 'min-h-[76px] rounded-2xl'} flex-col items-center justify-center gap-1.5 border p-2 text-center transition ${largeImage ? 'shadow-[0_4px_14px_rgba(22,28,35,.08)]' : ''} ${selected ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))] shadow-[0_0_0_1px_hsl(var(--primary)/.12)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.45)]'}`} aria-pressed={selected}>
-    {image ? <img src={image} alt="" className={`${largeImage ? 'h-28 sm:h-32' : 'h-12'} w-full rounded-xl object-contain`} /> : Icon && <Icon size={24} strokeWidth={selected ? 2.5 : 1.9} />}
-    <span className={`${largeImage ? 'text-lg' : 'text-[11px]'} font-bold leading-tight`}>{label}</span>
+  return <button type="button" onClick={onClick} className={`group relative flex ${largeImage ? 'aspect-[1.5] min-h-0 overflow-hidden rounded-[20px] border-0 p-0' : 'min-h-[76px] rounded-2xl border p-2'} flex-col items-center justify-center gap-1.5 text-center transition ${largeImage ? 'hover:scale-[1.01]' : ''} ${selected ? (largeImage ? 'ring-2 ring-[hsl(var(--primary))] ring-offset-2' : 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))] shadow-[0_0_0_1px_hsl(var(--primary)/.12)]') : (largeImage ? '' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.45)]')}`} aria-label={label} aria-pressed={selected}>
+    {image ? <img src={image} alt="" className={`${largeImage ? 'size-full object-cover' : 'h-12 w-full rounded-xl object-contain'}`} /> : Icon && <Icon size={24} strokeWidth={selected ? 2.5 : 1.9} />}
+    {!largeImage && <span className="text-[11px] font-bold leading-tight">{label}</span>}
     {description && <span className="text-[9px] leading-tight text-[hsl(var(--muted-foreground))]">{description}</span>}
     {selected && <span className="absolute right-1.5 top-1.5 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-white"><Check size={10} /></span>}
   </button>;
