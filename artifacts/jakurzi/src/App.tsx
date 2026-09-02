@@ -7,7 +7,6 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
-import hostBannerSrc from '@assets/file_00000000e18481fb9f77a46c32720fa9_1788299200324.png';
 import listPlaceBannerSrc from '@assets/file_0000000061a881fa8660af4de8b524cb_1_1788299610339.png';
 import listPlaceCardReference from '@assets/Screenshot_20260902-052104_1788308525877.jpg';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
@@ -936,15 +935,6 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
-    <button onClick={() => setLocation('/post')} className="relative mt-4 block h-[144px] w-full overflow-hidden rounded-[30px] bg-white shadow-[0_4px_16px_rgba(22,28,35,.05)] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place">
-      <span className="absolute inset-y-0 left-0 w-[34%] overflow-hidden">
-        <img src={hostBannerSrc} alt="" className="absolute left-[-16px] top-[-10px] h-[calc(100%+20px)] max-w-none" />
-      </span>
-      <span className="absolute inset-y-0 right-0 left-[36%] text-left">
-        <span className="absolute left-[5%] right-[3%] top-[18%] text-[18px] font-semibold leading-tight tracking-[-.035em] text-[#101a2b] sm:text-[20px]">Become Co-Host</span>
-        <span className="absolute left-[5%] right-[4%] top-[47%] text-[12px] leading-[1.35] text-black/55 sm:text-[13px]">It's easy to start hosting and earn extra income.</span>
-      </span>
-    </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
       <img src={listPlaceCardReference} alt="List your place. Share your space and start earning with AiroRent." className="size-full object-cover" />
     </button>
