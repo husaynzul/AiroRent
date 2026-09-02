@@ -12,6 +12,14 @@ import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b33
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
+import propertyHouse3d from '@assets/property-house-3d.png';
+import propertyApartment3d from '@assets/property-apartment-3d.png';
+import propertyVilla3d from '@assets/property-villa-3d.png';
+import propertyTownhouse3d from '@assets/property-townhouse-3d.png';
+import propertyPenthouse3d from '@assets/property-penthouse-3d.png';
+import propertyStudio3d from '@assets/property-studio-3d.png';
+import propertyGuesthouse3d from '@assets/property-guesthouse-3d.png';
+import propertyDuplex3d from '@assets/property-duplex-3d.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
@@ -113,14 +121,14 @@ const defaultFilters: FilterState = {
 };
 
 const filterPropertyTypes = [
-  { label: 'House', icon: Home, image: gozoFarmhouseImage },
-  { label: 'Apartment', icon: Building2, image: seaviewTerraceImage },
-  { label: 'Villa', icon: Sparkles, image: seaviewTerraceImage },
-  { label: 'Townhouse', icon: Home, image: gozoFarmhouseImage },
-  { label: 'Penthouse', icon: Building2, image: seaviewTerraceImage },
-  { label: 'Studio', icon: DoorOpen, image: limestoneLoftImage },
-  { label: 'Guesthouse', icon: Home, image: gozoFarmhouseImage },
-  { label: 'Duplex', icon: Building2, image: seaviewTerraceImage },
+  { label: 'House', icon: Home, image: propertyHouse3d },
+  { label: 'Apartment', icon: Building2, image: propertyApartment3d },
+  { label: 'Villa', icon: Sparkles, image: propertyVilla3d },
+  { label: 'Townhouse', icon: Home, image: propertyTownhouse3d },
+  { label: 'Penthouse', icon: Building2, image: propertyPenthouse3d },
+  { label: 'Studio', icon: DoorOpen, image: propertyStudio3d },
+  { label: 'Guesthouse', icon: Home, image: propertyGuesthouse3d },
+  { label: 'Duplex', icon: Building2, image: propertyDuplex3d },
 ] as const;
 
 const filterAmenities = [
@@ -622,20 +630,20 @@ function HomePage() {
   </main>;
 }
 
-function FilterSection({ step, title, subtitle, children }: { step: string; title: string; subtitle: string; children: ReactNode }) {
+function FilterSection({ step, title, subtitle, children, darkStep = false }: { step: string; title: string; subtitle: string; children: ReactNode; darkStep?: boolean }) {
   return <section className="border-t border-[hsl(var(--border))] pt-6 first:border-t-0 first:pt-0">
     <div className="flex items-start gap-3">
-      <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[hsl(var(--primary))] text-sm font-extrabold text-white">{step}</span>
-      <div><h3 className="font-display text-xl tracking-[-.025em]">{title}</h3><p className="mt-0.5 text-xs text-[hsl(var(--muted-foreground))]">{subtitle}</p></div>
+      <span className={`grid shrink-0 place-items-center font-extrabold text-white ${darkStep ? 'size-12 rounded-full bg-[hsl(var(--foreground))] text-lg' : 'size-9 rounded-xl bg-[hsl(var(--primary))] text-sm'}`}>{step}</span>
+      <div><h3 className="font-display text-2xl tracking-[-.035em]">{title}</h3><p className="mt-0.5 text-sm text-[hsl(var(--muted-foreground))]">{subtitle}</p></div>
     </div>
     <div className="mt-5">{children}</div>
   </section>;
 }
 
-function FilterChoice({ label, selected, onClick, icon: Icon, image, description }: { label: string; selected: boolean; onClick: () => void; icon?: typeof Settings; image?: string; description?: string }) {
-  return <button type="button" onClick={onClick} className={`group relative flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl border p-2 text-center transition ${selected ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))] shadow-[0_0_0_1px_hsl(var(--primary)/.12)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.45)]'}`} aria-pressed={selected}>
-    {image ? <img src={image} alt="" className="h-12 w-full rounded-xl object-cover" /> : Icon && <Icon size={24} strokeWidth={selected ? 2.5 : 1.9} />}
-    <span className="text-[11px] font-bold leading-tight">{label}</span>
+function FilterChoice({ label, selected, onClick, icon: Icon, image, description, largeImage = false }: { label: string; selected: boolean; onClick: () => void; icon?: typeof Settings; image?: string; description?: string; largeImage?: boolean }) {
+  return <button type="button" onClick={onClick} className={`group relative flex ${largeImage ? 'min-h-[190px] sm:min-h-[200px] rounded-[20px]' : 'min-h-[76px] rounded-2xl'} flex-col items-center justify-center gap-1.5 border p-2 text-center transition ${largeImage ? 'shadow-[0_4px_14px_rgba(22,28,35,.08)]' : ''} ${selected ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.07)] text-[hsl(var(--primary))] shadow-[0_0_0_1px_hsl(var(--primary)/.12)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--primary)/.45)]'}`} aria-pressed={selected}>
+    {image ? <img src={image} alt="" className={`${largeImage ? 'h-28 sm:h-32' : 'h-12'} w-full rounded-xl object-contain`} /> : Icon && <Icon size={24} strokeWidth={selected ? 2.5 : 1.9} />}
+    <span className={`${largeImage ? 'text-lg' : 'text-[11px]'} font-bold leading-tight`}>{label}</span>
     {description && <span className="text-[9px] leading-tight text-[hsl(var(--muted-foreground))]">{description}</span>}
     {selected && <span className="absolute right-1.5 top-1.5 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-white"><Check size={10} /></span>}
   </button>;
@@ -720,10 +728,10 @@ function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters:
           </div>
         </FilterSection>
 
-        <FilterSection step="02" title={isBuy ? 'Property Type & Purchase' : 'Property Type & Stay'} subtitle={isBuy ? 'Choose what you want to buy' : 'Choose type and stay preferences'}>
+        <FilterSection step="02" darkStep title={isBuy ? 'Property Type & Purchase' : 'Property Type & Stay'} subtitle={isBuy ? 'Choose what you want to buy' : 'Choose type and stay preferences'}>
           <p className="mb-3 text-xs font-bold">Property Type <span className="font-normal text-[hsl(var(--muted-foreground))]">Select one or more</span></p>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {filterPropertyTypes.map(({ label, icon: Icon, image }) => <FilterChoice key={label} label={label} icon={Icon} image={image} selected={selectedTypes.includes(label)} onClick={() => toggleArray('propertyTypes', label)} />)}
+          <div className="grid grid-cols-2 gap-3">
+            {filterPropertyTypes.map(({ label, icon: Icon, image }) => <FilterChoice key={label} label={label} icon={Icon} image={image} largeImage selected={selectedTypes.includes(label)} onClick={() => toggleArray('propertyTypes', label)} />)}
           </div>
           {isBuy ? <div className="mt-6 space-y-5">
             <label className="block text-xs font-bold">Buying Purpose<select value={draft.buyingPurpose} onChange={(event) => update('buyingPurpose', event.target.value)} className={selectClass}>{['Buy to Live', 'Investment', 'Holiday Home', 'Rental Investment', 'Commercial Investment'].map((option) => <option key={option}>{option}</option>)}</select></label>
