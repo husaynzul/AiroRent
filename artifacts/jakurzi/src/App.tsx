@@ -935,10 +935,10 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
-    <button onClick={() => setLocation('/post')} className="mt-4 block h-[132px] w-full overflow-hidden transition hover:-translate-y-0.5 sm:h-[146px]" data-testid="button-profile-list-place">
-      <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="size-full object-contain" />
+    <button onClick={() => setLocation('/post')} className="mt-4 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place">
+      <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="size-full scale-[1.16] object-contain" />
     </button>
-    <button onClick={() => setLocation('/post')} className="mt-3 block h-[132px] w-full overflow-hidden transition hover:-translate-y-0.5 sm:h-[146px]" data-testid="button-profile-list-place-secondary">
+    <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
       <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.16] object-contain" />
     </button>
     <section className="mt-5" data-testid="section-profile-account">

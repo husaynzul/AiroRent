@@ -1,0 +1,40 @@
+ONLY modify the Profile section cards. Do not change anything else in the app.
+Please carefully fix the two highlighted cards: “Become a host” and “List your place.”
+1. SAME ROUNDED CORNERS
+Both cards must have exactly the same rounded-corner style and radius.
+Use a clearly rounded shape on all four corners, approximately 28–32px border-radius. The top and bottom cards must look visually identical in their corner rounding.
+2. REMOVE THE DOUBLE/EXTRA WHITE LAYER
+There is currently a duplicate white background/container layer behind the cards, especially visible around the “List your place” card.
+Remove that extra layer completely.
+Each section must be ONE SINGLE CARD only:
+Page background → single rounded white card → content
+NOT:
+Page background → extra white container → white card → content
+There should be no duplicated white background, stacked card, or hidden container creating this effect.
+3. CARD SIZE
+Make both cards slightly larger than they currently are.
+Increase their width and height while keeping the existing content and layout inside them intact.
+They should feel like proper large, clear cards rather than small cards sitting inside another container.
+4. SPACING
+Reduce the excessive empty space between the two cards.
+Keep only a small, clean gap between “Become a host” and “List your place” — approximately 12–16px, not a large gap.
+Also reduce unnecessary vertical spacing throughout the Profile section so the page feels compact, clean, and well-fitted.
+There should be no unnecessarily large empty spaces between Profile sections/cards.
+5. KEEP THE DESIGN CLEAN
+The cards should look like:
+large + single-layer + white + smoothly rounded + clean + compact spacing
+Keep the existing white/off-white page background.
+VERY IMPORTANT — DO NOT CHANGE ANYTHING ELSE
+Do not change:
+Text
+Images
+Icons
+Buttons
+Navigation
+Typography
+Content
+Functionality
+Other app screens
+Other sections
+Only fix the two Profile cards’ rounded corners, size, spacing, and remove the duplicated background layer.
+Both “Become a host” and “List your place” must have the same large rounded shape and must appear as single cards, not cards inside another white container.
