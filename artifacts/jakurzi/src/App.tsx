@@ -9,6 +9,7 @@ import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
 import hostBannerSrc from '@assets/file_00000000e18481fb9f77a46c32720fa9_1788299200324.png';
 import listPlaceBannerSrc from '@assets/file_0000000061a881fa8660af4de8b524cb_1_1788299610339.png';
+import listPlaceCardReference from '@assets/Screenshot_20260902-052104_1788308525877.jpg';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
@@ -939,7 +940,7 @@ function ProfileExperiencePage() {
       <img src={hostBannerSrc} alt="Become a host. It's easy to start hosting and earn extra income." className="size-full scale-[1.16] object-contain" />
     </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
-      <img src={listPlaceBannerSrc} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.16] object-contain" />
+      <img src={listPlaceCardReference} alt="List your place. Share your space and start earning with AiroRent." className="size-full object-cover" />
     </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
