@@ -260,7 +260,7 @@ function MobileHomePage({ mode, setMode, query, setQuery, recent, saved, onSave 
   const [browseTab, setBrowseTab] = useState('All');
   const recentItems = recent.length ? recent : [listings[1], listings[3], listings[2]];
   const nearbyItems = browseTab === 'Experiences' ? listings.filter((item) => item.mode === 'Short Let') : browseTab === 'Rooms' ? listings.filter((item) => item.type === 'Studio') : listings.filter((item) => item.mode !== 'Short Let');
-  return <div className="bg-white md:hidden">
+  return <div className="bg-[hsl(var(--background))] md:hidden">
     <div className="px-5 pb-5 pt-5">
       <label className="flex h-[58px] items-center gap-3 rounded-full border border-black/10 bg-white px-5 shadow-[0_6px_18px_rgba(0,0,0,.12)]">
         <Search size={19} strokeWidth={2.4} />
@@ -322,7 +322,7 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
     { place: 'New York, United States', details: '2 Guests', icon: Building2 },
     { place: 'Lahore, Punjab', details: 'Aug 20 – 22  ·  3 Guests', icon: Sparkles },
   ];
-  return <div className="fixed inset-0 z-50 h-[100dvh] overflow-y-auto bg-[#f7f8f9] pb-8 text-[#1d2329] md:hidden" data-testid="mobile-search-experience">
+  return <div className="fixed inset-0 z-50 h-[100dvh] overflow-y-auto bg-[hsl(var(--background))] pb-8 text-[#1d2329] md:hidden" data-testid="mobile-search-experience">
     <div className="mx-auto max-w-md px-7 pb-8 pt-5">
       <header className="flex items-center justify-between">
         <button onClick={onClose} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white" aria-label="Close search" data-testid="button-close-search-experience"><ArrowLeft size={22} /></button>
@@ -393,7 +393,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
   ) : (
     <p className="rounded-2xl bg-[hsl(var(--muted))] px-4 py-5 text-sm text-[hsl(var(--muted-foreground))]">No properties match this search yet.</p>
   );
-  return <div className="bg-white md:hidden">
+  return <div className="bg-[hsl(var(--background))] md:hidden">
     <section className="px-5 pb-4 pt-3">
       <div className="relative">
         <div className={`flex h-12 w-full items-center gap-3 rounded-full border bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)] transition ${searchExpanded ? 'border-[hsl(var(--primary))] ring-4 ring-[hsl(var(--primary)/.08)]' : 'border-black/10'}`} role="search" onClick={() => setSearchExpanded(true)}>
@@ -923,12 +923,12 @@ function ProfileExperiencePage() {
     ['Inbox', MessageCircle, '/messages'],
     ['Payments', WalletCards, '/profile/settings'],
   ] as const;
-  return <main className="min-h-[100dvh] bg-[#f7f8f9] px-5 pb-28 pt-5 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
+  return <main className="min-h-[100dvh] bg-[hsl(var(--background))] px-5 pb-28 pt-5 md:mx-auto md:min-h-0 md:max-w-[940px] md:bg-transparent md:px-8 md:py-10">
     <section className="flex items-start justify-between" data-testid="section-profile-header">
       <div><h1 className="text-[28px] font-semibold tracking-[-.055em] md:font-display md:text-5xl">Profile</h1><p className="mt-1 text-[13px] text-black/55 md:text-sm">Manage your account</p></div>
       <button onClick={notify} className="relative grid size-11 place-items-center rounded-full bg-white shadow-[0_5px_16px_rgba(0,0,0,.08)]" aria-label="Notifications" data-testid="button-profile-overview-notifications"><Bell size={19} /><span className="absolute right-2.5 top-2 size-2 rounded-full bg-[hsl(var(--primary))]" /></button>
     </section>
-    <section className="mt-5 rounded-[24px] bg-[#e8eaec] p-4 shadow-[0_7px_22px_rgba(22,28,35,.08)] md:p-7" data-testid="section-profile-card">
+    <section className="mt-5 rounded-[24px] border border-black/[.04] bg-white p-4 shadow-[0_5px_18px_rgba(22,28,35,.06)] md:p-7" data-testid="section-profile-card">
       <div className="flex items-center gap-4">
         <div className="relative grid size-[70px] shrink-0 place-items-center rounded-full border-4 border-white bg-[#d9dde1] text-[32px] font-bold text-[hsl(var(--primary))] shadow-sm md:size-24 md:text-4xl">{userName[0]}<button onClick={() => setToast('Profile photo editing is ready.')} className="absolute -bottom-1 -right-1 grid size-7 place-items-center rounded-full bg-white text-[hsl(var(--primary))] shadow-sm" aria-label="Edit profile photo" data-testid="button-profile-edit-photo"><Pencil size={13} /></button></div>
         <div className="min-w-0 flex-1"><h2 className="truncate text-[23px] font-bold tracking-[-.04em] md:text-3xl">{userName}</h2><span className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-bold text-[hsl(var(--primary))]"><Sparkles size={12} />Explorer</span><p className="mt-2 truncate text-[12px] text-black/55">{userName.toLowerCase().replaceAll(' ', '.')}@example.com</p></div>
@@ -943,9 +943,9 @@ function ProfileExperiencePage() {
     </button>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
-      <div className="rounded-[20px] bg-white px-3 shadow-[0_5px_18px_rgba(0,0,0,.06)]">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</div>
+      <div className="rounded-[24px] border border-black/[.04] bg-white px-3 shadow-[0_4px_16px_rgba(22,28,35,.05)]">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</div>
     </section>
-    <button onClick={() => setToast('Log out is ready to confirm.')} className="mt-4 flex w-full items-center gap-3 rounded-[20px] bg-white px-3 py-3 text-left shadow-[0_5px_18px_rgba(0,0,0,.06)]" data-testid="button-profile-overview-logout"><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><DoorOpen size={18} /></span><span className="flex-1 text-[15px] font-medium">Log Out</span><ChevronRight size={19} className="text-black/45" /></button>
+    <button onClick={() => setToast('Log out is ready to confirm.')} className="mt-4 flex w-full items-center gap-3 rounded-[24px] border border-black/[.04] bg-white px-3 py-3 text-left shadow-[0_4px_16px_rgba(22,28,35,.05)]" data-testid="button-profile-overview-logout"><span className="grid size-9 place-items-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><DoorOpen size={18} /></span><span className="flex-1 text-[15px] font-medium">Log Out</span><ChevronRight size={19} className="text-black/45" /></button>
     {toast && <Toast text={toast} onClose={() => setToast('')} />}
   </main>;
 }

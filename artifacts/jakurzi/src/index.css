@@ -36,25 +36,25 @@
 }
 
 :root {
-  --background: 210 16% 97%;
+  --background: 0 0% 98%;
   --foreground: 220 15% 16%;
-  --border: 210 13% 87%;
-  --input: 210 13% 82%;
+  --border: 0 0% 89%;
+  --input: 0 0% 82%;
   --ring: 220 12% 42%;
   --card: 0 0% 100%;
   --card-foreground: 220 15% 16%;
-  --card-border: 210 13% 89%;
+  --card-border: 0 0% 91%;
   --popover: 0 0% 100%;
   --popover-foreground: 220 15% 16%;
-  --popover-border: 210 13% 86%;
+  --popover-border: 0 0% 89%;
   --primary: 220 13% 22%;
   --primary-foreground: 0 0% 100%;
   --brand-accent: 336 58% 52%;
-  --secondary: 210 14% 93%;
+  --secondary: 0 0% 97%;
   --secondary-foreground: 220 15% 22%;
-  --muted: 210 14% 94%;
+  --muted: 0 0% 96.5%;
   --muted-foreground: 220 8% 45%;
-  --accent: 210 16% 90%;
+  --accent: 0 0% 94%;
   --accent-foreground: 220 15% 16%;
   --destructive: 2 65% 48%;
   --destructive-foreground: 0 0% 100%;
@@ -64,8 +64,8 @@
   --app-font-serif: 'Inter', sans-serif;
   --app-font-mono: 'Inter', sans-serif;
   --radius: 1.35rem;
-  --shadow-soft: 0 8px 24px rgba(22, 28, 35, .07);
-  --shadow-lift: 0 16px 36px rgba(22, 28, 35, .1);
+  --shadow-soft: 0 4px 16px rgba(22, 28, 35, .06);
+  --shadow-lift: 0 10px 26px rgba(22, 28, 35, .08);
 }
 
 .dark {
@@ -142,9 +142,9 @@
   to { opacity: 1; }
 }
 
-/* AiroRent's visual signature: a quiet neutral canvas with a restrained active accent. */
+/* AiroRent's visual signature: a quiet near-white canvas with restrained contrast. */
 .airo-hero {
-  background: hsl(var(--secondary));
+  background: hsl(var(--background));
 }
 
 .airo-hero .shadow-lift {
@@ -170,7 +170,7 @@
 [class~="bg-[#fafafa]"] { background-color: hsl(var(--muted)); }
 
 @media (max-width: 767px) {
-  body { background: hsl(var(--card)); }
+  body { background: hsl(var(--background)); }
   .font-display { letter-spacing: -.055em; }
   svg { stroke-width: 2.3; }
 }
