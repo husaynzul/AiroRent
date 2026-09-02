@@ -940,9 +940,9 @@ function ProfileExperiencePage() {
       <span className="absolute inset-y-0 left-0 w-[34%] overflow-hidden">
         <img src={hostBannerSrc} alt="" className="absolute left-[-16px] top-[-10px] h-[calc(100%+20px)] max-w-none" />
       </span>
-      <span className="absolute inset-y-0 right-0 left-[31%] text-left">
-        <span className="absolute left-[8%] right-[3%] top-[16%] text-[21px] font-bold leading-tight tracking-[-.04em] text-[#101a2b] sm:text-[24px]">Become Co-Host</span>
-        <span className="absolute left-[8%] right-[4%] top-[46%] text-[13px] leading-[1.35] text-black/55 sm:text-[14px]">It's easy to start hosting and earn extra income.</span>
+      <span className="absolute inset-y-0 right-0 left-[36%] text-left">
+        <span className="absolute left-[5%] right-[3%] top-[18%] text-[18px] font-semibold leading-tight tracking-[-.035em] text-[#101a2b] sm:text-[20px]">Become Co-Host</span>
+        <span className="absolute left-[5%] right-[4%] top-[47%] text-[12px] leading-[1.35] text-black/55 sm:text-[13px]">It's easy to start hosting and earn extra income.</span>
       </span>
     </button>
     <button onClick={() => setLocation('/post')} className="mt-3 block h-[144px] w-full overflow-hidden rounded-[30px] transition hover:-translate-y-0.5 sm:h-[158px]" data-testid="button-profile-list-place-secondary">
