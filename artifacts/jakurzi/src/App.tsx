@@ -7,6 +7,8 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
+import coHostCardReference from '@assets/file_00000000781c8210aed083d0160eb4ab_1788330690546.png';
+import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b333_1788330699951.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
 import seaviewTerraceImage from '@assets/generated_images/jakurzi-seaview-terrace.jpg';
 import gozoFarmhouseImage from '@assets/generated_images/jakurzi-gozo-farmhouse.jpg';
@@ -933,6 +935,14 @@ function ProfileExperiencePage() {
         <button onClick={() => setLocation('/profile/settings')} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/90 shadow-sm transition hover:-translate-y-0.5" aria-label="Open account settings" data-testid="button-profile-overview-settings"><ChevronRight size={20} /></button>
       </div>
     </section>
+    <div className="mt-5 grid gap-4" data-testid="section-profile-host-promos">
+      <button onClick={() => setLocation('/post')} className="group block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="Become a co-host" data-testid="button-profile-cohost">
+        <img src={coHostCardReference} alt="Become Co-Host. It's easy to start hosting and earn extra income." className="size-full scale-[1.08] object-cover transition duration-300 group-hover:scale-[1.1]" />
+      </button>
+      <button onClick={() => setLocation('/post')} className="group block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="List your place" data-testid="button-profile-list-place">
+        <img src={listPlaceCardReference} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.08] object-cover transition duration-300 group-hover:scale-[1.1]" />
+      </button>
+    </div>
     <section className="mt-5" data-testid="section-profile-account">
       <p className="mb-2 px-1 text-[13px] text-black/55">Account</p>
       <div className="rounded-[24px] border border-black/[.04] bg-white px-3 shadow-[0_4px_16px_rgba(22,28,35,.05)]">{profileRows.map(([label, Icon, action, testId]) => row(label, Icon, action, testId))}</div>
