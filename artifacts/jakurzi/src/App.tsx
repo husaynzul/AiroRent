@@ -936,11 +936,13 @@ function ProfileExperiencePage() {
       </div>
     </section>
     <div className="mt-5 grid gap-4" data-testid="section-profile-host-promos">
-      <button onClick={() => setLocation('/post')} className="group block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="Become a co-host" data-testid="button-profile-cohost">
+      <button onClick={() => setLocation('/post')} className="group relative block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="Become a co-host" data-testid="button-profile-cohost">
         <img src={coHostCardReference} alt="Become Co-Host. It's easy to start hosting and earn extra income." className="size-full scale-[1.08] object-cover transition duration-300 group-hover:scale-[1.1]" />
+        <span className="pointer-events-none absolute left-[43%] right-[4%] top-[63%] bottom-[12%] rounded-[14px] bg-white" aria-hidden="true" />
       </button>
-      <button onClick={() => setLocation('/post')} className="group block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="List your place" data-testid="button-profile-list-place">
+      <button onClick={() => setLocation('/post')} className="group relative block aspect-[2.2] w-full overflow-hidden rounded-[24px] bg-white shadow-[0_5px_18px_rgba(22,28,35,.06)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,28,35,.1)]" aria-label="List your place" data-testid="button-profile-list-place">
         <img src={listPlaceCardReference} alt="List your place. Share your space and start earning with AiroRent." className="size-full scale-[1.08] object-cover transition duration-300 group-hover:scale-[1.1]" />
+        <span className="pointer-events-none absolute left-[43%] right-[4%] top-[63%] bottom-[12%] rounded-[14px] bg-white" aria-hidden="true" />
       </button>
     </div>
     <section className="mt-5" data-testid="section-profile-account">
