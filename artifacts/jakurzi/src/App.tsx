@@ -670,36 +670,127 @@ function PriceFilterGraphic() {
   const minimumFraction = (minimum - sliderMin) / (sliderMax - sliderMin);
   const maximumFraction = (maximum - sliderMin) / (sliderMax - sliderMin);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const layersRef = useRef<{ gray: HTMLCanvasElement; pink: HTMLCanvasElement } | null>(null);
+  const minimumRef = useRef(minimum);
+  const maximumRef = useRef(maximum);
+  const pendingPointerRef = useRef<{ handle: 'minimum' | 'maximum'; value: number } | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  minimumRef.current = minimum;
+  maximumRef.current = maximum;
+
   const setMinimumValue = (value: number) => {
-    const next = Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1));
+    const next = Math.max(sliderMin, Math.min(value || sliderMin, maximumRef.current - 1));
+    minimumRef.current = next;
     setMinimum(next);
     setMinimumInput(String(next));
   };
   const setMaximumValue = (value: number) => {
-    const next = Math.min(sliderMax, Math.max(value || sliderMax, minimum + 1));
+    const next = Math.min(sliderMax, Math.max(value || sliderMax, minimumRef.current + 1));
+    maximumRef.current = next;
     setMaximum(next);
     setMaximumInput(String(next));
   };
   const editMinimum = (rawValue: string) => {
     setMinimumInput(rawValue);
     const value = Number(rawValue);
-    if (rawValue.trim() && Number.isFinite(value) && value >= sliderMin && value < maximum) setMinimum(value);
+    if (rawValue.trim() && Number.isFinite(value) && value >= sliderMin && value < maximumRef.current) {
+      minimumRef.current = value;
+      setMinimum(value);
+    }
   };
   const editMaximum = (rawValue: string) => {
     setMaximumInput(rawValue);
     const value = Number(rawValue);
-    if (rawValue.trim() && Number.isFinite(value) && value <= sliderMax && value > minimum) setMaximum(value);
+    if (rawValue.trim() && Number.isFinite(value) && value <= sliderMax && value > minimumRef.current) {
+      maximumRef.current = value;
+      setMaximum(value);
+    }
   };
   const valueFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const fraction = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
     return Math.round(sliderMin + fraction * (sliderMax - sliderMin));
   };
-  const updateFromPointer = (event: ReactPointerEvent<HTMLDivElement>, handle: 'minimum' | 'maximum') => {
-    const value = valueFromPointer(event);
-    if (handle === 'minimum') setMinimumValue(value);
-    else setMaximumValue(value);
+  const flushPointerUpdate = () => {
+    animationFrameRef.current = null;
+    const pending = pendingPointerRef.current;
+    pendingPointerRef.current = null;
+    if (!pending) return;
+    if (pending.handle === 'minimum') setMinimumValue(pending.value);
+    else setMaximumValue(pending.value);
   };
+  const updateFromPointer = (event: ReactPointerEvent<HTMLDivElement>, handle: 'minimum' | 'maximum') => {
+    pendingPointerRef.current = { handle, value: valueFromPointer(event) };
+    if (animationFrameRef.current === null) {
+      animationFrameRef.current = requestAnimationFrame(flushPointerUpdate);
+    }
+  };
+
+  const renderGraphic = () => {
+    const canvas = canvasRef.current;
+    const layers = layersRef.current;
+    if (!canvas || !layers) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const currentMinimumX = 700 + minimumFraction * (2595 - 700);
+    const currentMaximumX = 700 + maximumFraction * (2595 - 700);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(layers.gray, 0, 0);
+    context.save();
+    context.beginPath();
+    context.rect(currentMinimumX, 0, currentMaximumX - currentMinimumX, canvas.height);
+    context.clip();
+    context.drawImage(layers.pink, 0, 0);
+    context.restore();
+
+    const handleRadius = 106;
+    const paintTrack = () => {
+      context.save();
+      context.lineCap = 'round';
+      context.lineWidth = 48;
+      context.strokeStyle = '#a4a4a4';
+      context.beginPath();
+      context.moveTo(700, 1240);
+      context.lineTo(2595, 1240);
+      context.stroke();
+      context.strokeStyle = '#fa025a';
+      context.beginPath();
+      context.moveTo(currentMinimumX, 1240);
+      context.lineTo(currentMaximumX, 1240);
+      context.stroke();
+      context.restore();
+    };
+    const clearHandle = (x: number) => {
+      context.save();
+      context.beginPath();
+      context.arc(x, 1240, 122, 0, Math.PI * 2);
+      context.fillStyle = '#fdfdfd';
+      context.fill();
+      context.restore();
+    };
+    const drawHandle = (x: number) => {
+      context.save();
+      context.beginPath();
+      context.arc(x, 1240, handleRadius, 0, Math.PI * 2);
+      context.fillStyle = '#fdfdfd';
+      context.shadowColor = 'rgba(0,0,0,.14)';
+      context.shadowBlur = 28;
+      context.shadowOffsetY = 5;
+      context.fill();
+      context.restore();
+    };
+
+    paintTrack();
+    clearHandle(1106);
+    clearHandle(2151);
+    paintTrack();
+    drawHandle(currentMinimumX);
+    drawHandle(currentMaximumX);
+  };
+
   useEffect(() => {
     const image = new Image();
     image.onload = () => {
@@ -707,83 +798,62 @@ function PriceFilterGraphic() {
       if (!canvas) return;
       canvas.width = image.naturalWidth;
       canvas.height = image.naturalHeight;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      context.drawImage(image, 0, 0);
-      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+      const sourceContext = document.createElement('canvas').getContext('2d');
+      if (!sourceContext) return;
+      sourceContext.canvas.width = image.naturalWidth;
+      sourceContext.canvas.height = image.naturalHeight;
+      sourceContext.drawImage(image, 0, 0);
+
+      const pixels = sourceContext.getImageData(0, 0, canvas.width, canvas.height);
+      const grayPixels = new Uint8ClampedArray(pixels.data.length);
+      const pinkPixels = new Uint8ClampedArray(pixels.data.length);
       const { data } = pixels;
-      const pink = [250, 2, 90];
-      const gray = [164, 164, 164];
-      const minimumX = 700 + minimumFraction * (2595 - 700);
-      const maximumX = 700 + maximumFraction * (2595 - 700);
-      const recolor = (x: number, y: number) => {
-        const index = (y * canvas.width + x) * 4;
-        const red = data[index];
-        const green = data[index + 1];
-        const blue = data[index + 2];
-        const isGraphicPixel = Math.min(red, green, blue) < 225;
-        if (!isGraphicPixel) return;
-        const isPinkOrGray = (red > green + 25 && red > blue + 15) || Math.abs(red - green) < 18 && Math.abs(green - blue) < 18;
-        if (!isPinkOrGray) return;
-        const color = x >= minimumX && x <= maximumX ? pink : gray;
-        data[index] = color[0];
-        data[index + 1] = color[1];
-        data[index + 2] = color[2];
-      };
-      for (let y = 450; y <= 1120; y += 1) {
-        for (let x = 650; x <= 2700; x += 1) recolor(x, y);
+      const graphicRows = (y: number) => (y >= 450 && y <= 1120) || (y >= 1170 && y <= 1310);
+      for (let y = 450; y <= 1310; y += 1) {
+        if (!graphicRows(y)) continue;
+        for (let x = 650; x <= 2700; x += 1) {
+          const index = (y * canvas.width + x) * 4;
+          const red = data[index];
+          const green = data[index + 1];
+          const blue = data[index + 2];
+          const isGraphicPixel = Math.min(red, green, blue) < 225;
+          const isPinkOrGray = (red > green + 25 && red > blue + 15) || Math.abs(red - green) < 18 && Math.abs(green - blue) < 18;
+          if (!isGraphicPixel || !isPinkOrGray) continue;
+          grayPixels[index] = 164;
+          grayPixels[index + 1] = 164;
+          grayPixels[index + 2] = 164;
+          grayPixels[index + 3] = 255;
+          pinkPixels[index] = 250;
+          pinkPixels[index + 1] = 2;
+          pinkPixels[index + 2] = 90;
+          pinkPixels[index + 3] = 255;
+        }
       }
-      for (let y = 1170; y <= 1310; y += 1) {
-        for (let x = 650; x <= 2700; x += 1) recolor(x, y);
-      }
-      context.putImageData(pixels, 0, 0);
-      const handleRadius = 106;
-      const paintTrack = () => {
-        context.save();
-        context.lineCap = 'round';
-        context.lineWidth = 48;
-        context.strokeStyle = '#a4a4a4';
-        context.beginPath();
-        context.moveTo(700, 1240);
-        context.lineTo(2595, 1240);
-        context.stroke();
-        context.strokeStyle = '#fa025a';
-        context.beginPath();
-        context.moveTo(currentMinimumX, 1240);
-        context.lineTo(currentMaximumX, 1240);
-        context.stroke();
-        context.restore();
-      };
-      const clearHandle = (x: number) => {
-        context.save();
-        context.beginPath();
-        context.arc(x, 1240, 122, 0, Math.PI * 2);
-        context.fillStyle = '#fdfdfd';
-        context.fill();
-        context.restore();
-      };
-      const drawHandle = (x: number) => {
-        context.save();
-        context.beginPath();
-        context.arc(x, 1240, handleRadius, 0, Math.PI * 2);
-        context.fillStyle = '#fdfdfd';
-        context.shadowColor = 'rgba(0,0,0,.14)';
-        context.shadowBlur = 28;
-        context.shadowOffsetY = 5;
-        context.fill();
-        context.restore();
-      };
-      const currentMinimumX = 700 + minimumFraction * (2595 - 700);
-      const currentMaximumX = 700 + maximumFraction * (2595 - 700);
-      paintTrack();
-      clearHandle(1106);
-      clearHandle(2151);
-      paintTrack();
-      drawHandle(currentMinimumX);
-      drawHandle(currentMaximumX);
+
+      const gray = document.createElement('canvas');
+      gray.width = canvas.width;
+      gray.height = canvas.height;
+      gray.getContext('2d')?.putImageData(new ImageData(grayPixels, canvas.width, canvas.height), 0, 0);
+      const pink = document.createElement('canvas');
+      pink.width = canvas.width;
+      pink.height = canvas.height;
+      pink.getContext('2d')?.putImageData(new ImageData(pinkPixels, canvas.width, canvas.height), 0, 0);
+      layersRef.current = { gray, pink };
+      renderGraphic();
     };
     image.src = priceFilterReference;
-  }, [maximumFraction, minimumFraction]);
+    return () => {
+      image.onload = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    renderGraphic();
+  }, [minimumFraction, maximumFraction]);
+
+  useEffect(() => () => {
+    if (animationFrameRef.current !== null) cancelAnimationFrame(animationFrameRef.current);
+  }, []);
 
   return <section aria-labelledby="price-filter-title">
     <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
@@ -793,8 +863,8 @@ function PriceFilterGraphic() {
         <canvas ref={canvasRef} className="absolute inset-0 size-full" role="img" aria-label="Interactive price range histogram" />
         <div className="absolute left-[21.5%] right-[20.4%] top-[61%] z-30 h-[13%] touch-none" onPointerDown={(event) => { const value = valueFromPointer(event); const handle = Math.abs(value - minimum) <= Math.abs(value - maximum) ? 'minimum' : 'maximum'; setActiveHandle(handle); event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event, handle); }} onPointerMove={(event) => { if (activeHandle && event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event, activeHandle); }} onPointerUp={(event) => { event.currentTarget.releasePointerCapture(event.pointerId); setActiveHandle(null); }} onPointerCancel={() => setActiveHandle(null)} role="group" aria-label="Price range slider" />
       </div>
-      <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimumInput} min={sliderMin} max={maximum - 1} onChange={(event) => editMinimum(event.target.value)} onBlur={() => setMinimumValue(Number(minimumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
-      <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="maximum-price">Maximum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="maximum-price" type="number" value={maximumInput} min={minimum + 1} max={sliderMax} onChange={(event) => editMaximum(event.target.value)} onBlur={() => setMaximumValue(Number(maximumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Maximum price" /></div></div>
+      <div className="absolute bottom-0 left-0 flex h-[78px] w-[140px] flex-col items-center justify-center rounded-[22px] border border-[#e7e7e7] bg-white px-3 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:h-[100px] sm:w-[190px] sm:rounded-[28px]"><label className="block text-[15px] leading-tight text-[#777] sm:text-[18px]" htmlFor="minimum-price">Minimum</label><div className="mt-1 flex items-center justify-center text-[28px] leading-none font-semibold text-[#111] sm:text-[38px]"><span>$</span><input id="minimum-price" type="number" value={minimumInput} min={sliderMin} max={maximum - 1} onChange={(event) => editMinimum(event.target.value)} onBlur={() => setMinimumValue(Number(minimumInput))} className="w-[91px] appearance-none bg-transparent text-center outline-none sm:w-[123px]" aria-label="Minimum price" /></div></div>
+      <div className="absolute bottom-0 right-0 flex h-[78px] w-[140px] flex-col items-center justify-center rounded-[22px] border border-[#e7e7e7] bg-white px-3 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:h-[100px] sm:w-[190px] sm:rounded-[28px]"><label className="block text-[15px] leading-tight text-[#777] sm:text-[18px]" htmlFor="maximum-price">Maximum</label><div className="mt-1 flex items-center justify-center text-[28px] leading-none font-semibold text-[#111] sm:text-[38px]"><span>$</span><input id="maximum-price" type="number" value={maximumInput} min={minimum + 1} max={sliderMax} onChange={(event) => editMaximum(event.target.value)} onBlur={() => setMaximumValue(Number(maximumInput))} className="w-[91px] appearance-none bg-transparent text-center outline-none sm:w-[123px]" aria-label="Maximum price" /></div></div>
     </div>
   </section>;
 }
