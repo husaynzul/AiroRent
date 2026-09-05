@@ -1,4 +1,4 @@
-import { ReactNode, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useState } from 'react';
+import { ReactNode, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
 import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
@@ -7,9 +7,7 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
-import priceFilterReference from '@assets/price-filter-reference-clean.png';
-const priceFilterBarsMask = '/assets/price-filter/bars-mask.png';
-const priceFilterTrackMask = '/assets/price-filter/track-mask.png';
+import priceFilterReference from '@assets/20260905_052346_1788568403174.jpg';
 import coHostCardReference from '@assets/file_00000000781c8210aed083d0160eb4ab_1788330690546.png';
 import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b333_1788330699951.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
@@ -671,10 +669,7 @@ function PriceFilterGraphic() {
   const sliderMax = 3765;
   const minimumFraction = (minimum - sliderMin) / (sliderMax - sliderMin);
   const maximumFraction = (maximum - sliderMin) / (sliderMax - sliderMin);
-  const imageTrackStart = 21.5;
-  const imageTrackEnd = 79.6;
-  const minimumImagePosition = imageTrackStart + minimumFraction * (imageTrackEnd - imageTrackStart);
-  const maximumImagePosition = imageTrackStart + maximumFraction * (imageTrackEnd - imageTrackStart);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const setMinimumValue = (value: number) => {
     const next = Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1));
     setMinimum(next);
@@ -705,28 +700,71 @@ function PriceFilterGraphic() {
     if (handle === 'minimum') setMinimumValue(value);
     else setMaximumValue(value);
   };
-  const maskStyle = (mask: string, color: string): React.CSSProperties => ({
-    backgroundColor: color,
-    maskImage: `url(${mask})`,
-    WebkitMaskImage: `url(${mask})`,
-    maskRepeat: 'no-repeat',
-    WebkitMaskRepeat: 'no-repeat',
-    maskSize: '100% 100%',
-    WebkitMaskSize: '100% 100%',
-  });
+  useEffect(() => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.drawImage(image, 0, 0);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+      const { data } = pixels;
+      const pink = [250, 2, 90];
+      const gray = [164, 164, 164];
+      const minimumX = 700 + minimumFraction * (2595 - 700);
+      const maximumX = 700 + maximumFraction * (2595 - 700);
+      const recolor = (x: number, y: number) => {
+        const index = (y * canvas.width + x) * 4;
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        const isGraphicPixel = Math.min(red, green, blue) < 225;
+        if (!isGraphicPixel) return;
+        const isPinkOrGray = (red > green + 25 && red > blue + 15) || Math.abs(red - green) < 18 && Math.abs(green - blue) < 18;
+        if (!isPinkOrGray) return;
+        const color = x >= minimumX && x <= maximumX ? pink : gray;
+        data[index] = color[0];
+        data[index + 1] = color[1];
+        data[index + 2] = color[2];
+      };
+      for (let y = 450; y <= 1120; y += 1) {
+        for (let x = 650; x <= 2700; x += 1) recolor(x, y);
+      }
+      for (let y = 1170; y <= 1310; y += 1) {
+        for (let x = 650; x <= 2700; x += 1) recolor(x, y);
+      }
+      context.putImageData(pixels, 0, 0);
+      const handleRadius = 106;
+      const drawHandle = (x: number) => {
+        context.save();
+        context.beginPath();
+        context.arc(x, 1240, handleRadius, 0, Math.PI * 2);
+        context.fillStyle = '#fdfdfd';
+        context.shadowColor = 'rgba(0,0,0,.14)';
+        context.shadowBlur = 28;
+        context.shadowOffsetY = 5;
+        context.fill();
+        context.restore();
+      };
+      drawHandle(1106);
+      drawHandle(2151);
+      const currentMinimumX = 700 + minimumFraction * (2595 - 700);
+      const currentMaximumX = 700 + maximumFraction * (2595 - 700);
+      drawHandle(currentMinimumX);
+      drawHandle(currentMaximumX);
+    };
+    image.src = priceFilterReference;
+  }, [maximumFraction, minimumFraction]);
 
   return <section aria-labelledby="price-filter-title">
     <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
     <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
     <div className="relative mx-auto mt-2 h-[275px] w-full max-w-[760px] overflow-hidden sm:h-[420px]">
-      <img src={priceFilterReference} alt="Price filter" className="absolute left-1/2 top-[-45px] block w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" />
       <div className="absolute left-1/2 top-[-45px] z-10 aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]">
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={maskStyle(priceFilterBarsMask, '#a4a4a4')} />
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ ...maskStyle(priceFilterBarsMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={maskStyle(priceFilterTrackMask, '#a4a4a4')} />
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ ...maskStyle(priceFilterTrackMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
-        <span aria-hidden className="pointer-events-none absolute top-[67.5%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${minimumImagePosition}%` }} />
-        <span aria-hidden className="pointer-events-none absolute top-[67.5%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${maximumImagePosition}%` }} />
+        <canvas ref={canvasRef} className="absolute inset-0 size-full" role="img" aria-label="Interactive price range histogram" />
         <div className="absolute left-[21.5%] right-[20.4%] top-[61%] z-30 h-[13%] touch-none" onPointerDown={(event) => { const value = valueFromPointer(event); const handle = Math.abs(value - minimum) <= Math.abs(value - maximum) ? 'minimum' : 'maximum'; setActiveHandle(handle); event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event, handle); }} onPointerMove={(event) => { if (activeHandle && event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event, activeHandle); }} onPointerUp={(event) => { event.currentTarget.releasePointerCapture(event.pointerId); setActiveHandle(null); }} onPointerCancel={() => setActiveHandle(null)} role="group" aria-label="Price range slider" />
       </div>
       <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimumInput} min={sliderMin} max={maximum - 1} onChange={(event) => editMinimum(event.target.value)} onBlur={() => setMinimumValue(Number(minimumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
