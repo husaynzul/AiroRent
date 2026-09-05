@@ -738,6 +738,30 @@ function PriceFilterGraphic() {
       }
       context.putImageData(pixels, 0, 0);
       const handleRadius = 106;
+      const paintTrack = () => {
+        context.save();
+        context.lineCap = 'round';
+        context.lineWidth = 48;
+        context.strokeStyle = '#a4a4a4';
+        context.beginPath();
+        context.moveTo(700, 1240);
+        context.lineTo(2595, 1240);
+        context.stroke();
+        context.strokeStyle = '#fa025a';
+        context.beginPath();
+        context.moveTo(currentMinimumX, 1240);
+        context.lineTo(currentMaximumX, 1240);
+        context.stroke();
+        context.restore();
+      };
+      const clearHandle = (x: number) => {
+        context.save();
+        context.beginPath();
+        context.arc(x, 1240, 122, 0, Math.PI * 2);
+        context.fillStyle = '#fdfdfd';
+        context.fill();
+        context.restore();
+      };
       const drawHandle = (x: number) => {
         context.save();
         context.beginPath();
@@ -749,10 +773,12 @@ function PriceFilterGraphic() {
         context.fill();
         context.restore();
       };
-      drawHandle(1106);
-      drawHandle(2151);
       const currentMinimumX = 700 + minimumFraction * (2595 - 700);
       const currentMaximumX = 700 + maximumFraction * (2595 - 700);
+      paintTrack();
+      clearHandle(1106);
+      clearHandle(2151);
+      paintTrack();
       drawHandle(currentMinimumX);
       drawHandle(currentMaximumX);
     };
