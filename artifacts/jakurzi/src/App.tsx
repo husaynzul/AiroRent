@@ -21,6 +21,7 @@ import propertyTownhouse3d from '@assets/property-townhouse-card.png';
 import propertyPenthouse3d from '@assets/property-penthouse-card.png';
 import propertyGuesthouse3d from '@assets/property-guesthouse-card.png';
 import propertyDuplex3d from '@assets/property-duplex-card.png';
+import maisonetteCategoryImage from '@assets/file_00000000b1d88207a1ae334c223fdf35_2_1788584194073.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
@@ -495,7 +496,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
   const categoryCards = [
     { label: 'Apartments', image: propertyApartment3d },
     { label: 'Penthouses', image: propertyPenthouse3d },
-    { label: 'Maisonettes', image: propertyApartment3d },
+    { label: 'Maisonettes', image: maisonetteCategoryImage },
     { label: 'Townhouses', image: propertyTownhouse3d },
     { label: 'Villas', image: propertyVilla3d },
     { label: 'Studios', image: propertyStudio3d },
