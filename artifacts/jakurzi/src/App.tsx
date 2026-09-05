@@ -492,7 +492,14 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
   const mobileListings = matches;
   const trendingListings = query ? matches.slice(0, 5) : listings.filter((item) => item.mode === mode).slice(0, 5);
   const popularRentals = listings.filter((item) => item.mode === 'Rent').slice(0, 5);
-  const categoryCards = propertyTabs.filter(([label]) => label !== 'All');
+  const categoryCards = [
+    { label: 'Apartments', image: propertyApartment3d },
+    { label: 'Penthouses', image: propertyPenthouse3d },
+    { label: 'Maisonettes', image: propertyApartment3d },
+    { label: 'Townhouses', image: propertyTownhouse3d },
+    { label: 'Villas', image: propertyVilla3d },
+    { label: 'Studios', image: propertyStudio3d },
+  ];
   const renderListingRow = (items: Listing[], rowName: string) => items.length ? (
     <div className="flex snap-x gap-4 overflow-x-auto pb-2 pr-1">
       {items.map((item) => (
@@ -519,7 +526,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
       <section aria-labelledby="mobile-top-categories">
         <div className="mb-3 flex items-center justify-between"><h2 id="mobile-top-categories" className="text-[20px] font-semibold tracking-[-.04em]">Top Categories</h2><span className="text-xs text-black/45">Browse all</span></div>
         <div className="flex gap-3 overflow-x-auto pb-1">
-          {categoryCards.map(([label, Icon]) => <button key={label} onClick={() => setCategory(label)} className={`flex w-[116px] shrink-0 flex-col items-start rounded-2xl border p-3 text-left transition ${category === label ? 'border-[hsl(var(--primary))] bg-[hsl(var(--secondary))]' : 'border-black/[.08] bg-white'}`} data-testid={`card-mobile-top-category-${label.toLowerCase()}`}><span className="grid size-9 place-items-center rounded-xl bg-[hsl(var(--accent)/.65)] text-[hsl(var(--primary))]"><Icon size={19} /></span><span className="mt-3 text-xs font-semibold">{label}</span><span className="mt-1 text-[11px] text-black/45">{label === 'Villas' ? 'Sea views' : 'Popular homes'}</span></button>)}
+          {categoryCards.map(({ label, image }) => <button key={label} onClick={() => setCategory(label)} className={`group w-[145px] shrink-0 overflow-hidden rounded-2xl border bg-white text-left transition ${category === label ? 'border-[hsl(var(--primary))] shadow-[0_0_0_2px_hsl(var(--primary)/.16)]' : 'border-black/[.08] hover:border-[hsl(var(--primary)/.45)]'}`} data-testid={`card-mobile-top-category-${label.toLowerCase()}`} aria-label={`Browse ${label}`}><img src={image} alt={`${label} property`} className="aspect-[1.48] w-full object-cover transition duration-300 group-hover:scale-[1.03]" /></button>)}
         </div>
       </section>
       <section aria-labelledby="mobile-trending-now">
