@@ -660,7 +660,7 @@ function purposeToMode(purpose: FilterPurpose): Mode {
 }
 
 function PriceFilterGraphic() {
-  return <img src={priceFilterReference} alt="Price filter" className="mx-auto block w-full max-w-[560px] object-contain" />;
+  return <img src={priceFilterReference} alt="Price filter" className="mx-auto block w-full max-w-[760px] object-contain" />;
 }
 
 function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState, mode: Mode) => void; onClose: () => void }) {
@@ -689,7 +689,7 @@ function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters:
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [onClose]);
   return <div className="fixed inset-0 z-50 flex animate-fade items-end bg-[hsl(var(--foreground)/.45)] p-0 backdrop-blur-sm md:items-center md:justify-center md:p-3" onClick={onClose} role="presentation">
-    <div className="flex max-h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[28px] bg-[hsl(var(--card))] shadow-lift md:max-h-[92dvh] md:rounded-[28px]" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="filter-sheet-title">
+     <div className="flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-[28px] bg-[hsl(var(--card))] shadow-lift md:max-h-[92dvh] md:rounded-[28px]" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="filter-sheet-title">
       <header className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-4 md:px-7">
         <div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[hsl(var(--primary))]">AiroRent filters</p><h2 id="filter-sheet-title" className="mt-1 font-display text-2xl tracking-[-.035em]">Find your perfect stay</h2></div>
         <div className="flex items-center gap-2"><button type="button" onClick={() => setDraft({ ...defaultFilters, purpose: modeToFilterPurpose(mode) })} className="rounded-full px-3 py-2 text-xs font-bold text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]" data-testid="button-reset-filters">Reset</button><button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full bg-[hsl(var(--muted))]" aria-label="Close filters" data-testid="button-close-filters"><X size={18} /></button></div>
