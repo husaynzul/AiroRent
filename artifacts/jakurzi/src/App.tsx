@@ -660,7 +660,13 @@ function purposeToMode(purpose: FilterPurpose): Mode {
 }
 
 function PriceFilterGraphic() {
-  return <img src={priceFilterReference} alt="Price filter" className="mx-auto block w-full max-w-[760px] object-contain" />;
+  return <section aria-labelledby="price-filter-title">
+    <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
+    <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
+    <div className="relative mx-auto mt-2 h-[220px] w-full max-w-[760px] overflow-hidden sm:h-[320px]">
+      <img src={priceFilterReference} alt="Price filter" className="absolute left-1/2 top-[-45px] block w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" />
+    </div>
+  </section>;
 }
 
 function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState, mode: Mode) => void; onClose: () => void }) {
