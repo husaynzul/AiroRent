@@ -34,7 +34,6 @@ type Mode = 'Rent' | 'Buy' | 'Short Let';
 type FilterPurpose = 'Rent' | 'Short Rent' | 'Buy' | 'Trip / Booking';
 type FilterState = {
   purpose: FilterPurpose;
-  price: string;
   minPrice: number;
   maxPrice: number;
   beds: string;
@@ -78,9 +77,8 @@ type FilterState = {
 
 const defaultFilters: FilterState = {
   purpose: 'Rent',
-  price: 'Any',
-  minPrice: 500,
-  maxPrice: 5000,
+  minPrice: 1989,
+  maxPrice: 3235,
   beds: 'Any',
   baths: 'Any',
   garages: 'Any',
@@ -568,13 +566,6 @@ function HomePage() {
       .filter((item) => filters.propertyTypes.length === 0 ? filters.propertyType === 'Any' || item.type === filters.propertyType : filters.propertyTypes.includes(item.type))
       .filter((item) => filters.location === 'Any' || item.location.toLowerCase().includes(filters.location.toLowerCase()))
       .filter((item) => {
-        const price = Number(item.price.replace(/[^0-9]/g, ''));
-        if (filters.price === 'Under €1,000') return price < 1000;
-        if (filters.price === '€1,000–€2,000') return price >= 1000 && price <= 2000;
-        if (filters.price === 'Over €2,000') return price > 2000;
-        return true;
-      })
-      .filter((item) => {
         const beds = Number(item.detail.match(/^\d+/)?.[0] || 0);
         const minimum = Number(filters.beds.replace('+', ''));
         return filters.beds === 'Any' || beds >= minimum;
@@ -668,7 +659,41 @@ function purposeToMode(purpose: FilterPurpose): Mode {
 }
 
 function formatFilterPrice(value: number) {
-  return `€${value.toLocaleString('en-US')}${value >= 5000 || value >= 2000000 ? '+' : ''}`;
+  return `$${value.toLocaleString('en-US')}`;
+}
+
+const priceHistogram = [
+  68, 112, 160, 210, 265, 320, 380, 470, 540, 600,
+  680, 600, 520, 430, 340, 265, 200, 140, 85,
+];
+
+function PriceFilterGraphic({ minPrice, maxPrice, onChange }: { minPrice: number; maxPrice: number; onChange: (key: 'minPrice' | 'maxPrice', value: number) => void }) {
+  const sliderMin = 0;
+  const sliderMax = 4000;
+  const minValue = Math.max(sliderMin, Math.min(minPrice, sliderMax - 1));
+  const maxValue = Math.min(sliderMax, Math.max(maxPrice, minValue + 1));
+  const maxHandlePosition = 100 - (maxValue / sliderMax) * 100;
+  const minHandlePosition = 100 - (minValue / sliderMax) * 100;
+
+  return <section className="mx-auto w-full max-w-[520px] rounded-[24px] bg-white px-4 py-5 sm:px-7 sm:py-6" aria-labelledby="price-filter-title">
+    <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
+    <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
+    <div className="mt-4 flex min-h-[220px] items-center gap-4 sm:mt-5 sm:min-h-[250px] sm:gap-6">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-[7px] sm:gap-2" aria-hidden="true">
+        {priceHistogram.map((width, index) => <span key={index} className={`mx-auto block h-[7px] rounded-full transition-colors sm:h-[8px] ${index >= 6 && index <= 10 ? 'bg-[#f30b59]' : 'bg-[#b9b9b9]'}`} style={{ width: `${(width / 680) * 100}%` }} />)}
+      </div>
+      <div className="relative h-[205px] w-[118px] shrink-0 sm:h-[232px] sm:w-[132px]">
+        <div className="absolute bottom-2 left-[15px] top-2 w-[9px] rounded-full bg-[#a9a9a9] sm:left-[17px] sm:w-[10px]" />
+        <div className="absolute left-[15px] w-[9px] rounded-full bg-[#f30b59] sm:left-[17px] sm:w-[10px]" style={{ top: `${maxHandlePosition}%`, height: `${Math.max(0, minHandlePosition - maxHandlePosition)}%` }} />
+        <span className="absolute left-0 size-[33px] -translate-x-[1px] -translate-y-1/2 rounded-full border border-[#e5e5e5] bg-white shadow-[0_2px_8px_rgba(0,0,0,.12)] sm:size-[36px]" style={{ top: `${maxHandlePosition}%` }} />
+        <span className="absolute left-0 size-[33px] -translate-x-[1px] -translate-y-1/2 rounded-full border border-[#e5e5e5] bg-white shadow-[0_2px_8px_rgba(0,0,0,.12)] sm:size-[36px]" style={{ top: `${minHandlePosition}%` }} />
+        <input type="range" min={sliderMin} max={sliderMax} value={maxValue} onChange={(event) => onChange('maxPrice', Math.max(Number(event.target.value), minValue + 1))} className="absolute left-0 top-0 z-10 h-full w-10 cursor-pointer opacity-0 [writing-mode:vertical-lr]" aria-label="Maximum price" data-testid="range-max-price" />
+        <input type="range" min={sliderMin} max={sliderMax} value={minValue} onChange={(event) => onChange('minPrice', Math.min(Number(event.target.value), maxValue - 1))} className="absolute left-0 top-0 z-10 h-full w-10 cursor-pointer opacity-0 [writing-mode:vertical-lr]" aria-label="Minimum price" data-testid="range-min-price" />
+        <p className="absolute -right-1 w-[73px] translate-x-full -translate-y-1/2 text-[13px] leading-tight text-[#111] sm:-right-2 sm:text-[15px]" style={{ top: `${maxHandlePosition}%` }}><span className="block">Maximum</span><b className="mt-1 block text-[19px] sm:text-[22px]">{formatFilterPrice(maxValue)}</b></p>
+        <p className="absolute -right-1 w-[73px] translate-x-full -translate-y-1/2 text-[13px] leading-tight text-[#111] sm:-right-2 sm:text-[15px]" style={{ top: `${minHandlePosition}%` }}><span className="block">Minimum</span><b className="mt-1 block text-[19px] sm:text-[22px]">{formatFilterPrice(minValue)}</b></p>
+      </div>
+    </div>
+  </section>;
 }
 
 function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState, mode: Mode) => void; onClose: () => void }) {
@@ -676,8 +701,6 @@ function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters:
   const purpose = draft.purpose;
   const isBuy = purpose === 'Buy';
   const isShortStay = purpose === 'Short Rent' || purpose === 'Trip / Booking';
-  const priceFloor = isBuy ? 50000 : 500;
-  const priceCeiling = isBuy ? 2000000 : 5000;
   const selectClass = 'mt-2 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-3 text-sm outline-none focus:border-[hsl(var(--primary))]';
   const update = <K extends keyof FilterState>(key: K, value: FilterState[K]) => setDraft((current) => ({ ...current, [key]: value }));
   const toggleArray = (key: 'propertyTypes' | 'amenities' | 'outdoorFeatures' | 'investmentFilters' | 'documents' | 'bookingOptions' | 'accessibility', value: string) => {
@@ -710,16 +733,9 @@ function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters:
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {([['Rent', Home], ['Short Rent', CalendarDays], ['Buy', Building2], ['Trip / Booking', Sparkles]] as const).map(([label, Icon]) => <FilterChoice key={label} label={label} icon={Icon} selected={purpose === label} onClick={() => choosePurpose(label)} />)}
           </div>
-          <div className="mt-6">
-            <div className="flex items-center justify-between"><p className="text-sm font-bold">{isBuy ? 'Budget' : 'Price Range'}</p><span className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">{formatFilterPrice(draft.minPrice)} – {formatFilterPrice(draft.maxPrice)}</span></div>
-            <div className="mt-3 space-y-2">
-              <input type="range" min={priceFloor} max={priceCeiling} step={isBuy ? 10000 : 100} value={Math.max(priceFloor, Math.min(draft.minPrice, priceCeiling))} onChange={(event) => update('minPrice', Math.min(Number(event.target.value), draft.maxPrice - (isBuy ? 10000 : 100)))} className="w-full accent-[hsl(var(--primary))]" aria-label="Minimum price" data-testid="range-min-price" />
-              <input type="range" min={priceFloor} max={priceCeiling} step={isBuy ? 10000 : 100} value={Math.min(priceCeiling, Math.max(draft.maxPrice, draft.minPrice + (isBuy ? 10000 : 100)))} onChange={(event) => update('maxPrice', Math.max(Number(event.target.value), draft.minPrice + (isBuy ? 10000 : 100)))} className="w-full accent-[hsl(var(--primary))]" aria-label="Maximum price" data-testid="range-max-price" />
-            </div>
-            <div className="mt-3 flex gap-2 overflow-x-auto">
-              {(isBuy ? ['Any', 'Under €500,000', '€500,000–€1,000,000', 'Over €1,000,000'] : ['Any', 'Under €1,000', '€1,000–€2,000', 'Over €2,000']).map((option) => <button type="button" key={option} onClick={() => update('price', option)} className={`shrink-0 rounded-full border px-3 py-2 text-[11px] font-bold ${draft.price === option ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/.08)] text-[hsl(var(--primary))]' : 'border-[hsl(var(--border))]'}`} data-testid={`button-price-${option.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-')}`}>{option}</button>)}
-            </div>
-          </div>
+           <div className="mt-6">
+             <PriceFilterGraphic minPrice={draft.minPrice} maxPrice={draft.maxPrice} onChange={update} />
+           </div>
           <div className="mt-6 grid grid-cols-2 gap-3">
             <label className="text-xs font-bold">Beds<select value={draft.beds} onChange={(event) => update('beds', event.target.value)} className={selectClass} data-testid="select-beds">{['Any', 'Studio', '1+', '2+', '3+', '4+', '5+'].map((option) => <option key={option}>{option}</option>)}</select></label>
             <label className="text-xs font-bold">Baths<select value={draft.baths} onChange={(event) => update('baths', event.target.value)} className={selectClass} data-testid="select-baths">{['Any', '1+', '2+', '3+', '4+', '5+'].map((option) => <option key={option}>{option}</option>)}</select></label>

@@ -1,0 +1,57 @@
+IMPORTANT: Recreate the provided Price Filter design EXACTLY as shown in the reference image.
+
+First, make the entire Price Filter component smaller and more compact so it fits perfectly inside a mobile app screen. Do NOT make the design large or oversized. Scale/stretch the complete design proportionally and reduce its overall size as much as possible while keeping it clearly visible and usable.
+
+The entire design must be perfectly CENTERED horizontally and vertically within the available mobile screen area. It should look balanced, compact, clean, and mobile-friendly.
+
+IMPORTANT: The design itself must remain SAME-TO-SAME with the reference image. Do not redesign, simplify, rearrange, or change the visual style.
+
+Keep ALL of these elements exactly as they appear in the reference:
+- "Price Filter" heading
+- "All-inclusive Pricing" subtitle
+- The complete horizontal histogram/bar graph
+- Gray bars
+- Pink/red selected bars
+- Exact bar ordering and relative lengths
+- The red selected range
+- The vertical price slider on the right
+- Both white circular slider handles
+- Gray and red slider track
+- "Maximum" label
+- Maximum price "$3235"
+- "Minimum" label
+- Minimum price "$1989"
+- Typography hierarchy
+- Spacing and alignment
+- Overall visual proportions
+- Rounded corners of the bars
+- Colors and overall appearance
+
+The ONLY major change should be the RESPONSIVE SIZE.
+
+Make the complete component compact enough for a mobile app while preserving the exact same design and proportions. The histogram and the vertical slider must both be scaled down together so they remain perfectly aligned.
+
+The vertical slider on the right must also be reduced in size and perfectly aligned with the graph. Do not let the slider become oversized compared to the graph.
+
+Use a LANDSCAPE-style compact arrangement of the design, similar to the reference image, but scaled down to fit comfortably inside a mobile app viewport.
+
+The entire Price Filter component should appear as one compact, centered unit with proper spacing around it. Nothing should touch or overflow the screen edges.
+
+Do NOT crop any part of the design.
+Do NOT remove any element.
+Do NOT change the layout unnecessarily.
+Do NOT enlarge the text or slider independently.
+Do NOT make the component full-screen.
+Do NOT make it look like a desktop UI.
+
+The final result should be:
+1. SAME-TO-SAME visual design as the reference.
+2. Significantly smaller and more compact.
+3. Fully centered.
+4. Mobile-friendly.
+5. Landscape-style proportions preserved.
+6. Perfectly aligned.
+7. Fully visible without cropping or overflow.
+8. Responsive across different mobile screen sizes.
+
+Use the attached reference image as the exact visual reference and match it as closely as possible.
