@@ -130,6 +130,15 @@
   }
   .animate-rise { animation: rise .55s cubic-bezier(.22, .75, .2, 1) both; }
   .animate-fade { animation: fade .4s ease both; }
+  [class~="overflow-x-auto"] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  [class~="overflow-x-auto"]::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
    .texture { background: hsl(var(--background)); }
 }
 
