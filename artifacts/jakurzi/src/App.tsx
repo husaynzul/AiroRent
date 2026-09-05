@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
 import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
@@ -8,6 +8,8 @@ import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.j
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
 import priceFilterReference from '@assets/20260905_052346_1788568403174.jpg';
+const priceFilterBarsMask = '/assets/price-filter/bars-mask.png';
+const priceFilterTrackMask = '/assets/price-filter/track-mask.png';
 import coHostCardReference from '@assets/file_00000000781c8210aed083d0160eb4ab_1788330690546.png';
 import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b333_1788330699951.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
@@ -662,18 +664,82 @@ function purposeToMode(purpose: FilterPurpose): Mode {
 function PriceFilterGraphic() {
   const [minimum, setMinimum] = useState(1989);
   const [maximum, setMaximum] = useState(3235);
+  const [minimumInput, setMinimumInput] = useState('1989');
+  const [maximumInput, setMaximumInput] = useState('3235');
   const sliderMin = 1300;
   const sliderMax = 3900;
-  const setMinimumValue = (value: number) => setMinimum(Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1)));
-  const setMaximumValue = (value: number) => setMaximum(Math.min(sliderMax, Math.max(value || sliderMax, minimum + 1)));
+  const rangeChanged = minimum !== 1989 || maximum !== 3235;
+  const minimumFraction = (minimum - sliderMin) / (sliderMax - sliderMin);
+  const maximumFraction = (maximum - sliderMin) / (sliderMax - sliderMin);
+  const trackStart = 3.5;
+  const trackEnd = 98;
+  const minimumPosition = trackStart + minimumFraction * (trackEnd - trackStart);
+  const maximumPosition = trackStart + maximumFraction * (trackEnd - trackStart);
+  const histogramStart = Math.max(0, Math.min(100, 37.3 + ((minimum - 1989) / (sliderMax - sliderMin)) * 52.2));
+  const histogramEnd = Math.max(0, Math.min(100, 100 + ((maximum - 3235) / (sliderMax - sliderMin)) * 52.2));
+  const imageSpacePosition = (wrapperPosition: number) => Math.max(0, Math.min(100, ((wrapperPosition + 31.5) / 163) * 100));
+  const minimumImagePosition = imageSpacePosition(minimumPosition);
+  const maximumImagePosition = imageSpacePosition(maximumPosition);
+  const histogramStartImagePosition = imageSpacePosition(histogramStart);
+  const histogramEndImagePosition = imageSpacePosition(histogramEnd);
+  const setMinimumValue = (value: number) => {
+    const next = Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1));
+    setMinimum(next);
+    setMinimumInput(String(next));
+  };
+  const setMaximumValue = (value: number) => {
+    const next = Math.min(sliderMax, Math.max(value || sliderMax, minimum + 1));
+    setMaximum(next);
+    setMaximumInput(String(next));
+  };
+  const editMinimum = (rawValue: string) => {
+    setMinimumInput(rawValue);
+    const value = Number(rawValue);
+    if (rawValue.trim() && Number.isFinite(value) && value >= sliderMin && value < maximum) setMinimum(value);
+  };
+  const editMaximum = (rawValue: string) => {
+    setMaximumInput(rawValue);
+    const value = Number(rawValue);
+    if (rawValue.trim() && Number.isFinite(value) && value <= sliderMax && value > minimum) setMaximum(value);
+  };
+  const updateFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const fraction = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+    const value = Math.round(sliderMin + fraction * (sliderMax - sliderMin));
+    if (Math.abs(value - minimum) <= Math.abs(value - maximum)) {
+      setMinimumValue(value);
+    } else {
+      setMaximumValue(value);
+    }
+  };
+  const maskStyle = (mask: string, color: string): React.CSSProperties => ({
+    backgroundColor: color,
+    maskImage: `url(${mask})`,
+    WebkitMaskImage: `url(${mask})`,
+    maskRepeat: 'no-repeat',
+    WebkitMaskRepeat: 'no-repeat',
+    maskSize: '100% 100%',
+    WebkitMaskSize: '100% 100%',
+  });
 
   return <section aria-labelledby="price-filter-title">
     <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
     <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
     <div className="relative mx-auto mt-2 h-[275px] w-full max-w-[760px] overflow-hidden sm:h-[420px]">
       <img src={priceFilterReference} alt="Price filter" className="absolute left-1/2 top-[-45px] block w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" />
-      <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimum} min={sliderMin} max={maximum - 1} onChange={(event) => setMinimumValue(Number(event.target.value))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
-      <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="maximum-price">Maximum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="maximum-price" type="number" value={maximum} min={minimum + 1} max={sliderMax} onChange={(event) => setMaximumValue(Number(event.target.value))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Maximum price" /></div></div>
+      {rangeChanged && <>
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={maskStyle(priceFilterBarsMask, '#a4a4a4')} />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={{ ...maskStyle(priceFilterBarsMask, '#fa025a'), clipPath: `inset(0 ${Math.max(0, 100 - histogramEndImagePosition)}% 0 ${histogramStartImagePosition}%)` }} />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={maskStyle(priceFilterTrackMask, '#a4a4a4')} />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={{ ...maskStyle(priceFilterTrackMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
+        <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: '23.5%' }} />
+        <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: '75.8%' }} />
+        <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: `${minimumPosition}%` }} />
+        <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: `${maximumPosition}%` }} />
+      </>}
+      <div className="absolute left-[3.5%] right-[2%] top-[76%] z-30 h-[34px] -translate-y-1/2 touch-none sm:top-[83%]" onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event); }} onPointerMove={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event); }} onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)} role="group" aria-label="Price range slider" />
+      <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimumInput} min={sliderMin} max={maximum - 1} onChange={(event) => editMinimum(event.target.value)} onBlur={() => setMinimumValue(Number(minimumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
+      <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="maximum-price">Maximum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="maximum-price" type="number" value={maximumInput} min={minimum + 1} max={sliderMax} onChange={(event) => editMaximum(event.target.value)} onBlur={() => setMaximumValue(Number(maximumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Maximum price" /></div></div>
     </div>
   </section>;
 }
