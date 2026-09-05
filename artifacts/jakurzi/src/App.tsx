@@ -1,4 +1,4 @@
-import { ReactNode, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
 import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
@@ -7,6 +7,7 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
+import priceFilterReference from '@assets/20260905_052346_1788568403174.jpg';
 import coHostCardReference from '@assets/file_00000000781c8210aed083d0160eb4ab_1788330690546.png';
 import listPlaceCardReference from '@assets/file_00000000017c8210b4432f4cc821b333_1788330699951.png';
 import limestoneLoftImage from '@assets/generated_images/jakurzi-limestone-loft.jpg';
@@ -658,59 +659,8 @@ function purposeToMode(purpose: FilterPurpose): Mode {
   return purpose === 'Buy' ? 'Buy' : purpose === 'Rent' ? 'Rent' : 'Short Let';
 }
 
-function formatFilterPrice(value: number) {
-  return `$${value.toLocaleString('en-US')}`;
-}
-
-const priceHistogram = [
-  8, 12, 17, 25, 32, 43, 57, 72, 89, 108, 128, 149, 172, 194, 214,
-  235, 254, 275, 292, 274, 252, 229, 207, 181, 158, 131, 103, 75, 48, 28, 12,
-];
-
-function PriceFilterGraphic({ minPrice, maxPrice, onChange }: { minPrice: number; maxPrice: number; onChange: (key: 'minPrice' | 'maxPrice', value: number) => void }) {
-  const sliderMin = 1300;
-  const sliderMax = 3900;
-  const minValue = Math.max(sliderMin, Math.min(minPrice, sliderMax - 1));
-  const maxValue = Math.min(sliderMax, Math.max(maxPrice, minValue + 1));
-  const minHandlePosition = ((minValue - sliderMin) / (sliderMax - sliderMin)) * 100;
-  const maxHandlePosition = ((maxValue - sliderMin) / (sliderMax - sliderMin)) * 100;
-  const updateFromPointer = (event: ReactPointerEvent<HTMLDivElement>, handle?: 'minPrice' | 'maxPrice') => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const nextValue = Math.round(sliderMin + Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width)) * (sliderMax - sliderMin));
-    const closestHandle = handle || (Math.abs(nextValue - minValue) <= Math.abs(nextValue - maxValue) ? 'minPrice' : 'maxPrice');
-    onChange(closestHandle, closestHandle === 'minPrice' ? Math.min(nextValue, maxValue - 1) : Math.max(nextValue, minValue + 1));
-  };
-  const adjustWithKeyboard = (event: ReactKeyboardEvent<HTMLButtonElement>, handle: 'minPrice' | 'maxPrice') => {
-    const step = event.shiftKey ? 100 : 25;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
-      event.preventDefault();
-      onChange(handle, handle === 'minPrice' ? Math.max(sliderMin, minValue - step) : Math.max(minValue + 1, maxValue - step));
-    }
-    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-      event.preventDefault();
-      onChange(handle, handle === 'minPrice' ? Math.min(maxValue - 1, minValue + step) : Math.min(sliderMax, maxValue + step));
-    }
-  };
-
-  return <section className="mx-auto w-full max-w-[560px] rounded-[24px] bg-white px-4 py-5 sm:px-8 sm:py-7" aria-labelledby="price-filter-title">
-    <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
-    <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
-    <div className="mx-auto mt-8 w-full max-w-[500px] sm:mt-10">
-      <div className="flex h-[150px] items-end justify-center gap-[4px] sm:h-[170px] sm:gap-[5px]" aria-hidden="true">
-        {priceHistogram.map((height, index) => <span key={index} className={`block w-[7px] shrink-0 rounded-full sm:w-[8px] ${index < 10 ? 'bg-[#a9a9a9]' : 'bg-[#f30b59]'}`} style={{ height: `${(height / 292) * 100}%` }} />)}
-      </div>
-      <div className="mt-5 flex items-center gap-2 sm:mt-6 sm:gap-4">
-        <div className="w-[74px] shrink-0 rounded-[15px] border border-[#e7e7e7] bg-white px-2.5 py-2.5 shadow-[0_2px_8px_rgba(0,0,0,.06)] sm:w-[88px] sm:px-3.5 sm:py-3"><span className="block text-[11px] text-[#777] sm:text-[13px]">Minimum</span><b className="mt-1 block text-[16px] font-semibold text-[#111] sm:text-[20px]">{formatFilterPrice(minValue)}</b></div>
-        <div className="relative min-w-0 flex-1 h-[42px] touch-none" onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event); }} onPointerMove={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event); }} onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)} role="group" aria-label="Price range">
-          <div className="absolute left-0 right-0 top-1/2 h-[15px] -translate-y-1/2 rounded-full bg-[#a9a9a9]" />
-          <div className="absolute top-1/2 h-[15px] -translate-y-1/2 rounded-full bg-[#f30b59]" style={{ left: `${minHandlePosition}%`, width: `${Math.max(0, maxHandlePosition - minHandlePosition)}%` }} />
-          <button type="button" className="absolute top-1/2 z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] active:cursor-grabbing sm:size-[54px]" style={{ left: `${minHandlePosition}%` }} aria-label="Minimum price" aria-valuemin={sliderMin} aria-valuemax={sliderMax} aria-valuenow={minValue} onKeyDown={(event) => adjustWithKeyboard(event, 'minPrice')} data-testid="range-min-price" />
-          <button type="button" className="absolute top-1/2 z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] active:cursor-grabbing sm:size-[54px]" style={{ left: `${maxHandlePosition}%` }} aria-label="Maximum price" aria-valuemin={sliderMin} aria-valuemax={sliderMax} aria-valuenow={maxValue} onKeyDown={(event) => adjustWithKeyboard(event, 'maxPrice')} data-testid="range-max-price" />
-        </div>
-        <div className="w-[74px] shrink-0 rounded-[15px] border border-[#e7e7e7] bg-white px-2.5 py-2.5 text-right shadow-[0_2px_8px_rgba(0,0,0,.06)] sm:w-[88px] sm:px-3.5 sm:py-3"><span className="block text-[11px] text-[#777] sm:text-[13px]">Maximum</span><b className="mt-1 block text-[16px] font-semibold text-[#111] sm:text-[20px]">{formatFilterPrice(maxValue)}</b></div>
-      </div>
-    </div>
-  </section>;
+function PriceFilterGraphic() {
+  return <img src={priceFilterReference} alt="Price filter" className="mx-auto block w-full max-w-[560px] object-contain" />;
 }
 
 function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters: FilterState; onApply: (filters: FilterState, mode: Mode) => void; onClose: () => void }) {
@@ -751,7 +701,7 @@ function FilterSheet({ mode, filters, onApply, onClose }: { mode: Mode; filters:
             {([['Rent', Home], ['Short Rent', CalendarDays], ['Buy', Building2], ['Trip / Booking', Sparkles]] as const).map(([label, Icon]) => <FilterChoice key={label} label={label} icon={Icon} selected={purpose === label} onClick={() => choosePurpose(label)} />)}
           </div>
            <div className="mt-6">
-             <PriceFilterGraphic minPrice={draft.minPrice} maxPrice={draft.maxPrice} onChange={update} />
+             <PriceFilterGraphic />
            </div>
           <div className="mt-6 grid grid-cols-2 gap-3">
             <label className="text-xs font-bold">Beds<select value={draft.beds} onChange={(event) => update('beds', event.target.value)} className={selectClass} data-testid="select-beds">{['Any', 'Studio', '1+', '2+', '3+', '4+', '5+'].map((option) => <option key={option}>{option}</option>)}</select></label>
