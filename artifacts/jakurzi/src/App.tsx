@@ -7,7 +7,7 @@ import mapReference from '@assets/Screenshot_20260830-081244_1788070712144.jpg';
 import profileReference from '@assets/Screenshot_20260830-080806_1788070736616.jpg';
 import datesReference from '@assets/Screenshot_20260830-080720_1788070712360.jpg';
 import whatsappIconSrc from '@assets/WhatsApp-Logo.wine_1788298140645.png';
-import priceFilterReference from '@assets/20260905_052346_1788568403174.jpg';
+import priceFilterReference from '@assets/price-filter-reference-clean.png';
 const priceFilterBarsMask = '/assets/price-filter/bars-mask.png';
 const priceFilterTrackMask = '/assets/price-filter/track-mask.png';
 import coHostCardReference from '@assets/file_00000000781c8210aed083d0160eb4ab_1788330690546.png';
@@ -671,13 +671,10 @@ function PriceFilterGraphic() {
   const sliderMax = 3765;
   const minimumFraction = (minimum - sliderMin) / (sliderMax - sliderMin);
   const maximumFraction = (maximum - sliderMin) / (sliderMax - sliderMin);
-  const trackStart = 3.5;
-  const trackEnd = 98;
-  const minimumPosition = trackStart + minimumFraction * (trackEnd - trackStart);
-  const maximumPosition = trackStart + maximumFraction * (trackEnd - trackStart);
-  const imageSpacePosition = (wrapperPosition: number) => Math.max(0, Math.min(100, ((wrapperPosition + 31.5) / 163) * 100));
-  const minimumImagePosition = imageSpacePosition(minimumPosition);
-  const maximumImagePosition = imageSpacePosition(maximumPosition);
+  const imageTrackStart = 21.5;
+  const imageTrackEnd = 79.6;
+  const minimumImagePosition = imageTrackStart + minimumFraction * (imageTrackEnd - imageTrackStart);
+  const maximumImagePosition = imageTrackStart + maximumFraction * (imageTrackEnd - imageTrackStart);
   const setMinimumValue = (value: number) => {
     const next = Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1));
     setMinimum(next);
@@ -723,15 +720,15 @@ function PriceFilterGraphic() {
     <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
     <div className="relative mx-auto mt-2 h-[275px] w-full max-w-[760px] overflow-hidden sm:h-[420px]">
       <img src={priceFilterReference} alt="Price filter" className="absolute left-1/2 top-[-45px] block w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={maskStyle(priceFilterBarsMask, '#a4a4a4')} />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={{ ...maskStyle(priceFilterBarsMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={maskStyle(priceFilterTrackMask, '#a4a4a4')} />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-45px] aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" style={{ ...maskStyle(priceFilterTrackMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
-      <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: '23.7%' }} />
-      <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: '75.9%' }} />
-      <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: `${minimumPosition}%` }} />
-      <span aria-hidden className="pointer-events-none absolute top-[76%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:top-[83%] sm:size-[54px]" style={{ left: `${maximumPosition}%` }} />
-      <div className="absolute left-[3.5%] right-[2%] top-[76%] z-30 h-[34px] -translate-y-1/2 touch-none sm:top-[83%]" onPointerDown={(event) => { const value = valueFromPointer(event); const handle = Math.abs(value - minimum) <= Math.abs(value - maximum) ? 'minimum' : 'maximum'; setActiveHandle(handle); event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event, handle); }} onPointerMove={(event) => { if (activeHandle && event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event, activeHandle); }} onPointerUp={(event) => { event.currentTarget.releasePointerCapture(event.pointerId); setActiveHandle(null); }} onPointerCancel={() => setActiveHandle(null)} role="group" aria-label="Price range slider" />
+      <div className="absolute left-1/2 top-[-45px] z-10 aspect-[3264/1836] w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={maskStyle(priceFilterBarsMask, '#a4a4a4')} />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ ...maskStyle(priceFilterBarsMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={maskStyle(priceFilterTrackMask, '#a4a4a4')} />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ ...maskStyle(priceFilterTrackMask, '#fa025a'), clipPath: `inset(0 ${100 - maximumImagePosition}% 0 ${minimumImagePosition}%)` }} />
+        <span aria-hidden className="pointer-events-none absolute top-[67.5%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${minimumImagePosition}%` }} />
+        <span aria-hidden className="pointer-events-none absolute top-[67.5%] z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${maximumImagePosition}%` }} />
+        <div className="absolute left-[21.5%] right-[20.4%] top-[61%] z-30 h-[13%] touch-none" onPointerDown={(event) => { const value = valueFromPointer(event); const handle = Math.abs(value - minimum) <= Math.abs(value - maximum) ? 'minimum' : 'maximum'; setActiveHandle(handle); event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event, handle); }} onPointerMove={(event) => { if (activeHandle && event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event, activeHandle); }} onPointerUp={(event) => { event.currentTarget.releasePointerCapture(event.pointerId); setActiveHandle(null); }} onPointerCancel={() => setActiveHandle(null)} role="group" aria-label="Price range slider" />
+      </div>
       <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimumInput} min={sliderMin} max={maximum - 1} onChange={(event) => editMinimum(event.target.value)} onBlur={() => setMinimumValue(Number(minimumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
       <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="maximum-price">Maximum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="maximum-price" type="number" value={maximumInput} min={minimum + 1} max={sliderMax} onChange={(event) => editMaximum(event.target.value)} onBlur={() => setMaximumValue(Number(maximumInput))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Maximum price" /></div></div>
     </div>
