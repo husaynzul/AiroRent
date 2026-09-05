@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Route, Switch, useLocation } from 'wouter';
 import logoSrc from '@assets/file_0000000000148211841fa7f5697fcb2f_2_1788136018448.png';
 import exploreReference from '@assets/Screenshot_20260830-080641_1788070712166.jpg';
@@ -660,13 +660,37 @@ function purposeToMode(purpose: FilterPurpose): Mode {
 }
 
 function PriceFilterGraphic() {
+  const sliderMin = 1300;
+  const sliderMax = 3900;
+  const [minimum, setMinimum] = useState(1989);
+  const [maximum, setMaximum] = useState(3235);
+  const minimumPosition = ((minimum - sliderMin) / (sliderMax - sliderMin)) * 100;
+  const maximumPosition = ((maximum - sliderMin) / (sliderMax - sliderMin)) * 100;
+  const updateFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const value = Math.round(sliderMin + Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width)) * (sliderMax - sliderMin));
+    if (Math.abs(value - minimum) <= Math.abs(value - maximum)) {
+      setMinimum(Math.min(value, maximum - 1));
+    } else {
+      setMaximum(Math.max(value, minimum + 1));
+    }
+  };
+  const setMinimumValue = (value: number) => setMinimum(Math.max(sliderMin, Math.min(value || sliderMin, maximum - 1)));
+  const setMaximumValue = (value: number) => setMaximum(Math.min(sliderMax, Math.max(value || sliderMax, minimum + 1)));
+
   return <section aria-labelledby="price-filter-title">
     <h3 id="price-filter-title" className="text-[25px] font-semibold tracking-[-.045em] text-[#111] sm:text-[30px]">Price Filter</h3>
     <p className="mt-1 text-[17px] tracking-[-.025em] text-[#858585] sm:text-[20px]">All-inclusive Pricing</p>
     <div className="relative mx-auto mt-2 h-[275px] w-full max-w-[760px] overflow-hidden sm:h-[420px]">
       <img src={priceFilterReference} alt="Price filter" className="absolute left-1/2 top-[-45px] block w-[163%] max-w-none -translate-x-1/2 sm:top-[-85px]" />
-      <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><span className="block text-[10px] leading-tight text-[#777] sm:text-[11px]">Minimum</span><b className="mt-0.5 block text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]">$1989</b></div>
-      <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><span className="block text-[10px] leading-tight text-[#777] sm:text-[11px]">Maximum</span><b className="mt-0.5 block text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]">$3235</b></div>
+      <div className="absolute left-[3%] right-[3%] top-[76%] z-10 h-[42px] touch-none sm:top-[83%]" onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); updateFromPointer(event); }} onPointerMove={(event) => { if (event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event); }} onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)} role="group" aria-label="Price range">
+        <div className="absolute left-0 right-0 top-1/2 h-[15px] -translate-y-1/2 rounded-full bg-[#a9a9a9]" />
+        <div className="absolute top-1/2 h-[15px] -translate-y-1/2 rounded-full bg-[#f30b59]" style={{ left: `${minimumPosition}%`, width: `${Math.max(0, maximumPosition - minimumPosition)}%` }} />
+        <span className="absolute top-1/2 z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${minimumPosition}%` }} />
+        <span className="absolute top-1/2 z-20 size-[50px] -translate-x-1/2 -translate-y-1/2 rounded-[17px] border border-[#e7e7e7] bg-white shadow-[0_3px_12px_rgba(0,0,0,.14)] sm:size-[54px]" style={{ left: `${maximumPosition}%` }} />
+      </div>
+      <div className="absolute bottom-0 left-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="minimum-price">Minimum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="minimum-price" type="number" value={minimum} min={sliderMin} max={maximum - 1} onChange={(event) => setMinimumValue(Number(event.target.value))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Minimum price" /></div></div>
+      <div className="absolute bottom-0 right-0 w-[86px] rounded-[12px] border border-[#e7e7e7] bg-white px-2 py-1.5 text-center shadow-[0_2px_8px_rgba(0,0,0,.08)] sm:w-[100px] sm:px-2.5"><label className="block text-[10px] leading-tight text-[#777] sm:text-[11px]" htmlFor="maximum-price">Maximum</label><div className="mt-0.5 flex items-center justify-center text-[14px] leading-tight font-semibold text-[#111] sm:text-[16px]"><span>$</span><input id="maximum-price" type="number" value={maximum} min={minimum + 1} max={sliderMax} onChange={(event) => setMaximumValue(Number(event.target.value))} className="w-[51px] bg-transparent text-center outline-none" aria-label="Maximum price" /></div></div>
     </div>
   </section>;
 }
