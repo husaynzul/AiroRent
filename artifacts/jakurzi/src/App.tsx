@@ -518,7 +518,6 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
         <div className={`flex h-12 w-full items-center gap-3 rounded-full border bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)] transition ${searchExpanded ? 'border-[hsl(var(--primary))] ring-4 ring-[hsl(var(--primary)/.08)]' : 'border-black/10'}`} role="search" onClick={() => setSearchExpanded(true)}>
           <Search size={18} className="shrink-0 text-black/60" />
           <input value={query} onChange={(event) => setQuery(event.target.value)} onFocus={() => setSearchExpanded(true)} placeholder="Find anything" aria-label="Find anything" className="min-w-0 flex-1 bg-transparent text-center text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" />
-          <button onClick={(event) => { event.stopPropagation(); setLocation(`/?mode=${mode}&q=${encodeURIComponent(query)}`); setSearchExpanded(false); }} className="text-sm font-bold text-[hsl(var(--primary))]" data-testid="button-mobile-market-search">Search</button>
         </div>
         {searchExpanded && <MobileSearchExperience query={query} setQuery={setQuery} onClose={() => setSearchExpanded(false)} onSearch={(nextQuery) => { const searchQuery = nextQuery ?? query; setLocation(`/?mode=${mode}&q=${encodeURIComponent(searchQuery)}`); setSearchExpanded(false); }} onOpenFilters={() => { setSearchExpanded(false); onOpenFilters(); }} />}
       </div>
