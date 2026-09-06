@@ -22,6 +22,7 @@ import propertyPenthouse3d from '@assets/property-penthouse-card.png';
 import propertyGuesthouse3d from '@assets/property-guesthouse-card.png';
 import propertyDuplex3d from '@assets/property-duplex-card.png';
 import maisonetteCategoryImage from '@assets/file_00000000b1d88207a1ae334c223fdf35_2_1788584194073.png';
+import bookingLogoSrc from '@assets/file_0000000050cc8208ac2c6503f1c199fb_1788659624229.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
@@ -276,17 +277,17 @@ function BottomNav() {
   const items = [
     { href: '/', label: 'Explore', icon: Search },
     { href: '/wishlist', label: 'Saved', icon: Heart },
-    { href: '/trips', label: 'Bookings', icon: CalendarDays },
+    { href: '/trips', label: 'Bookings', icon: CalendarDays, logo: bookingLogoSrc },
     { href: '/messages', label: 'Inbox', icon: MessageCircle },
     { href: '/profile', label: 'Profile', icon: UserRound },
   ];
   return (
     <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-24px)] max-w-md -translate-x-1/2 rounded-[24px] border border-[hsl(var(--border)/.8)] bg-[hsl(var(--card)/.96)] px-3 pb-[max(9px,env(safe-area-inset-bottom))] pt-2 shadow-lift backdrop-blur-xl md:hidden">
       <div className="mx-auto flex max-w-md justify-between">
-        {items.map(({ href, label, icon: Icon }) => {
+        {items.map(({ href, label, icon: Icon, logo }) => {
           const active = href === '/' ? location === '/' : location.startsWith(href);
           return <Link key={href} href={href} className={`flex min-w-[54px] flex-col items-center gap-1 text-[10px] font-semibold transition ${active ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-bottom-${label.toLowerCase()}`}>
-            <span className={`relative grid size-9 place-items-center rounded-full ${active ? 'bg-[hsl(var(--secondary))]' : ''}`}><Icon size={22} strokeWidth={active ? 2.7 : 2.2} />{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
+            <span className={`relative grid size-9 place-items-center rounded-full ${active ? 'bg-[hsl(var(--secondary))]' : ''}`}>{logo ? <img src={logo} alt="" aria-hidden="true" className="size-7 object-contain" /> : <Icon size={22} strokeWidth={active ? 2.7 : 2.2} />}{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
           </Link>;
         })}
       </div>
