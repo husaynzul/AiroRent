@@ -513,7 +513,7 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
     <p className="rounded-2xl bg-[hsl(var(--muted))] px-4 py-5 text-sm text-[hsl(var(--muted-foreground))]">No properties match this search yet.</p>
   );
   return <div className="bg-[hsl(var(--background))] md:hidden">
-    <section className="sticky top-0 z-40 border-b border-black/[.06] bg-[hsl(var(--background)/.96)] px-5 pb-4 pt-3 backdrop-blur-xl">
+    <section className="sticky top-0 z-40 border-b border-black/[.06] bg-[hsl(var(--background)/.96)] px-5 pb-3 pt-3 backdrop-blur-xl">
       <div className="relative">
         <div className={`flex h-12 w-full items-center gap-3 rounded-full border bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)] transition ${searchExpanded ? 'border-[hsl(var(--primary))] ring-4 ring-[hsl(var(--primary)/.08)]' : 'border-black/10'}`} role="search" onClick={() => setSearchExpanded(true)}>
           <div className="relative min-w-0 flex-1 translate-x-1.5">
