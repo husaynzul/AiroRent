@@ -516,8 +516,8 @@ function MobileMarketplacePage({ mode, setMode, query, setQuery, category, setCa
     <section className="sticky top-0 z-40 border-b border-black/[.06] bg-[hsl(var(--background)/.96)] px-5 pb-4 pt-3 backdrop-blur-xl">
       <div className="relative">
         <div className={`flex h-12 w-full items-center gap-3 rounded-full border bg-[#fafafa] px-4 shadow-[0_5px_16px_rgba(0,0,0,.08)] transition ${searchExpanded ? 'border-[hsl(var(--primary))] ring-4 ring-[hsl(var(--primary)/.08)]' : 'border-black/10'}`} role="search" onClick={() => setSearchExpanded(true)}>
-          <div className="relative min-w-0 flex-1">
-            <Search size={18} className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-[68px] -translate-y-1/2 text-black/60" />
+          <div className="relative min-w-0 flex-1 translate-x-1.5">
+            <Search size={18} className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-[72px] -translate-y-1/2 text-black/60" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} onFocus={() => setSearchExpanded(true)} placeholder="Find anything" aria-label="Find anything" className="w-full bg-transparent text-center text-sm outline-none placeholder:text-black/50" data-testid="input-mobile-market-search" />
           </div>
         </div>
