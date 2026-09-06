@@ -287,7 +287,7 @@ function BottomNav() {
         {items.map(({ href, label, icon: Icon, logo }) => {
           const active = href === '/' ? location === '/' : location.startsWith(href);
           return <Link key={href} href={href} className={`flex min-w-[54px] flex-col items-center gap-1 text-[10px] font-semibold transition ${active ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-bottom-${label.toLowerCase()}`}>
-            <span className={`relative grid size-9 place-items-center rounded-full ${active ? 'bg-[hsl(var(--secondary))]' : ''}`}>{logo ? <img src={logo} alt="" aria-hidden="true" className="size-7 object-contain" /> : <Icon size={22} strokeWidth={active ? 2.7 : 2.2} />}{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
+            <span className={`relative grid size-9 place-items-center rounded-full ${active ? 'bg-[hsl(var(--secondary))]' : ''}`}>{logo ? <img src={logo} alt="" aria-hidden="true" className="size-8 object-contain" /> : <Icon size={22} strokeWidth={active ? 2.7 : 2.2} />}{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
           </Link>;
         })}
       </div>
