@@ -438,16 +438,12 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
   ];
   return <div className="fixed inset-0 z-50 h-[100dvh] overflow-y-auto bg-[hsl(var(--background))] pb-8 text-[#1d2329] md:hidden" data-testid="mobile-search-experience">
     <div className="mx-auto max-w-md px-7 pb-8 pt-5">
-      <header className="flex items-center justify-between">
-        <button onClick={onClose} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white" aria-label="Close search" data-testid="button-close-search-experience"><ArrowLeft size={22} /></button>
-        <div className="text-center"><h1 className="text-[21px] font-bold tracking-[-.04em] text-[#1d2329]">Where to?</h1><p className="mt-0.5 text-[13px] text-black/50">Find your perfect stay</p></div>
-        <button onClick={onOpenFilters} className="grid size-11 place-items-center rounded-[14px] border border-black/10 bg-white text-[#4b535b]" aria-label="Open all filters" data-testid="button-search-experience-filters"><Navigation size={19} /></button>
-      </header>
-      <p className="mt-7 px-1 text-[11px] font-bold uppercase tracking-[.12em] text-black/50">Search by city or area</p>
-      <div className="mt-2 flex h-[74px] items-center gap-3 rounded-[17px] border-[1.5px] border-[#6f7880] bg-white px-5 shadow-[0_4px_12px_rgba(22,28,35,.06)]">
-        <Search size={22} className="shrink-0 text-[#4b535b]" />
-        <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search destinations, places, or homes" aria-label="Search destinations, places, or homes" className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-black/45" data-testid="input-search-experience-destination" />
-        <button onClick={onOpenFilters} className="grid size-11 shrink-0 place-items-center rounded-full bg-[#252b31] text-white shadow-[0_5px_12px_rgba(22,28,35,.15)]" aria-label="Adjust search filters" data-testid="button-search-experience-adjust"><SlidersHorizontal size={19} /></button>
+      <div className="sticky top-0 z-40 -mx-7 bg-[hsl(var(--background)/.96)] px-7 pb-3 pt-5 backdrop-blur-xl">
+        <div className="flex h-[74px] items-center gap-3 rounded-[17px] border-[1.5px] border-[#6f7880] bg-white px-5 shadow-[0_4px_12px_rgba(22,28,35,.06)]">
+          <Search size={22} className="shrink-0 text-[#4b535b]" />
+          <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search destinations, places, or homes" aria-label="Search destinations, places, or homes" className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-black/45" data-testid="input-search-experience-destination" />
+          <button onClick={onOpenFilters} className="grid size-11 shrink-0 place-items-center rounded-full bg-[#252b31] text-white shadow-[0_5px_12px_rgba(22,28,35,.15)]" aria-label="Adjust search filters" data-testid="button-search-experience-adjust"><SlidersHorizontal size={19} /></button>
+        </div>
       </div>
       <div className="mt-5 flex gap-2.5 overflow-x-auto pb-1">
         {categories.map(([label, Icon]) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex h-[91px] w-[73px] shrink-0 flex-col items-center justify-center gap-2 rounded-[13px] border text-[11px] font-medium ${activeCategory === label ? 'border-transparent bg-[#e2e5e8] text-[#252b31]' : 'border-black/[.05] bg-white text-black/70'}`} data-testid={`button-search-category-${label.toLowerCase()}`}><Icon size={28} strokeWidth={2} /><span>{label}</span>{activeCategory === label && <span className="h-1 w-5 rounded-full bg-[#252b31]" />}</button>)}
