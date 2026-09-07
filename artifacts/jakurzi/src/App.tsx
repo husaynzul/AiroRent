@@ -278,7 +278,7 @@ function BottomNav() {
   const items = [
     { href: '/', label: 'Explore', icon: Search, logo: exploreLogoSrc },
     { href: '/wishlist', label: 'Saved', icon: Heart },
-    { href: '/trips', label: 'Bookings', icon: CalendarDays, logo: bookingLogoSrc },
+    { href: '/trips', label: 'Let’s Travel', icon: CalendarDays, logo: bookingLogoSrc },
     { href: '/messages', label: 'Inbox', icon: MessageCircle },
     { href: '/profile', label: 'Profile', icon: UserRound },
   ];
