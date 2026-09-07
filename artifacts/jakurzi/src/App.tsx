@@ -24,6 +24,12 @@ import propertyDuplex3d from '@assets/property-duplex-card.png';
 import maisonetteCategoryImage from '@assets/file_00000000b1d88207a1ae334c223fdf35_2_1788584194073.png';
 import bookingLogoSrc from '@assets/file_0000000050cc8208ac2c6503f1c199fb_1788659624229.png';
 import exploreLogoSrc from '@assets/file_000000008aa48211b65c06339c44c5a5_1788661704155.png';
+import staysSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_1_1788783625584.png';
+import thingsToDoSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_8_1788783625645.png';
+import carRentalsSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_7_1788783625674.png';
+import toursSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_9_1788783625704.png';
+import restaurantsSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_5_1788783625738.png';
+import cruisesSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_3_1788783625781.png';
 import {
   ArrowLeft, ArrowRight, Bath, Bell, BedDouble, Building2, CalendarDays, Check,
   ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, DoorOpen,
@@ -415,11 +421,12 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
   const [showAllDestinations, setShowAllDestinations] = useState(false);
   const [likedDestination, setLikedDestination] = useState('');
   const categories = [
-    ['All', Globe2],
-    ['Beach', Sparkles],
-    ['Mountains', Layers3],
-    ['City', Building2],
-    ['Countryside', Home],
+    { label: 'Stays', image: staysSearchCategoryImage },
+    { label: 'Things to Do', image: thingsToDoSearchCategoryImage },
+    { label: 'Car Rentals', image: carRentalsSearchCategoryImage },
+    { label: 'Tours & Experiences', image: toursSearchCategoryImage },
+    { label: 'Restaurants', image: restaurantsSearchCategoryImage },
+    { label: 'Cruises & Boats', image: cruisesSearchCategoryImage },
   ] as const;
   const destinations = [
     { city: 'Istanbul', country: 'Türkiye', price: 'From $45 / night', image: images.limestone },
@@ -446,7 +453,7 @@ function MobileSearchExperience({ query, setQuery, onClose, onSearch, onOpenFilt
         </div>
       </div>
       <div className="mt-5 flex gap-2.5 overflow-x-auto pb-1">
-        {categories.map(([label, Icon]) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex h-[91px] w-[73px] shrink-0 flex-col items-center justify-center gap-2 rounded-[13px] border text-[11px] font-medium ${activeCategory === label ? 'border-transparent bg-[#e2e5e8] text-[#252b31]' : 'border-black/[.05] bg-white text-black/70'}`} data-testid={`button-search-category-${label.toLowerCase()}`}><Icon size={28} strokeWidth={2} /><span>{label}</span>{activeCategory === label && <span className="h-1 w-5 rounded-full bg-[#252b31]" />}</button>)}
+        {categories.map(({ label, image }) => <button key={label} onClick={() => setActiveCategory(label)} className={`relative flex h-[91px] w-[73px] shrink-0 items-center justify-center overflow-hidden rounded-[13px] border text-[11px] font-medium ${activeCategory === label ? 'border-transparent bg-[#e2e5e8] text-[#252b31]' : 'border-black/[.05] bg-white text-black/70'}`} data-testid={`button-search-category-${label.toLowerCase().replaceAll(' ', '-')}`}><img src={image} alt={label} className="size-full object-contain" />{activeCategory === label && <span className="absolute h-1 w-5 rounded-full bg-[#252b31]" />}</button>)}
       </div>
       <section className="mt-7">
         <div className="flex items-center justify-between"><h2 className="text-[14px] font-bold">{showAllDestinations ? 'Cities & countries' : 'Popular destinations'}</h2><button onClick={() => setShowAllDestinations((value) => !value)} className="flex items-center gap-1 text-[11px] font-semibold text-black/60" data-testid="button-search-view-all">{showAllDestinations ? 'Back' : 'View all'} <ChevronRight size={14} className={showAllDestinations ? 'rotate-180' : ''} /></button></div>
