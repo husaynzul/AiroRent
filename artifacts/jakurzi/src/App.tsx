@@ -39,6 +39,11 @@ import {
   Star, Tag, UserRound, UsersRound, WalletCards, X, Accessibility, BellRing,
   Globe2, ReceiptText, BriefcaseBusiness,
 } from 'lucide-react';
+import {
+  PopularRentalsPage,
+  ReferenceBottomNav,
+  ReferenceHomeScreen,
+} from '@/components/reference-rental-screens';
 
 type Mode = 'Rent' | 'Buy' | 'Short Let';
 type FilterPurpose = 'Rent' | 'Short Rent' | 'Buy' | 'Trip / Booking';
@@ -174,6 +179,7 @@ type Listing = {
   tag?: string;
   verified?: boolean;
   garages?: number;
+  duration?: 'Hourly' | 'Daily' | 'Monthly' | 'Yearly';
 };
 
 type BookingRecord = {
@@ -203,6 +209,12 @@ const listings: Listing[] = [
   { id: 'gozo-stone', title: 'Sun-washed stone farmhouse', location: 'Xagħra, Gozo', type: 'House', mode: 'Short Let', price: '€210', detail: '4 beds · 3 baths · sleeps 8', image: images.farmhouse, rating: '4.97', tag: 'Guest favourite', verified: true, garages: 2 },
   { id: 'msida-studio', title: 'Bright studio by the marina', location: 'Msida, Central', type: 'Studio', mode: 'Rent', price: '€850 / mo', detail: '1 bed · 1 bath · 46 m²', image: images.limestone, rating: '4.61', garages: 0 },
   { id: 'marsaxlokk-villa', title: 'Pool villa, close to the sea', location: 'Marsaxlokk, South East', type: 'Villa', mode: 'Buy', price: '€1,180,000', detail: '4 beds · 3 baths · 240 m²', image: images.seaview, rating: '4.88', tag: 'Price reduced', verified: true, garages: 2 },
+  { id: 'sliema-rooftop-penthouse', title: 'Penthouse with Rooftop Pool', location: 'Sliema, Central', type: 'Penthouse', mode: 'Rent', price: '€3,450 / mo', detail: '3 beds · 2 baths · 148 m²', image: images.seaview, rating: '4.9', tag: 'New this week', duration: 'Yearly' },
+  { id: 'seaview-villa-rent', title: 'Seaview Villa', location: 'St. Julian’s, Central', type: 'Villa', mode: 'Rent', price: '€2,900 / mo', detail: '4 beds · 3 baths · 230 m²', image: images.farmhouse, rating: '4.7', tag: 'New this week', duration: 'Yearly' },
+  { id: 'seaview-studio-rent', title: 'Seaview Studio', location: 'Sliema, Central', type: 'Studio', mode: 'Rent', price: '€1,100 / mo', detail: '1 bed · 1 bath · 52 m²', image: images.limestone, rating: '4.8', tag: 'New this week', duration: 'Monthly' },
+  { id: 'seaview-loft-rent', title: 'Seaview Loft', location: 'Ta’ Xbiex, Central', type: 'Loft', mode: 'Rent', price: '€1,520 / mo', detail: '2 beds · 2 baths · 110 m²', image: images.seaview, rating: '4.8', tag: 'New this week', duration: 'Monthly' },
+  { id: 'seaview-residence-rent', title: 'Seaview Residence', location: 'Sliema, Central', type: 'Apartment', mode: 'Rent', price: '€2,150 / mo', detail: '3 beds · 2 baths · 132 m²', image: images.deck, rating: '4.8', tag: 'New this week', duration: 'Monthly' },
+  { id: 'daily-seaview-apartment', title: 'Seaview Apartment', location: 'Sliema, Central', type: 'Apartment', mode: 'Short Let', price: '€850', detail: '2 beds · 2 baths · sleeps 4', image: images.seaview, rating: '4.92', tag: 'New this week', duration: 'Daily' },
 ];
 
 const hostPhone = '+35679001842';
@@ -281,6 +293,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
 function BottomNav() {
   const [location] = useLocation();
   if (location.startsWith('/listing/')) return null;
+  if (location === '/' || location.startsWith('/popular-rentals')) return <ReferenceBottomNav />;
   const items = [
     { href: '/', label: 'Explore', icon: Search, logo: exploreLogoSrc },
     { href: '/wishlist', label: 'Saved', icon: Heart },
@@ -309,7 +322,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   const homeRoute = location === '/' || location.startsWith('/?');
   const profileRoute = location.startsWith('/profile');
   const messagesRoute = location.startsWith('/messages');
-  const mobileHeaderlessRoute = immersiveRoute || profileRoute || messagesRoute || location.startsWith('/wishlist') || location.startsWith('/trips') || homeRoute;
+  const mobileHeaderlessRoute = immersiveRoute || profileRoute || messagesRoute || location.startsWith('/wishlist') || location.startsWith('/trips') || location.startsWith('/popular-rentals') || homeRoute;
   return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={mobileHeaderlessRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
@@ -606,7 +619,14 @@ function HomePage() {
     setMode(nextMode);
   };
   return <main>
-    <MobileMarketplacePage mode={mode} setMode={setMode} query={query} setQuery={setQuery} category={category} setCategory={setCategory} matches={matches} saved={saved} onSave={toggleSave} onOpenFilters={() => setFilterOpen(true)} onClearFilters={() => setFilters(defaultFilters)} />
+     <ReferenceHomeScreen
+       rentals={matches}
+       query={query}
+       setQuery={setQuery}
+       saved={saved}
+       onSave={toggleSave}
+       onOpenExistingFilters={() => setFilterOpen(true)}
+     />
     <div className="hidden md:block">
      <section className="airo-hero relative overflow-hidden border-b border-[hsl(var(--border))]">
        <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-[hsl(var(--primary)/.18)] blur-3xl" />
@@ -1409,7 +1429,7 @@ function PostPage() {
 }
 
 function AppRouter() {
-  return <Shell><Switch><Route path="/" component={HomePage} /><Route path="/map" component={MapPage} /><Route path="/wishlist" component={WishlistPage} /><Route path="/trips" component={TripsPage} /><Route path="/messages" component={MessagesPage} /><Route path="/profile/settings" component={AccountSettingsPage} /><Route path="/profile" component={ProfileExperiencePage} /><Route path="/post" component={PostPage} /><Route path="/listing/:id">{(params) => <DetailPage id={params.id} />}</Route><Route><NotFound /></Route></Switch></Shell>;
+  return <Shell><Switch><Route path="/" component={HomePage} /><Route path="/popular-rentals"><PopularRentalsPage listings={listings} /></Route><Route path="/map" component={MapPage} /><Route path="/wishlist" component={WishlistPage} /><Route path="/trips" component={TripsPage} /><Route path="/messages" component={MessagesPage} /><Route path="/profile/settings" component={AccountSettingsPage} /><Route path="/profile" component={ProfileExperiencePage} /><Route path="/post" component={PostPage} /><Route path="/listing/:id">{(params) => <DetailPage id={params.id} />}</Route><Route><NotFound /></Route></Switch></Shell>;
 }
 
 function NotFound() {

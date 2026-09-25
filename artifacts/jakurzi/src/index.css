@@ -160,6 +160,46 @@
   box-shadow: 0 16px 36px rgba(22, 28, 35, .1);
 }
 
+.rental-price-thumb {
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.rental-price-thumb::-webkit-slider-runnable-track {
+  height: 5px;
+  background: transparent;
+}
+
+.rental-price-thumb::-moz-range-track {
+  height: 5px;
+  background: transparent;
+}
+
+.rental-price-thumb::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5.5px;
+  border: 1px solid white;
+  border-radius: 999px;
+  background: #171a20;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .22);
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.rental-price-thumb::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 1px solid white;
+  border-radius: 999px;
+  background: #171a20;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .22);
+  pointer-events: auto;
+  cursor: grab;
+}
+
 /* Keep legacy reference-screen utility colors on-brand without changing interactions. */
 [class~="bg-black"] { background-color: hsl(var(--foreground)); }
 [class~="text-black"] { color: hsl(var(--foreground)); }
