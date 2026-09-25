@@ -22,8 +22,6 @@ import propertyPenthouse3d from '@assets/property-penthouse-card.png';
 import propertyGuesthouse3d from '@assets/property-guesthouse-card.png';
 import propertyDuplex3d from '@assets/property-duplex-card.png';
 import maisonetteCategoryImage from '@assets/file_00000000b1d88207a1ae334c223fdf35_2_1788584194073.png';
-import bookingLogoSrc from '@assets/file_0000000050cc8208ac2c6503f1c199fb_1788659624229.png';
-import exploreLogoSrc from '@assets/file_000000008aa48211b65c06339c44c5a5_1788661704155.png';
 import staysSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_1_1788783625584.png';
 import thingsToDoSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_8_1788783625645.png';
 import carRentalsSearchCategoryImage from '@assets/file_000000000a2881f8971813a904eddc62_7_1788783625674.png';
@@ -290,31 +288,6 @@ function Header({ onMenu }: { onMenu: () => void }) {
   );
 }
 
-function BottomNav() {
-  const [location] = useLocation();
-  if (location.startsWith('/listing/')) return null;
-  if (location === '/' || location.startsWith('/popular-rentals')) return <ReferenceBottomNav />;
-  const items = [
-    { href: '/', label: 'Explore', icon: Search, logo: exploreLogoSrc },
-    { href: '/wishlist', label: 'Saved', icon: Heart },
-    { href: '/trips', label: 'Let’s Travel', icon: CalendarDays, logo: bookingLogoSrc },
-    { href: '/messages', label: 'Inbox', icon: MessageCircle },
-    { href: '/profile', label: 'Profile', icon: UserRound },
-  ];
-  return (
-    <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-24px)] max-w-md -translate-x-1/2 rounded-[24px] border border-[hsl(var(--border)/.8)] bg-[hsl(var(--card)/.96)] px-3 pb-[max(9px,env(safe-area-inset-bottom))] pt-2 shadow-lift backdrop-blur-xl md:hidden">
-      <div className="mx-auto flex max-w-md justify-between">
-        {items.map(({ href, label, icon: Icon, logo }) => {
-          const active = href === '/' ? location === '/' : location.startsWith(href);
-          return <Link key={href} href={href} className={`flex min-w-[54px] flex-col items-center gap-1 text-[10px] font-semibold transition ${active ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`} data-testid={`link-bottom-${label.toLowerCase()}`}>
-            <span className={`relative grid size-9 place-items-center rounded-full ${active ? 'bg-[#FB468B] text-white' : ''}`}>{logo ? <img src={logo} alt="" aria-hidden="true" className={`size-8 object-contain ${active ? 'brightness-0 invert' : ''}`} /> : <Icon size={22} strokeWidth={active ? 2.7 : 2.2} />}{href === '/messages' && <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-full bg-[hsl(var(--primary))] text-[9px] font-bold text-white">3</span>}</span>{label}
-          </Link>;
-        })}
-      </div>
-    </nav>
-  );
-}
-
 function Shell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [location] = useLocation();
@@ -323,7 +296,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   const profileRoute = location.startsWith('/profile');
   const messagesRoute = location.startsWith('/messages');
   const mobileHeaderlessRoute = immersiveRoute || profileRoute || messagesRoute || location.startsWith('/wishlist') || location.startsWith('/trips') || location.startsWith('/popular-rentals') || homeRoute;
-  return <div className={`texture min-h-[100dvh] ${immersiveRoute ? '' : 'pb-20 md:pb-0'}`}><div className={mobileHeaderlessRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<BottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
+  return <div className="texture min-h-[100dvh] pb-20 md:pb-0"><div className={mobileHeaderlessRoute ? 'hidden md:block' : ''}><Header onMenu={() => setMenuOpen(true)} /></div>{children}<ReferenceBottomNav />{menuOpen && <MenuSheet onClose={() => setMenuOpen(false)} />}</div>;
 }
 
 function MenuSheet({ onClose }: { onClose: () => void }) {
