@@ -8,13 +8,16 @@ import {
   Bell,
   CarFront,
   CalendarDays,
+  ChefHat,
   Clock3,
   type LucideIcon,
   ChevronDown,
   Heart,
   Home,
   MapPin,
+  MessageSquare,
   Mountain,
+  Plane,
   Search,
   SlidersHorizontal,
   Sparkles,
@@ -76,7 +79,7 @@ const marketplaceCategories: Array<{
 }> = [
   { label: 'Homes', icon: Home },
   { label: 'Cars', icon: CarFront },
-  { label: 'Services', icon: Sparkles },
+  { label: 'Services', icon: ChefHat },
   { label: 'Adventures', icon: Mountain },
   { label: 'Events', icon: CalendarDays },
   { label: 'Experiences', icon: Star },
@@ -143,8 +146,8 @@ function HomeRentalCard({
 }) {
   const [, setLocation] = useLocation();
   return (
-    <article className="overflow-hidden rounded-[11px] border border-[#dedfe1] bg-white shadow-[0_3px_9px_rgba(0,0,0,.12)]">
-      <div className="relative aspect-[3.55] overflow-hidden bg-[#dce3e8]">
+    <article className="overflow-hidden rounded-[17px] border border-[#dedfe1] bg-white shadow-[0_3px_9px_rgba(0,0,0,.12)]">
+      <div className="relative aspect-[2.72] overflow-hidden bg-[#dce3e8]">
         <button
           type="button"
           className="absolute inset-0 size-full"
@@ -153,38 +156,38 @@ function HomeRentalCard({
         >
           <img src={listing.image} alt={listing.title} className="size-full object-cover" />
         </button>
-        <span className="absolute left-2.5 top-2.5 rounded-[5px] bg-[#d6f0db] px-2 py-1 text-[10px] font-medium text-[#1c3823]">
+        <span className="absolute left-3 top-3 rounded-[7px] bg-[#ffdc67] px-2.5 py-1 text-[11px] font-semibold text-[#1c2025]">
           {listing.tag || 'New this week'}
         </span>
         <button
           type="button"
           onClick={() => onSave(listing.id)}
-          className="absolute right-2.5 top-2 grid size-8 place-items-center rounded-full bg-white text-[#1c2025] shadow-sm"
+          className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white text-[#1c2025] shadow-sm"
           aria-label={saved ? 'Remove from wishlist' : 'Save listing'}
         >
-          <Heart size={18} fill={saved ? 'currentColor' : 'none'} />
+          <Heart size={20} fill={saved ? 'currentColor' : 'none'} />
         </button>
       </div>
-      <div className="px-2.5 pb-2.5 pt-2">
+      <div className="px-3.5 pb-3 pt-2.5">
         <button
           type="button"
-          className="block max-w-full truncate text-left text-[14px] font-semibold"
+          className="block max-w-full truncate text-left text-[19px] font-semibold leading-tight"
           onClick={() => setLocation(`/listing/${listing.id}`)}
         >
           {listing.title}
         </button>
-        <p className="mt-1 truncate text-[10px] text-[#51565d]">
-          <MapPin className="mr-0.5 inline size-3 align-[-2px]" />
-          {listing.location} · {listing.detail.replaceAll(' · ', ' · ')}
+        <p className="mt-1 flex items-center gap-1 truncate text-[13px] text-[#51565d]">
+          <BedDouble className="size-4 shrink-0" strokeWidth={1.8} />
+          {listing.detail}
         </p>
         <div className="mt-1.5 flex items-center justify-between gap-2">
-          <p className="text-[15px] font-bold">{listing.price}{listing.mode === 'Short Let' ? ' / night' : ''}</p>
+          <p className="text-[19px] font-bold">{listing.price}{listing.mode === 'Short Let' ? ' / night' : ''}</p>
           <button
             type="button"
             onClick={() => setLocation(`/listing/${listing.id}`)}
-            className="flex h-7 shrink-0 items-center gap-1 rounded-[5px] bg-[#171a20] px-2.5 text-[11px] font-medium text-white"
+            className="flex h-9 shrink-0 items-center gap-1 rounded-[9px] bg-[#e50058] px-4 text-[14px] font-semibold text-white shadow-[0_3px_8px_rgba(229,0,88,.18)]"
           >
-            Rent now <ArrowRight size={13} />
+            Check availability
           </button>
         </div>
       </div>
@@ -206,7 +209,7 @@ function MarketplaceCategoryShortcut({
     <button
       type="button"
       onClick={() => onSelect(category.label)}
-      className={`flex w-[62px] shrink-0 flex-col items-center gap-1.5 text-center text-[10px] font-medium ${
+      className={`flex w-[54px] shrink-0 flex-col items-center gap-1.5 text-center text-[10px] font-medium ${
         active ? 'text-[#171a20]' : 'text-[#51565d]'
       }`}
       aria-pressed={active}
@@ -307,9 +310,9 @@ export function ReferenceHomeScreen({
         </form>
       </header>
 
-      <div className="space-y-6 px-5 pb-2 pt-5">
+      <div className="space-y-3 px-5 pb-2 pt-2">
         <section aria-label="Marketplace categories" className="-mx-1 overflow-hidden">
-          <div className="flex gap-2 overflow-x-auto px-1 pb-1">
+          <div className="flex gap-1 overflow-x-auto px-1 pb-1">
             {marketplaceCategories.map((category) => (
               <MarketplaceCategoryShortcut
                 key={category.label}
@@ -323,15 +326,15 @@ export function ReferenceHomeScreen({
 
         <section aria-labelledby="reference-categories">
           <div className="mb-2 flex items-center justify-between">
-            <h2 id="reference-categories" className="text-[15px] font-medium">Top Categories</h2>
+            <h2 id="reference-categories" className="text-[18px] font-semibold">Top Categories</h2>
             <button
               type="button"
-              className="flex items-center gap-1 text-[12px] font-medium"
+              className="flex items-center gap-1 text-[14px] font-medium"
               onClick={() => setShowAllCategories((current) => !current)}
               aria-expanded={showAllCategories}
               data-testid="button-home-see-all-categories"
             >
-              {showAllCategories ? 'Show less' : 'See all'} <ArrowRight size={13} />
+              {showAllCategories ? 'Show less' : 'See all'} <ArrowRight size={14} />
             </button>
           </div>
           <div className={`grid ${showAllCategories ? 'grid-cols-3' : 'grid-cols-3'} gap-2`}>
@@ -353,17 +356,17 @@ export function ReferenceHomeScreen({
 
         <section aria-labelledby="reference-trending">
           <div className="mb-2 flex items-center justify-between">
-            <h2 id="reference-trending" className="text-[15px] font-medium">Trending Now</h2>
+            <h2 id="reference-trending" className="text-[23px] font-semibold tracking-[-.035em]">Trending Homes</h2>
             <button
               type="button"
               onClick={goToRentals}
-              className="flex items-center gap-1 text-[12px] font-medium"
+              className="flex items-center gap-1 text-[14px] font-medium"
               data-testid="button-home-see-all-trending"
             >
-              See all <ArrowRight size={13} />
+              See all <ArrowRight size={14} />
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {featuredRentals.map((listing) => (
               <HomeRentalCard
                 key={listing.id}
@@ -1042,8 +1045,8 @@ export function ReferenceBottomNav() {
   const items = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/popular-rentals', label: 'Search', icon: Search },
-    { href: '/trips', label: 'Travel', icon: CalendarDays },
-    { href: '/messages', label: 'Inbox', icon: Bell },
+    { href: '/trips', label: 'Travel', icon: Plane },
+    { href: '/messages', label: 'Inbox', icon: MessageSquare },
     { href: '/profile', label: 'Profile', icon: UserRound },
   ];
   return (
